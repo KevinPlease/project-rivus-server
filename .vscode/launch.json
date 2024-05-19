@@ -13,7 +13,8 @@
             "smartStep": true,
             "preLaunchTask": "npm build",
             "internalConsoleOptions": "openOnSessionStart",
-            "outFiles": ["${workspaceFolder}/bin/**/*.js"]
+            "outFiles": ["${workspaceFolder}/bin/**/*.js"],
+            "envFile": "${workspaceFolder}/.env.development"
         }
     ]
 }

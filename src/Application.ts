@@ -1,10 +1,9 @@
-import "./env";
 import CFG_BACKEND from "./backend/config";
 import CFG_WEB from "./network/config";
 import { DEFAULT_DEBUG_PORT, PRIORITIES } from "./service/config";
 
 const ENV = process.env;
-const CONNECTION_MODE = ENV.mode || "development";
+const CONNECTION_MODE = ENV.MODE || "development";
 if (!ENV.DB_USERNAME || !ENV.DB_PASSWORD) throw "Missing environment variable for DB credentials!";
 
 const DB_CREDENTIALS = { username: ENV.DB_USERNAME, password: ENV.DB_PASSWORD };
