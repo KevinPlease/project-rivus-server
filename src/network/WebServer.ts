@@ -180,13 +180,16 @@ class WebServer extends Communicator {
 			this.dispatch("server connected", "success from dispatcher");
 		};
 
-		if (CONNECTION_MODE === "development" || CONNECTION_MODE === "testing") {
-			this._express.listen(CONN.PORT, CONN.URL, onServerStarted);
-			return;
-		}
-
-		let certificationInfo = this.say("ask", "certificationInfo");
-		this.createAndListenSecurely(certificationInfo, onServerStarted);
+		this._express.listen(CONN.PORT, CONN.URL, onServerStarted);
+		return;
+		
+		// NOTE: Custom SSL certification management.
+		// if (CONNECTION_MODE === "development" || CONNECTION_MODE === "testing") {
+		// 	this._express.listen(CONN.PORT, CONN.URL, onServerStarted);
+		// 	return;
+		// }
+		// let certificationInfo = this.say("ask", "certificationInfo");
+		// this.createAndListenSecurely(certificationInfo, onServerStarted);
 	}
 
 

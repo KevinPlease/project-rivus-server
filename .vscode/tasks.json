@@ -7,9 +7,6 @@
 		"label": "npm build",
 		"type": "shell",
 		"command": "npm run build",
-		"windows": {
-			"command": "npm run build"
-		},
 		"group": {
 		  "kind": "build",
 		  "isDefault": true

@@ -5,9 +5,11 @@
   "main": "Application.ts",
   "type": "module",
   "scripts": {
-    "dev": "npm run build && node --inspect ./bin/Application.js",
-    "start": "npm run build && node ./bin/Application.js",
-    "build": "tsc-esm"
+    "dev": "dotenvx run -f .env.development -- npm run buildAndDebug",
+    "start": "dotenvx run -f .env -- npm run buildAndStart",
+    "build": "tsc-esm",
+    "buildAndDebug": "npm run build && node --inspect ./bin/Application.js",
+    "buildAndStart": "npm run build && node ./bin/Application.js"
   },
   "repository": {
     "type": "git",
