@@ -21,7 +21,7 @@ import ADMIN_ROUTES from "../admin/routes";
 import { BranchAuthorizer } from "../middleware/BranchAuthorizer";
 import { DomainAuthorizer } from "../middleware/DomainAuthorizer";
 import { IClientProvider } from "./interfaces/IClientProvider";
-import { NoClient } from "./NoClientProvider";
+import { NextClient } from "./NextClientProvider";
 
 const NON_NEXT_ROUTES = ["admin", "api"];
 
@@ -68,7 +68,7 @@ class WebServer extends Communicator {
 
 		const CONNECTION_MODE = say(WebServer, "ask", "connectionMode");
 		const isDev = CONNECTION_MODE === "development";
-		const clientProvider = NoClient.create({ dev: isDev });
+		const clientProvider = NextClient.create({ dev: isDev });
 		const clientHandler = clientProvider.getRequestHandler();
 
 		await clientProvider.prepare();

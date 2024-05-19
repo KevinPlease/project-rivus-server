@@ -2,7 +2,7 @@ import { AnyFunction } from "../../types/AnyFunction";
 import { Dictionary } from "../../types/Dictionary";
 
 interface IClientProvider {
-	inst: Object;
+	inst: any;
 	options?: Dictionary;
 
 	getRequestHandler(): (req: any, res: any, next?: AnyFunction) => void;
