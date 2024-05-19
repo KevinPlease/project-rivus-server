@@ -1,13 +1,6 @@
 import { AnyFunction } from "../types/AnyFunction";
 import { Dictionary } from "../types/Dictionary";
-
-interface IClientProvider {
-	inst: Object;
-	options?: Dictionary;
-
-	getRequestHandler(): (req: any, res: any, next?: AnyFunction) => void;
-	prepare(): Promise<void>;
-}
+import { IClientProvider } from "./interfaces/IClientProvider";
 
 class NoClient implements IClientProvider {
 	inst: Object;
@@ -34,8 +27,6 @@ class NoClient implements IClientProvider {
 	public async prepare(): Promise<void> {
 		return;		
 	}
-
 }
 
-export type { IClientProvider };
 export { NoClient };

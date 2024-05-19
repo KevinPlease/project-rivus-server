@@ -20,7 +20,8 @@ import API_ROUTES from "../api/routes";
 import ADMIN_ROUTES from "../admin/routes";
 import { BranchAuthorizer } from "../middleware/BranchAuthorizer";
 import { DomainAuthorizer } from "../middleware/DomainAuthorizer";
-import { IClientProvider, NoClient } from "./ClientProvider";
+import { IClientProvider } from "./interfaces/IClientProvider";
+import { NoClient } from "./NoClientProvider";
 
 const NON_NEXT_ROUTES = ["admin", "api"];
 
