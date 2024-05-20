@@ -13,7 +13,7 @@ const CONFIG = {
 		"DOMAIN_NAME": "rivus-io.com"
 	},
 	"production": {
-		"PORT": 443,
+		"PORT": 5000,
 		"protocol": "https",
 		"URL": "141.94.205.232",
 		"DOMAIN_NAME": "rivus-io.com"
