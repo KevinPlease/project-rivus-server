@@ -9,7 +9,7 @@
     "start": "npm run build && dotenvx run -f .env -- node ./bin/Application.js",
     "build": "tsc-esm",
     "nextDev": "npm run build && cd.. && dotenvx run -f ./server/.env.development -- node --inspect ./server/bin/Application.js",
-    "nextStart": "npm run build && cd.. && dotenvx run -f ./server/.env -- node ./server/bin/Application.js"
+    "nextStart": "npm run build && cd .. && dotenvx run -f ./server/.env -- node ./server/bin/Application.js"
   },
   "repository": {
     "type": "git",
