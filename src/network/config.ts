@@ -7,16 +7,16 @@ const CONFIG = {
 		"DOMAIN_NAME": "localhost"
 	},
 	"testing": {
-		"PORT": 3000,
+		"PORT": 5000,
 		"protocol": "https",
-		"URL": "51.38.98.185",
-		"DOMAIN_NAME": "ubrix.io"
+		"URL": "141.94.205.232",
+		"DOMAIN_NAME": "rivus-io.com"
 	},
 	"production": {
 		"PORT": 443,
 		"protocol": "https",
-		"URL": "ubrix.io",
-		"DOMAIN_NAME": "ubrix.io"
+		"URL": "141.94.205.232",
+		"DOMAIN_NAME": "rivus-io.com"
 	}
 };
 

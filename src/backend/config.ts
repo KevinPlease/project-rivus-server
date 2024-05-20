@@ -24,14 +24,14 @@ const config = {
 
 	"SERVER_CERTIFICATION": {
 		"testing": {
-			"privateKey": "/etc/letsencrypt/live/test.rivus.com/privkey.pem",
-			"certification": "/etc/letsencrypt/live/test.rivus.com/cert.pem",
-			"chain": "/etc/letsencrypt/live/test.rivus.com/chain.pem"
+			"privateKey": "/etc/letsencrypt/live/rivus-io.com/privkey.pem",
+			"certification": "/etc/letsencrypt/live/rivus-io.com/cert.pem",
+			"chain": "/etc/letsencrypt/live/rivus-io.com/chain.pem"
 		},
 		"production": {
-			"privateKey": "/etc/letsencrypt/live/rivus.com/privkey.pem",
-			"certification": "/etc/letsencrypt/live/rivus.com/cert.pem",
-			"chain": "/etc/letsencrypt/live/rivus.com/chain.pem"
+			"privateKey": "/etc/letsencrypt/live/rivus-io.com/privkey.pem",
+			"certification": "/etc/letsencrypt/live/rivus-io.com/cert.pem",
+			"chain": "/etc/letsencrypt/live/rivus-io.com/chain.pem"
 		}
 	},
 	
