@@ -13,7 +13,7 @@ const CONFIG = {
 		"DOMAIN_NAME": "ubrix.io"
 	},
 	"production": {
-		"PORT": 443,
+		"PORT": 5000,
 		"protocol": "https",
 		"URL": "ubrix.io",
 		"DOMAIN_NAME": "ubrix.io"
