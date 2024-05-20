@@ -156,10 +156,9 @@ class MongoDb {
 	// Adds a db admin in the new domain's db
 	addDbUser(): Promise<OperationStatus> {
 		let credentials = this._credentials;
-		let db = this._db;
 		let dbName = this._dbName;
 		let roles = [{ role: "readWrite", db: dbName }, { role: "dbAdmin", db: dbName }];
-		return Functions.doSimpleAsync(db, "addUser", credentials.username, credentials.password, roles);
+		return Functions.doSimpleAsync(this, "addUser", credentials.username, credentials.password, roles);
 	}
 
 
