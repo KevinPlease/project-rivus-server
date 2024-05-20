@@ -66,7 +66,9 @@ class Domain extends Model<DomainData> {
 
 	static async createAndConnect(name: string, branches: string[], credentials: {username: string, password: string}, say: MessengerFunction): Promise<Domain> {
 		const domain = Domain.create(name, branches, credentials, say);
-		await domain.connectDb(say);
+		const status = await domain.connectDb(say);
+		if (status === "failure") throw `Problem connecting to domain database: ${name}!`;
+
 		return domain.initializeRepositories(say);
 	}
 

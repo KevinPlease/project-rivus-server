@@ -150,7 +150,7 @@ class MongoDb {
 		let dbName = this._dbName;
 		let sysMongoDb : MongoDb = say(this, "ask", "sysMongoDb");
 		let roles = [{ role: "dbAdmin", db: dbName }, { role: "readWrite", db: dbName }, { role: "userAdmin", db: dbName }];
-		return Functions.doSimpleAsync(sysMongoDb, "addUser", credentials.username, credentials.password, { roles });
+		return Functions.doSimpleAsync(sysMongoDb, "addUser", credentials.username, credentials.password, roles);
 	}
 
 	// Adds a db admin in the new domain's db
@@ -159,7 +159,7 @@ class MongoDb {
 		let db = this._db;
 		let dbName = this._dbName;
 		let roles = [{ role: "readWrite", db: dbName }, { role: "dbAdmin", db: dbName }];
-		return Functions.doSimpleAsync(db, "addUser", credentials.username, credentials.password, { roles });
+		return Functions.doSimpleAsync(db, "addUser", credentials.username, credentials.password, roles);
 	}
 
 
