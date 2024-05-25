@@ -29,6 +29,7 @@ const ExString = {
 
 	caretReplace: (word: string, dataToReplace: string): string => {
 		return word.replace(/\^\[([^[\]^]*)\]\^/g, (m: string, p: string) => {
+			// @ts-ignore
 			let v = dataToReplace[p];
 			return v === undefined ? m : v;
 		});
