@@ -32,6 +32,19 @@ class CommsManager implements IEventBus {
 		}
 	}
 
+	public async dispatchCallOnce<T>(dispatcher: IDispatcher, event: string, arg?: T): Promise<any> {
+		const subsInstances = this.subsKeeper[event];
+		if (!subsInstances) return;
+
+		const lastSubInfo = subsInstances[0];
+		const result = await lastSubInfo.eventHandler.call(lastSubInfo.subscriber, dispatcher, arg);
+		if (lastSubInfo.subscriber.isOnce) {
+			this.removeSubscriber(lastSubInfo.subscriber, event);
+		}
+		
+		return result;
+	}
+
 	public removeSubscriber(subscriber: ISubscriber, event: string): void {
 		const subsKeeper = this.subsKeeper;
 		const eventSubscribers = subsKeeper[event];

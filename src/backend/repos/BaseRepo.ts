@@ -191,7 +191,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		const timeCreated = isDraft ? 0 : Date.now();
 		model.meta.timeCreated = timeCreated;
 
-		const operation: Operation = await this.dispatch(ERepoEvents.BEFORE_ADD, { model });
+		const operation: Operation = await this.dispatchOnce(ERepoEvents.BEFORE_ADD, { model });
 		if (operation.status === "failure") return "failure";
 
 		const insertedId = await this._create(model, say);
