@@ -4,6 +4,7 @@ import { ISubscriber } from "./ISubscriber";
 
 interface IEventBus {
 	dispatchCall<T>(dispatcher: IDispatcher, event: string, arg?: T): Promise<void>;
+	dispatchCallOnce<T>(dispatcher: IDispatcher, event: string, arg?: T): Promise<any>;
 	addSubscriber(subscriber: ISubscriber, event: string, eventHandler: DispatchFunc): void;
 	removeSubscriber(subscriber: ISubscriber, event: string): void;
 }

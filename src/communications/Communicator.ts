@@ -33,8 +33,12 @@ class Subscriber implements ISubscriber {
 
 class Communicator extends Subscriber implements IDispatcher {
 	
-	public dispatch<T>(event: string, arg?: T | undefined): Promise<any> {
+	public dispatch<T>(event: string, arg?: T | undefined): Promise<void> {
 		return eventBus.dispatchCall(this, event, arg);
+	}
+
+	public dispatchOnce<T>(event: string, arg?: T | undefined): Promise<any> {
+		return eventBus.dispatchCallOnce(this, event, arg);
 	}
 
 }

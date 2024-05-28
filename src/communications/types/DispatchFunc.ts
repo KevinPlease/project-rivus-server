@@ -1,3 +1,3 @@
-type DispatchFunc = (source: Object, arg: any) => void;
+type DispatchFunc = (source: Object, arg: any) => any;
 
 export type { DispatchFunc };

@@ -69,7 +69,7 @@ class User extends Model<UserData> {
 
 		// NOTE: cyclic dependency if importing UserRepo, therefore we use direct dependency injection
 		const userRepo = say(this, "ask", "repo", "users");
-		return Model._create(say, data, userRepo.repoName, User.ROLE, ownership, meta);
+		return User._create(say, data, userRepo.repoName, User.ROLE, ownership, meta);
 	}
 
 }
