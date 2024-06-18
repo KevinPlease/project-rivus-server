@@ -166,6 +166,8 @@ class Router {
 	}
 
 	public handleMethod(methodName: string, req: MExpRequest, res: ExpResponse, next: ExpNextFunc): Promise<void> {
+		if (!this._controller[methodName]) throw `No Controller method defined for this API: ${methodName}`;
+
 		const msngr = this.getRequestMsngr(req, res, next);
 		return Functions.doAsync(this._controller, methodName, msngr);
 	}
@@ -177,14 +179,10 @@ class Router {
 	}
 
 	public setRoute(resourceName: string, reqMethod: string, routeInfo: RouteInfo): Router {
-		const routerName = this.name;
-		const path = ExString.capitalize(routerName);
 		const name = ExString.capitalize(ExString.upToBefore(resourceName, "/"));
-		const methodName = reqMethod + path + name;
+		const methodName = reqMethod + name;
 
 		const method = this.getHandler(methodName);
-		if (!method) throw `No Controller method defined for this API: ${methodName}`;
-
 		const authorizeRequest = Functions.bound(this, "authorizeRequest", routeInfo);
 		const middlewares = [authorizeRequest];
 		const uploader = this.getUploader(name);
