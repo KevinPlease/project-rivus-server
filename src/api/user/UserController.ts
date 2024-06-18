@@ -1,14 +1,17 @@
-import Controller from "../network/Controller";
-import { MessengerFunction } from "../Messenger";
-import { Dictionary } from "../types/Dictionary";
-import { UserRepo } from "../backend/repos/UserRepo";
-import { IdentifiableDictionary } from "../types/IdentifiableDictionary";
-import { BasicCore } from "../core/Model";
-import { ListFilter } from "../backend/types/ListFilter";
-import { User, UserData } from "../backend/models/User";
-import { Operation } from "../types/Operation";
+import Controller from "../../network/Controller";
+import { MessengerFunction } from "../../Messenger";
+import { Dictionary } from "../../types/Dictionary";
+import { UserRepo } from "../../backend/repos/UserRepo";
+import { IdentifiableDictionary } from "../../types/IdentifiableDictionary";
+import { ListFilter } from "../../backend/types/ListFilter";
+import { User, UserData } from "../../backend/models/User";
+import { Operation } from "../../types/Operation";
 
-class ApiController extends Controller {
+class UserController extends Controller {
+
+	constructor(say: MessengerFunction) {
+		super("user", say);
+	}
 
 	async postAuthUser(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
@@ -66,7 +69,6 @@ class ApiController extends Controller {
 		return response.sendByInfo(authOperation.status, authOperation.message);
 	}
 
-	/** BEGIN: User APIs */
 	async postUser(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<UserData>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
@@ -182,12 +184,21 @@ class ApiController extends Controller {
 	}
 
 	async putUser(say: MessengerFunction) : Promise<void> {
-		const request = this.getActiveRequest<BasicCore<UserData>>(say);
+		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
-
 		const userRepo = UserRepo.getInstance(say);
-		const operation = await userRepo.editData(request.body._id, request.body.data, say);
 
+		const reqBody = request.body;
+		const userId = this.getOwningUserId(say);
+		
+		let operation: Operation = { status: "failure", message: "Bad Request!" };
+		if (reqBody.oldPassword && reqBody.newPassword) {
+			operation = await userRepo.changePassword(userId, reqBody.oldPassword, reqBody.newPassword, say);
+		} else {
+			const userData = reqBody as UserData;
+			operation = await userRepo.editData(userId, userData, say);
+		}
+		
 		return response.sendByInfo(operation.status, operation.message);
 	}
 
@@ -200,8 +211,7 @@ class ApiController extends Controller {
 		
 		return response.sendByInfo(operationStatus);
 	}
-	/** END: User APIs */
 
 }
 
-export default ApiController;
+export default UserController;

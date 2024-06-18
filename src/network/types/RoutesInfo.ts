@@ -1,13 +1,13 @@
 import { MethodType } from "../Request";
 
 type RouteInfo = {
-	actionId: string,
-	needsAuth?: boolean
+	actionId: string;
+	needsAuth?: boolean;
 }
 
 type RawRouteInfo = {
-	actionName: string,
-	needsAuth?: boolean
+	actionName: string;
+	needsAuth?: boolean;
 }
 
 type ResourceInfo = Record<string, RouteInfo>;
