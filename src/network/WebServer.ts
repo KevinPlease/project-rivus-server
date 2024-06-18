@@ -8,22 +8,19 @@ import { ExString } from "../shared/String";
 import NetworkUrl from "../network/NetworkUrl";
 
 // Import router classes here
-import ApiRouter from "../api/ApiRouter";
 import { Response } from "../network/Response";
 import { Communicator } from "../communications/Communicator";
-import { AdminRouter } from "../admin/AdminRouter";
 import { RoleAuthorizer } from "../middleware/RoleAuthorizer";
 import { UserAuthorizer } from "../middleware/UserAuthorizer";
 import UserRateLimiter from "../middleware/UserRateLimiter";
 
-import API_ROUTES from "../api/routes";
-import ADMIN_ROUTES from "../admin/routes";
+import { ROUTERS } from "../api/routers";
 import { BranchAuthorizer } from "../middleware/BranchAuthorizer";
 import { DomainAuthorizer } from "../middleware/DomainAuthorizer";
 import { IClientProvider } from "./interfaces/IClientProvider";
 import { NoClient } from "./NoClientProvider";
 
-const NON_NEXT_ROUTES = ["admin", "api"];
+const NON_NEXT_ROUTES = ["api"];
 
 /**
  * The entry point for the server configurations and initating the connection.
@@ -102,24 +99,20 @@ class WebServer extends Communicator {
 
 	async createRouters(msngr: MessengerFunction) {
 		const express = this._express;
-		const apiRouter = await ApiRouter
-			.create(Express.Router(), API_ROUTES, msngr)
+
+		for (const Router of ROUTERS) {
+			const router = await Router
+			.create(Express.Router(), msngr)
 			.addAuthMiddleware	(new DomainAuthorizer())
 			.addAuthMiddleware	(new BranchAuthorizer())
 			.addAuthMiddleware	(new UserAuthorizer())
 			.addAuthMiddleware	(new RoleAuthorizer())
 			.addRateLimiter		(UserRateLimiter.create())
 			.init();
-		express.use("/api", apiRouter.expRouter);
 
-		const adminRouter = await AdminRouter
-			.create(Express.Router(), ADMIN_ROUTES, msngr)
-			.addAuthMiddleware	(new DomainAuthorizer())
-			.addAuthMiddleware	(new BranchAuthorizer())
-			.addAuthMiddleware	(new UserAuthorizer())
-			.addRateLimiter		(UserRateLimiter.create())
-			.init();
-		express.use("/admin/api", adminRouter.expRouter);
+			const path = "/api/" + router.name;
+			express.use(path, router.expRouter);
+		}
 	}
 
 

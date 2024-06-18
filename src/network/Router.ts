@@ -50,19 +50,21 @@ class Router {
 	}
 
 	public get expRouter(): ExpRouter { return this._expRouter }
+	public get name(): string { return this._controller.name }
 
-	static create(expRouter: ExpRouter, routes: RawRoutesInfo, say: MessengerFunction): Router {
-		let controller = new Controller(say);
-		return new Router(expRouter, controller, routes, say);
+	public static create(expRouter: ExpRouter, say: MessengerFunction): Router {
+		let controller = new Controller("", say);
+		return new Router(expRouter, controller, {}, say);
 	}
 
-	say(purpose: string, what: string, content: any): any {
+	public say(purpose: string, what: string, content: any): any {
 		return this._msngr(this, purpose, what, content);
 	}
 
-	async init(): Promise<Router> {
+	public async init(): Promise<Router> {
 		const routes = this._routes;
 		const actionRepo = ActionRepo.getInstance(this._msngr);
+		
 		for (const reqMethod in routes) {
 			const resourceInfo: RawResourceInfo = routes[reqMethod];
 			for (const resourceName in resourceInfo) {
@@ -71,41 +73,41 @@ class Router {
 				if (!actionId) console.error(`Action missing in database for name: ${rawRouteInfo.actionName}`);
 
 				const routeInfo = { needsAuth: rawRouteInfo.needsAuth, actionId };
-				await this.setRoute(resourceName, reqMethod, routeInfo);
+				this.setRoute(resourceName, reqMethod, routeInfo);
 			}
 		}
 
 		return this;
 	}
 
-	addAuthMiddleware(authorizer: IAuthorizer): Router {
+	public addAuthMiddleware(authorizer: IAuthorizer): Router {
 		this._authorizers.push(authorizer);
 		return this;
 	}
 
-	addRateLimiter(rateLimiter: IRateLimiter): Router {
+	public addRateLimiter(rateLimiter: IRateLimiter): Router {
 		this._rateLimiter = rateLimiter;
 		// @ts-ignore
 		this.expRouter.all("*", Functions.bound(this, "conformRequest"));
 		return this;
 	}
 
-	getDomainFromRequest(req: MExpRequest): Domain {
+	public getDomainFromRequest(req: MExpRequest): Domain {
 		let subdomain: string = ArrayOps.last(req.subdomains);
 		return Domain.byName(subdomain, this._msngr);
 	}
 
-	getBranchFromRequest(req: MExpRequest): Branch {
+	public getBranchFromRequest(req: MExpRequest): Branch {
 		const branchName = req.headers.branch as string;
 		const domain = this.getDomainFromRequest(req);
 		return domain.getBranchByName(branchName);
 	}
 
-	getUserFromRequest(req: MExpRequest): string {
+	public getUserFromRequest(req: MExpRequest): string {
 		return req.user?.id || "";
 	}
 
-	validateRequest(req: MExpRequest): Operation {
+	public validateRequest(req: MExpRequest): Operation {
 		let status: OperationStatus = "success";
 		let message: string = "";
 
@@ -124,7 +126,7 @@ class Router {
 		return { status, message };
 	}
 
-	getRepoFromRequest(repoName: string, req: MExpRequest): IRepository<Dictionary> | null {
+	public getRepoFromRequest(repoName: string, req: MExpRequest): IRepository<Dictionary> | null {
 		const domain = this.getDomainFromRequest(req);
 		if (!domain) return null;
 
@@ -132,7 +134,7 @@ class Router {
 		return this.say("ask", "repoForInfo", repoRequest);
 	}
 
-	askForOwnWork(type: string, data: Dictionary, req: MExpRequest): IRepository<Dictionary> | null {
+	public askForOwnWork(type: string, data: Dictionary, req: MExpRequest): IRepository<Dictionary> | null {
 		const domain = this.getDomainFromRequest(req);
 		if (!domain) return null;
 
@@ -163,20 +165,21 @@ class Router {
 		};
 	}
 
-	handleMethod(methodName: string, req: MExpRequest, res: ExpResponse, next: ExpNextFunc): Promise<void> {
+	public handleMethod(methodName: string, req: MExpRequest, res: ExpResponse, next: ExpNextFunc): Promise<void> {
 		const msngr = this.getRequestMsngr(req, res, next);
 		return Functions.doAsync(this._controller, methodName, msngr);
 	}
 
-	getHandler(methodName: string): RouteHandler {
+	public getHandler(methodName: string): RouteHandler {
 		return (req: MExpRequest, res: ExpResponse, next: ExpNextFunc): any => {
 			return this.handleMethod(methodName, req, res, next);
 		};
 	}
 
-	async setRoute(resourceName: string, reqMethod: string, routeInfo: RouteInfo): Promise<Router> {
-		const path = ExString.capitalize(ExString.upToBefore(resourceName, "/"));
-		const name = ExString.capitalize(ExString.betweenFirstTwo(resourceName, "/"));
+	public setRoute(resourceName: string, reqMethod: string, routeInfo: RouteInfo): Router {
+		const routerName = this.name;
+		const path = ExString.capitalize(routerName);
+		const name = ExString.capitalize(ExString.upToBefore(resourceName, "/"));
 		const methodName = reqMethod + path + name;
 
 		const method = this.getHandler(methodName);
@@ -184,7 +187,7 @@ class Router {
 
 		const authorizeRequest = Functions.bound(this, "authorizeRequest", routeInfo);
 		const middlewares = [authorizeRequest];
-		const uploader = this.getUploader(path, name);
+		const uploader = this.getUploader(name);
 		if (uploader) middlewares.push(uploader);
 
 		this.expRouter[reqMethod](`/${resourceName}`, ...middlewares, method);
@@ -192,7 +195,7 @@ class Router {
 		return this;
 	}
 
-	async authorizeRequest(routeInfo: RouteInfo, req: MExpRequest, res: ExpResponse, next: ExpNextFunc) {
+	public async authorizeRequest(routeInfo: RouteInfo, req: MExpRequest, res: ExpResponse, next: ExpNextFunc) {
 		const headers = req.headers as MReqHeaders;
 		const domain = ArrayOps.last(req.subdomains) || "";
 		const reqAuthInfo: RequestAuthInfo = { authToken: headers.authorization || "", branchName: headers.branch, domainName: domain, ...routeInfo };
@@ -208,32 +211,33 @@ class Router {
 		next();
 	}
 
-	getUploader(path: string, modelRole: string) : RouteHandler | null {
-		path = path.toLowerCase();
-		if (path !== "images" && path !== "documents") return null;
+	public getUploader(mediaType: string) : RouteHandler | null {
+		const modelRole = ExString.capitalize(this.name);
+		mediaType = mediaType.toLowerCase();
+		if (mediaType !== "images" && mediaType !== "documents") return null;
 
 		const self = this;
 		function handleUpload(req: MExpRequest, res: ExpResponse, next: ExpNextFunc) {
 			const msngr = self.getRequestMsngr(req, res, next);
 		
-			if (path === "images") {
+			if (mediaType === "images") {
 				const imgStorageMiddleware = new ImageStorage(modelRole);
 				return ImageUploader
 					.create(imgStorageMiddleware, msngr)
-					.callExpHandler(path, req, res, next);
+					.callExpHandler(mediaType, req, res, next);
 
-			} else if (path === "documents") {
+			} else if (mediaType === "documents") {
 				const docStorageMiddleware = new DocumentStorage(modelRole);
 				return DocumentUploader
 					.create(docStorageMiddleware, msngr)
-					.callExpHandler(path, req, res, next);
+					.callExpHandler(mediaType, req, res, next);
 			}
 		}
 
 		return handleUpload;
 	}
 
-	async conformRequest(req: MExpRequest, res: ExpResponse, next: ExpNextFunc) {
+	public async conformRequest(req: MExpRequest, res: ExpResponse, next: ExpNextFunc) {
 		const authToken = req.headers.authorization || "";
 		// TODO: The separation between UserRateLimiter and the ip rate limit case here, must be more explicit (e.g. another rateLimiter strategy?)
 		const info = await this.say("ask", "infoFromToken", authToken) || { id: req.ip };

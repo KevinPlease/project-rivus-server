@@ -9,12 +9,17 @@ import { Communicator } from "../communications/Communicator";
 
 class Controller extends Communicator {
 	private _msngr: MessengerFunction;
+	private _name: string;
 
-	constructor(msngr: MessengerFunction) {
+	constructor(name:string, msngr: MessengerFunction) {
 		super();
 
+		this._name = name;
 		this._msngr = msngr;
 	}
+
+	public get name(): string { return this._name }
+	public set name(value: string) { this._name = value }
 
 	public say(purpose: string, what: string, content: any): any {
 		return this._msngr(this, purpose, what, content);
