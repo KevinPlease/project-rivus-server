@@ -18,6 +18,7 @@ import { PropertyRepo } from "../repos/PropertyRepo";
 import { OrderRepo } from "../repos/OrderRepo";
 import { UnitRepo } from "../repos/UnitRepo";
 import { PropertyTypeRepo } from "../repos/PropertyTypeRepo";
+import { ConstructionStageRepo } from "../repos/ConstructionStageRepo";
 
 const SYS_NAME = process.env.SYS_NAME || "";
 if (!SYS_NAME) throw "Missing environment variable for SYS_NAME!";
@@ -141,18 +142,23 @@ class Domain extends Model<DomainData> {
 
 		const unitRepoId = IdCreator.createRepoId(UnitRepo.REPO_NAME, domainName);
 		const unitColl = db.getCollection(unitRepoId);
-		const unitRepo = PropertyRepo.create(unitColl, domainName);
+		const unitRepo = UnitRepo.create(unitColl, domainName);
 		this._repoCache.set(unitRepo, unitRepo.repoName);
 		
 		const orderRepoId = IdCreator.createRepoId(OrderRepo.REPO_NAME, domainName);
 		const orderColl = db.getCollection(orderRepoId);
-		const orderRepo = PropertyRepo.create(orderColl, domainName);
+		const orderRepo = OrderRepo.create(orderColl, domainName);
 		this._repoCache.set(orderRepo, orderRepo.repoName);
 
-		const propertyTypeRepoId = IdCreator.createRepoId(OrderRepo.REPO_NAME, domainName);
+		const propertyTypeRepoId = IdCreator.createRepoId(PropertyTypeRepo.REPO_NAME, domainName);
 		const propertyTypeColl = db.getCollection(propertyTypeRepoId);
 		const propertyTypeRepo = PropertyTypeRepo.create(propertyTypeColl, domainName);
 		this._repoCache.set(propertyTypeRepo, propertyTypeRepo.repoName);
+
+		const constructionStageRepoId = IdCreator.createRepoId(ConstructionStageRepo.REPO_NAME, domainName);
+		const constructionStageColl = db.getCollection(constructionStageRepoId);
+		const constructionStageRepo = ConstructionStageRepo.create(constructionStageColl, domainName);
+		this._repoCache.set(constructionStageRepo, constructionStageRepo.repoName);
 
 		this.dispatch("domain connected", this);
 
