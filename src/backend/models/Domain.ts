@@ -8,28 +8,20 @@ import { RoleRepo } from "../repos/RoleRepo";
 import { BranchRepo } from "../repos/BranchRepo";
 import Cache from "../../core/Cache";
 import { Branch } from "./Branch";
-import IRepository from "../interfaces/IRepository";
+import IRepository, { IRepoOptions } from "../interfaces/IRepository";
 import { Dictionary } from "../../types/Dictionary";
 import { CounterRepo } from "../repos/CounterRepo";
 import { UserRepo } from "../repos/UserRepo";
 import { BaseRepo } from "../repos/BaseRepo";
-import { CustomerRepo } from "../repos/CustomerRepo";
-import { PropertyRepo } from "../repos/PropertyRepo";
-import { OrderRepo } from "../repos/OrderRepo";
-import { UnitRepo } from "../repos/UnitRepo";
-import { PropertyTypeRepo } from "../repos/PropertyTypeRepo";
-import { ConstructionStageRepo } from "../repos/ConstructionStageRepo";
-import { CountryRepo } from "../repos/CountryRepo";
-import { CityRepo } from "../repos/CityRepo";
-import { BuilderRepo } from "../repos/BuilderRepo";
-import { UnitTypeRepo } from "../repos/UnitTypeRepo";
-import { AvailabilityRepo } from "../repos/AvailabilityRepo";
-import { OfferingTypeRepo } from "../repos/OfferingTypeRepo";
-import { UnitExtraRepo } from "../repos/UnitExtraRepo";
-import { PaymentMethodRepo } from "../repos/PaymentMethodRepo";
+import MongoCollection from "../../mongo/MongoCollection";
 
 const SYS_NAME = process.env.SYS_NAME || "";
 if (!SYS_NAME) throw "Missing environment variable for SYS_NAME!";
+
+type RepositoryConstructor = {
+	REPO_NAME: string;
+	create(collection: MongoCollection, domain: string, branch?: string, options?: IRepoOptions): BaseRepo<Dictionary>;
+}
 
 type DomainData = {
 	branches: string[],
@@ -43,21 +35,13 @@ class Domain extends Model<DomainData> {
 
 	private _branchesCache: Cache<Branch>;
 	private _repoCache: Cache<BaseRepo<Dictionary>>;
-	private _branchRepo: BranchRepo | null;
-	private _counterRepo: CounterRepo | null;
 	private _database: DomainDb;
-	private _roleRepo: RoleRepo | null;
-	private _userRepo: UserRepo | null;
 	
 	constructor(core: ModelCore<DomainData>, domainDb: DomainDb) {
 		super(core);
 		
 		this._branchesCache = new Cache();
 		this._repoCache = new Cache();
-		this._branchRepo = null;
-		this._counterRepo = null;
-		this._roleRepo = null;
-		this._userRepo = null;
 		
 		this._database = domainDb;
 	}
@@ -65,30 +49,31 @@ class Domain extends Model<DomainData> {
 	public get database(): DomainDb { return this._database }
 	public get name(): string { return this.data.name }
 
-	static create(name: string, branches: string[], credentials: {username: string, password: string}, say: MessengerFunction): Domain {
+	static create(data: DomainData, say: MessengerFunction): Domain {
+		const name = data.name;
 		const lowcaseName = name.toLowerCase();
-		const data : DomainData = { branches, name, ...credentials};
-
 		const repository = SYS_NAME.toLowerCase() + "_domains";
 		const repoName = "domains";
 		const model = Model._create(say, data, repository, repoName);
 		model.id = lowcaseName;
 
-		const domainDb = DomainDb.create(lowcaseName, credentials, say);
+		const domainDb = DomainDb.create(lowcaseName, { username: data.username, password: data.password }, say);
 		return new Domain(model.toJSON(), domainDb);
 	}
 
-	static async createAndConnect(name: string, branches: string[], credentials: {username: string, password: string}, say: MessengerFunction): Promise<Domain> {
-		const domain = Domain.create(name, branches, credentials, say);
+	static async createAndConnect(data: DomainData, repositories: RepositoryConstructor[], say: MessengerFunction): Promise<Domain> {
+		const name = data.name;
+		const domain = Domain.create(data, say);
 		const status = await domain.connectDb(say);
 		if (status === "failure") throw `Problem connecting to domain database: ${name}!`;
 
-		return domain.initializeRepositories(say);
+		return domain.initializeRepositories(repositories, say);
 	}
 
 	static async createSystem(say: MessengerFunction): Promise<Domain> {
 		const credentials = say(this, "ask", "credentials");
-		const domain = Domain.create(SYS_NAME, [], credentials, say);
+		const data: DomainData = { name: SYS_NAME, branches: [], username: credentials.username, password: credentials.password };
+		const domain = Domain.create(data, say);
 		const result = await domain.database.connect();
 		if (!result) throw "Problem connecting to system_db";
 
@@ -106,7 +91,7 @@ class Domain extends Model<DomainData> {
 
 	static system(say: MessengerFunction): Domain { return Domain.byName(SYS_NAME, say) }
 
-	private async initializeRepositories(say: MessengerFunction) : Promise<Domain> {
+	private async initializeRepositories(repositories: RepositoryConstructor[], say: MessengerFunction) : Promise<Domain> {
 		const domainName = this.name;
 		const db = this.database.db;
 
@@ -121,95 +106,15 @@ class Domain extends Model<DomainData> {
 			this._branchesCache.set(branch, branch.data.name);
 		}
 
-		const counterRepoId = IdCreator.createRepoId(CounterRepo.REPO_NAME, domainName);
-		const counterColl = db.getCollection(counterRepoId);
-		const counterRepo = CounterRepo.create(counterColl, domainName);
-		this._repoCache.set(counterRepo, counterRepo.repoName);
-		await counterRepo.addDefaultData(say);
-
-		const roleRepoId = IdCreator.createRepoId(RoleRepo.REPO_NAME, domainName);
-		const roleColl = db.getCollection(roleRepoId);
-		const roleRepo = RoleRepo.create(roleColl, domainName);
-		this._repoCache.set(roleRepo, roleRepo.repoName);
-		await roleRepo.addDefaultData(say);
-
-		const userRepoId = IdCreator.createRepoId(UserRepo.REPO_NAME, domainName);
-		const userColl = db.getCollection(userRepoId);
-		const userRepo = UserRepo.create(userColl, domainName);
-		this._repoCache.set(userRepo, userRepo.repoName);
-
-		const customerRepoId = IdCreator.createRepoId(CustomerRepo.REPO_NAME, domainName);
-		const customerColl = db.getCollection(customerRepoId);
-		const customerRepo = UserRepo.create(customerColl, domainName);
-		this._repoCache.set(customerRepo, customerRepo.repoName);
-
-		const propertyRepoId = IdCreator.createRepoId(PropertyRepo.REPO_NAME, domainName);
-		const propertyColl = db.getCollection(propertyRepoId);
-		const propertyRepo = PropertyRepo.create(propertyColl, domainName);
-		this._repoCache.set(propertyRepo, propertyRepo.repoName);
-
-		const unitRepoId = IdCreator.createRepoId(UnitRepo.REPO_NAME, domainName);
-		const unitColl = db.getCollection(unitRepoId);
-		const unitRepo = UnitRepo.create(unitColl, domainName);
-		this._repoCache.set(unitRepo, unitRepo.repoName);
-		
-		const orderRepoId = IdCreator.createRepoId(OrderRepo.REPO_NAME, domainName);
-		const orderColl = db.getCollection(orderRepoId);
-		const orderRepo = OrderRepo.create(orderColl, domainName);
-		this._repoCache.set(orderRepo, orderRepo.repoName);
-
-		const propertyTypeRepoId = IdCreator.createRepoId(PropertyTypeRepo.REPO_NAME, domainName);
-		const propertyTypeColl = db.getCollection(propertyTypeRepoId);
-		const propertyTypeRepo = PropertyTypeRepo.create(propertyTypeColl, domainName);
-		this._repoCache.set(propertyTypeRepo, propertyTypeRepo.repoName);
-
-		const constructionStageRepoId = IdCreator.createRepoId(ConstructionStageRepo.REPO_NAME, domainName);
-		const constructionStageColl = db.getCollection(constructionStageRepoId);
-		const constructionStageRepo = ConstructionStageRepo.create(constructionStageColl, domainName);
-		this._repoCache.set(constructionStageRepo, constructionStageRepo.repoName);
-
-		const countryRepoId = IdCreator.createRepoId(CountryRepo.REPO_NAME, domainName);
-		const countryColl = db.getCollection(countryRepoId);
-		const countryRepo = CountryRepo.create(countryColl, domainName);
-		this._repoCache.set(countryRepo, countryRepo.repoName);
-
-		const cityRepoId = IdCreator.createRepoId(CityRepo.REPO_NAME, domainName);
-		const cityColl = db.getCollection(cityRepoId);
-		const cityRepo = CityRepo.create(cityColl, domainName);
-		this._repoCache.set(cityRepo, cityRepo.repoName);
-
-		const builderRepoId = IdCreator.createRepoId(BuilderRepo.REPO_NAME, domainName);
-		const builderColl = db.getCollection(builderRepoId);
-		const builderRepo = BuilderRepo.create(builderColl, domainName);
-		this._repoCache.set(builderRepo, builderRepo.repoName);
-
-		const unitTypeRepoId = IdCreator.createRepoId(UnitTypeRepo.REPO_NAME, domainName);
-		const unitTypeColl = db.getCollection(unitTypeRepoId);
-		const unitTypeRepo = UnitTypeRepo.create(unitTypeColl, domainName);
-		this._repoCache.set(unitTypeRepo, unitTypeRepo.repoName);
-
-		const availabilityRepoRepoId = IdCreator.createRepoId(AvailabilityRepo.REPO_NAME, domainName);
-		const availabilityRepoColl = db.getCollection(availabilityRepoRepoId);
-		const availabilityRepoRepo = AvailabilityRepo.create(availabilityRepoColl, domainName);
-		this._repoCache.set(availabilityRepoRepo, availabilityRepoRepo.repoName);
-
-		const offeringTypeRepoRepoId = IdCreator.createRepoId(OfferingTypeRepo.REPO_NAME, domainName);
-		const offeringTypeRepoColl = db.getCollection(offeringTypeRepoRepoId);
-		const offeringTypeRepoRepo = OfferingTypeRepo.create(offeringTypeRepoColl, domainName);
-		this._repoCache.set(offeringTypeRepoRepo, offeringTypeRepoRepo.repoName);
-
-		const unitExtraRepoRepoId = IdCreator.createRepoId(UnitExtraRepo.REPO_NAME, domainName);
-		const unitExtraRepoColl = db.getCollection(unitExtraRepoRepoId);
-		const unitExtraRepoRepo = UnitExtraRepo.create(unitExtraRepoColl, domainName);
-		this._repoCache.set(unitExtraRepoRepo, unitExtraRepoRepo.repoName);
-
-		const paymentMethodRepoRepoRepoId = IdCreator.createRepoId(PaymentMethodRepo.REPO_NAME, domainName);
-		const paymentMethodRepoRepoColl = db.getCollection(paymentMethodRepoRepoRepoId);
-		const paymentMethodRepoRepoRepo = PaymentMethodRepo.create(paymentMethodRepoRepoColl, domainName);
-		this._repoCache.set(paymentMethodRepoRepoRepo, paymentMethodRepoRepoRepo.repoName);
+		for (const Repository of repositories) {
+			const repoId = IdCreator.createRepoId(Repository.REPO_NAME, domainName);
+			const dbCollection = db.getCollection(repoId);
+			const counterRepo = Repository.create(dbCollection, domainName);
+			this._repoCache.set(counterRepo, counterRepo.repoName);
+			await counterRepo.addDefaultData(say);
+		}
 
 		this.dispatch("domain connected", this);
-
 		return this;
 	}
 

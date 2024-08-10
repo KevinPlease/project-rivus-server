@@ -54,6 +54,8 @@ interface IRepository<Data extends Dictionary> {
 	detailedFindById(id: string, say: MessengerFunction): Promise<DetailedFind<Model<Data>> | null>;
 
 	findDraft(say: MessengerFunction): Promise<DetailedFind<Model<Data>> | null>;
+
+	addDefaultData(say: MessengerFunction): Promise<OperationStatus>;
 }
 
 export type { IRepoOptions };

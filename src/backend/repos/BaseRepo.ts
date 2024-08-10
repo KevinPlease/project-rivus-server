@@ -319,6 +319,11 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		return this.detailedFind(query, say);
 	}
 
+	public async addDefaultData(say: MessengerFunction): Promise<OperationStatus> {
+		console.info(`${this.repoName}#createAggregation -> CHECK if this should be custom implemented?`);
+		return "success";
+	}
+
 }
 
 export { BaseRepo, ERepoEvents };

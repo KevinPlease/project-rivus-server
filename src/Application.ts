@@ -36,9 +36,45 @@ import ImageEnhancement from "./enhancers/ImageEnhancement";
 import { BranchRepo } from "./backend/repos/BranchRepo";
 import { ActionRepo } from "./backend/repos/ActionRepo";
 import { UserRepo } from "./backend/repos/UserRepo";
+import { RoleRepo } from "./backend/repos/RoleRepo";
+import { CounterRepo } from "./backend/repos/CounterRepo";
+import { AvailabilityRepo } from "./backend/repos/AvailabilityRepo";
+import { BuilderRepo } from "./backend/repos/BuilderRepo";
+import { CityRepo } from "./backend/repos/CityRepo";
+import { ConstructionStageRepo } from "./backend/repos/ConstructionStageRepo";
+import { CountryRepo } from "./backend/repos/CountryRepo";
+import { CustomerRepo } from "./backend/repos/CustomerRepo";
+import { PropertyRepo } from "./backend/repos/PropertyRepo";
+import { PropertyTypeRepo } from "./backend/repos/PropertyTypeRepo";
+import { OfferingTypeRepo } from "./backend/repos/OfferingTypeRepo";
+import { OrderRepo } from "./backend/repos/OrderRepo";
+import { PaymentMethodRepo } from "./backend/repos/PaymentMethodRepo";
+import { UnitRepo } from "./backend/repos/UnitRepo";
+import { UnitTypeRepo } from "./backend/repos/UnitTypeRepo";
+import { UnitExtraRepo } from "./backend/repos/UnitExtraRepo";
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
 class Application extends Communicator {
+	private static DOMAIN_REPOSITORIES = [
+		CounterRepo,
+		RoleRepo,
+		UserRepo,
+		CustomerRepo,
+		PropertyRepo,
+		UnitRepo,
+		OrderRepo,
+		PropertyTypeRepo,
+		ConstructionStageRepo,
+		CountryRepo,
+		CityRepo,
+		BuilderRepo,
+		UnitTypeRepo,
+		AvailabilityRepo,
+		OfferingTypeRepo,
+		UnitExtraRepo,
+		PaymentMethodRepo
+	];
+
 	private _domainCache: Cache<Domain>;
 	private _folder: Folder;
 	private _logger: Logger;
@@ -61,9 +97,9 @@ class Application extends Communicator {
 		this._folder = Folder.fromPath(__dirname, onMessage);
 		this._logger = new Logger(onMessage);
 		this._msngr = msngr;
-		
+
 		this._workerKeeper = WorkerKeeper.create(DEFAULT_DEBUG_PORT, onMessage);
-		
+
 		this._imgEnhancMaster = new ImgEnhancMaster(PRIORITIES);
 		// [DISABLED] Image Enhancer scheduling.
 		// this._imgEnhancMaster.initScheduling(onMessage);
@@ -81,7 +117,7 @@ class Application extends Communicator {
 		const onMessage = Functions.bound(application, "onMessage") as MessengerFunction;
 
 		application._sysDomain = await Domain.createSystem(onMessage);
-		
+
 		const actionRepoId = IdCreator.createRepoId(ActionRepo.REPO_NAME, SYS_NAME);
 		const actionColl = application._sysDomain.database.db.getCollection(actionRepoId);
 		application._actionRepo = ActionRepo.create(actionColl, SYS_NAME);
@@ -110,10 +146,10 @@ class Application extends Communicator {
 		// 	}
 		// });
 
-		application.subscribe("branch added", function(source: Object, branch: Branch) {
+		application.subscribe("branch added", function (source: Object, branch: Branch) {
 			const branchRepo = source as BranchRepo;
 			const domain = Domain.byName(branchRepo.domain, onMessage);
-			
+
 			const sysDomain = Domain.system(onMessage);
 			sysDomain.addBranchRef(domain, branch);
 
@@ -193,7 +229,7 @@ class Application extends Communicator {
 
 	public getRepoForInfo(repoRequest: RepoRequest): IRepository<Dictionary> | null {
 		const repoName = repoRequest.repoName;
-		
+
 		let repo = this.getRepo(repoName);
 		if (repo) return repo;
 
@@ -229,8 +265,7 @@ class Application extends Communicator {
 		let domainsCores = await sysDomain.database.getAllDomainData();
 		let promises = domainsCores.map(core => {
 			const data = core.data;
-			const credentials = { username: data.username, password: data.password };
-			return Domain.createAndConnect(data.name, data.branches, credentials, say);
+			return Domain.createAndConnect(data, Application.DOMAIN_REPOSITORIES, say);
 		});
 		await Promise.all(promises);
 
@@ -261,7 +296,7 @@ class Application extends Communicator {
 				case "credentials": return DB_CREDENTIALS;
 				case "domainByName": return this.getCachedDomain(content);
 				case "hostUrlForDomain": return this._webServer?.getHostUrlForDomain(content);
-				
+
 				case "repo": return this.getRepo(content);
 				case "repoForInfo": return this.getRepoForInfo(content);
 
