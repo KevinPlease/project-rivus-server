@@ -8,6 +8,7 @@ import { Customer, CustomerData } from "../models/Customer";
 import { DetailedFind } from "../types/DetailedFind";
 import { BaseDocimgRepo } from "./BaseDocRepo";
 import { UserRepo } from "./UserRepo";
+import { IRepoOptions } from "../interfaces/IRepository";
 
 
 class CustomerRepo extends BaseDocimgRepo<CustomerData> {
@@ -17,7 +18,8 @@ class CustomerRepo extends BaseDocimgRepo<CustomerData> {
 	private _middleware?: IRepoMiddleware;
 
 	public static create(collection: MongoCollection, domain: string) {
-		const repo = new CustomerRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain);
+		const options: IRepoOptions = { needsDisplayIds: true, needsDraftModels: true };
+		const repo = new CustomerRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
 		
 		repo._middleware = new PrivilegeKeeper();
 
