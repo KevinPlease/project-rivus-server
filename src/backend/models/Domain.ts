@@ -26,6 +26,7 @@ import { UnitTypeRepo } from "../repos/UnitTypeRepo";
 import { AvailabilityRepo } from "../repos/AvailabilityRepo";
 import { OfferingTypeRepo } from "../repos/OfferingTypeRepo";
 import { UnitExtraRepo } from "../repos/UnitExtraRepo";
+import { PaymentMethodRepo } from "../repos/PaymentMethodRepo";
 
 const SYS_NAME = process.env.SYS_NAME || "";
 if (!SYS_NAME) throw "Missing environment variable for SYS_NAME!";
@@ -201,6 +202,11 @@ class Domain extends Model<DomainData> {
 		const unitExtraRepoColl = db.getCollection(unitExtraRepoRepoId);
 		const unitExtraRepoRepo = UnitExtraRepo.create(unitExtraRepoColl, domainName);
 		this._repoCache.set(unitExtraRepoRepo, unitExtraRepoRepo.repoName);
+
+		const paymentMethodRepoRepoRepoId = IdCreator.createRepoId(PaymentMethodRepo.REPO_NAME, domainName);
+		const paymentMethodRepoRepoColl = db.getCollection(paymentMethodRepoRepoRepoId);
+		const paymentMethodRepoRepoRepo = PaymentMethodRepo.create(paymentMethodRepoRepoColl, domainName);
+		this._repoCache.set(paymentMethodRepoRepoRepo, paymentMethodRepoRepoRepo.repoName);
 
 		this.dispatch("domain connected", this);
 
