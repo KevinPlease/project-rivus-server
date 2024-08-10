@@ -13,6 +13,7 @@ import { Dictionary } from "../../types/Dictionary";
 import { CounterRepo } from "../repos/CounterRepo";
 import { UserRepo } from "../repos/UserRepo";
 import { BaseRepo } from "../repos/BaseRepo";
+import { CustomerRepo } from "../repos/CustomerRepo";
 
 const SYS_NAME = process.env.SYS_NAME || "";
 if (!SYS_NAME) throw "Missing environment variable for SYS_NAME!";
@@ -123,6 +124,11 @@ class Domain extends Model<DomainData> {
 		const userColl = db.getCollection(userRepoId);
 		const userRepo = UserRepo.create(userColl, domainName);
 		this._repoCache.set(userRepo, userRepo.repoName);
+
+		const customerRepoId = IdCreator.createRepoId(CustomerRepo.REPO_NAME, domainName);
+		const customerColl = db.getCollection(customerRepoId);
+		const customerRepo = UserRepo.create(customerColl, domainName);
+		this._repoCache.set(customerRepo, customerRepo.repoName);
 
 		this.dispatch("domain connected", this);
 

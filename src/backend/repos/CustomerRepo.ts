@@ -7,8 +7,7 @@ import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { Customer, CustomerData } from "../models/Customer";
 import { DetailedFind } from "../types/DetailedFind";
 import { BaseDocimgRepo } from "./BaseDocRepo";
-import { BranchRepo } from "./BranchRepo";
-import { RoleRepo } from "./RoleRepo";
+import { UserRepo } from "./UserRepo";
 
 
 class CustomerRepo extends BaseDocimgRepo<CustomerData> {
@@ -17,8 +16,8 @@ class CustomerRepo extends BaseDocimgRepo<CustomerData> {
 
 	private _middleware?: IRepoMiddleware;
 
-	public static create(collection: MongoCollection, domain: string, branch: string) {
-		const repo = new CustomerRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, branch);
+	public static create(collection: MongoCollection, domain: string) {
+		const repo = new CustomerRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain);
 		
 		repo._middleware = new PrivilegeKeeper();
 
@@ -30,17 +29,17 @@ class CustomerRepo extends BaseDocimgRepo<CustomerData> {
 	}
 
 	public createAggregation(query: Dictionary, say: MessengerFunction): Dictionary[] {
-		const roleRepoId = RoleRepo.getInstance(say).id;
+		const userRepoId = UserRepo.getInstance(say).id;
 		const project = {
 			"data.name": 1,
 			"repository": 1
 		};
 		const aggInfo : AggregationInfo[] = [
 			{
-				repoToJoinFrom: roleRepoId,
-				fieldToSet: "data.role",
+				repoToJoinFrom: userRepoId,
+				fieldToSet: "data.assignee",
 				project
-			},
+			}
 		];
 
 		const sort = {
@@ -51,13 +50,9 @@ class CustomerRepo extends BaseDocimgRepo<CustomerData> {
 	}
 
 	public async getFormDetails(say: MessengerFunction): Promise<GenericDictionary<Dictionary[]>> {
-		const roleRepo = RoleRepo.getInstance(say);
-		const role = await roleRepo.getSimplifiedMany(say);
-		
-		const branchRepo = BranchRepo.getInstance(say);
-		const branch = await branchRepo.getSimplifiedMany(say);
-
-		return { branch, role };
+		const userRepo = UserRepo.getInstance(say);
+		const assignee = await userRepo.getSimplifiedMany(say);
+		return { assignee };
 	}
 
 	public async detailedFind(query: Dictionary, say: MessengerFunction): Promise<DetailedFind<Customer> | null> {
@@ -65,7 +60,6 @@ class CustomerRepo extends BaseDocimgRepo<CustomerData> {
 		const modelCore = await this._readAsAggregation(aggregation, say);
 		if (!modelCore) return null;
 
-		// TODO: Aggregation for data.roles not adapted/accounted for.
 		const model = new Customer(modelCore);
 		const formDetails = await this.getFormDetails(say);
 		return { formDetails, model };
