@@ -24,6 +24,7 @@ import { CityRepo } from "../repos/CityRepo";
 import { BuilderRepo } from "../repos/BuilderRepo";
 import { UnitTypeRepo } from "../repos/UnitTypeRepo";
 import { AvailabilityRepo } from "../repos/AvailabilityRepo";
+import { OfferingTypeRepo } from "../repos/OfferingTypeRepo";
 
 const SYS_NAME = process.env.SYS_NAME || "";
 if (!SYS_NAME) throw "Missing environment variable for SYS_NAME!";
@@ -189,6 +190,11 @@ class Domain extends Model<DomainData> {
 		const availabilityRepoColl = db.getCollection(availabilityRepoRepoId);
 		const availabilityRepoRepo = AvailabilityRepo.create(availabilityRepoColl, domainName);
 		this._repoCache.set(availabilityRepoRepo, availabilityRepoRepo.repoName);
+
+		const offeringTypeRepoRepoId = IdCreator.createRepoId(OfferingTypeRepo.REPO_NAME, domainName);
+		const offeringTypeRepoColl = db.getCollection(offeringTypeRepoRepoId);
+		const offeringTypeRepoRepo = OfferingTypeRepo.create(offeringTypeRepoColl, domainName);
+		this._repoCache.set(offeringTypeRepoRepo, offeringTypeRepoRepo.repoName);
 
 		this.dispatch("domain connected", this);
 
