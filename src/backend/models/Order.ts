@@ -21,6 +21,7 @@ type OrderFormDetails = {
 	customer: any[];
 	availability: any[];
 	paymentMethod: any[];
+	assignee: any[];
 };
 
 class Order extends Model<OrderData> {

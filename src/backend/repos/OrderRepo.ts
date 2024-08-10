@@ -7,8 +7,10 @@ import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { Order, OrderData } from "../models/Order";
 import { DetailedFind } from "../types/DetailedFind";
+import { AvailabilityRepo } from "./AvailabilityRepo";
 import { BaseDocimgRepo } from "./BaseDocRepo";
 import { CustomerRepo } from "./CustomerRepo";
+import { PaymentMethodRepo } from "./PaymentMethodRepo";
 import { UserRepo } from "./UserRepo";
 
 
@@ -34,6 +36,9 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 	public createAggregation(query: Dictionary, say: MessengerFunction): Dictionary[] {
 		const userRepoId = UserRepo.getInstance(say).id;
 		const customerRepoId = CustomerRepo.getInstance(say).id;
+		const availabilityRepoId = AvailabilityRepo.getInstance(say).id;
+		const paymentMethodRepoId = PaymentMethodRepo.getInstance(say).id;
+
 		// TODO: Once all repos are available
 		const project = {
 			"data.name": 1,
@@ -48,6 +53,16 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 			{
 				repoToJoinFrom: customerRepoId,
 				fieldToSet: "data.customer",
+				project
+			},
+			{
+				repoToJoinFrom: availabilityRepoId,
+				fieldToSet: "data.availability",
+				project
+			},
+			{
+				repoToJoinFrom: paymentMethodRepoId,
+				fieldToSet: "data.paymentMethod",
 				project
 			}
 		];
@@ -65,7 +80,14 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 
 		const customerRepo = CustomerRepo.getInstance(say);
 		const customer = await customerRepo.getSimplifiedMany(say);
-		return { assignee, customer };
+
+		const availabilityRepo = AvailabilityRepo.getInstance(say);
+		const availability = await availabilityRepo.getSimplifiedMany(say);
+
+		const paymentMethodRepo = PaymentMethodRepo.getInstance(say);
+		const paymentMethod = await paymentMethodRepo.getSimplifiedMany(say);
+
+		return { assignee, customer, availability, paymentMethod };
 	}
 
 	public async detailedFind(query: Dictionary, say: MessengerFunction): Promise<DetailedFind<Order> | null> {
