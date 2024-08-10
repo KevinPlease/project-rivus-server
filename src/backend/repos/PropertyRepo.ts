@@ -8,7 +8,6 @@ import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { Property, PropertyData } from "../models/Property";
 import { DetailedFind } from "../types/DetailedFind";
 import { BaseDocimgRepo } from "./BaseDocRepo";
-import { CustomerRepo } from "./CustomerRepo";
 import { UserRepo } from "./UserRepo";
 
 
@@ -33,7 +32,6 @@ class PropertyRepo extends BaseDocimgRepo<PropertyData> {
 
 	public createAggregation(query: Dictionary, say: MessengerFunction): Dictionary[] {
 		const userRepoId = UserRepo.getInstance(say).id;
-		const customerRepoId = CustomerRepo.getInstance(say).id;
 		// TODO: Once all repos are available
 		const project = {
 			"data.name": 1,
@@ -43,11 +41,6 @@ class PropertyRepo extends BaseDocimgRepo<PropertyData> {
 			{
 				repoToJoinFrom: userRepoId,
 				fieldToSet: "data.assignee",
-				project
-			},
-			{
-				repoToJoinFrom: customerRepoId,
-				fieldToSet: "data.builder",
 				project
 			}
 		];
