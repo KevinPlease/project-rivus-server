@@ -16,6 +16,7 @@ import { BaseRepo } from "../repos/BaseRepo";
 import { CustomerRepo } from "../repos/CustomerRepo";
 import { PropertyRepo } from "../repos/PropertyRepo";
 import { OrderRepo } from "../repos/OrderRepo";
+import { UnitRepo } from "../repos/UnitRepo";
 
 const SYS_NAME = process.env.SYS_NAME || "";
 if (!SYS_NAME) throw "Missing environment variable for SYS_NAME!";
@@ -137,6 +138,11 @@ class Domain extends Model<DomainData> {
 		const propertyRepo = PropertyRepo.create(propertyColl, domainName);
 		this._repoCache.set(propertyRepo, propertyRepo.repoName);
 
+		const unitRepoId = IdCreator.createRepoId(UnitRepo.REPO_NAME, domainName);
+		const unitColl = db.getCollection(unitRepoId);
+		const unitRepo = PropertyRepo.create(unitColl, domainName);
+		this._repoCache.set(unitRepo, unitRepo.repoName);
+		
 		const orderRepoId = IdCreator.createRepoId(OrderRepo.REPO_NAME, domainName);
 		const orderColl = db.getCollection(orderRepoId);
 		const orderRepo = PropertyRepo.create(orderColl, domainName);
