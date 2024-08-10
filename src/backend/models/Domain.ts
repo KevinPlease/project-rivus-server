@@ -8,14 +8,20 @@ import { RoleRepo } from "../repos/RoleRepo";
 import { BranchRepo } from "../repos/BranchRepo";
 import Cache from "../../core/Cache";
 import { Branch } from "./Branch";
-import IRepository from "../interfaces/IRepository";
+import IRepository, { IRepoOptions } from "../interfaces/IRepository";
 import { Dictionary } from "../../types/Dictionary";
 import { CounterRepo } from "../repos/CounterRepo";
 import { UserRepo } from "../repos/UserRepo";
 import { BaseRepo } from "../repos/BaseRepo";
+import MongoCollection from "../../mongo/MongoCollection";
 
 const SYS_NAME = process.env.SYS_NAME || "";
 if (!SYS_NAME) throw "Missing environment variable for SYS_NAME!";
+
+type RepositoryConstructor = {
+	REPO_NAME: string;
+	create(collection: MongoCollection, domain: string, branch?: string, options?: IRepoOptions): BaseRepo<Dictionary>;
+}
 
 type DomainData = {
 	branches: string[],
@@ -29,21 +35,13 @@ class Domain extends Model<DomainData> {
 
 	private _branchesCache: Cache<Branch>;
 	private _repoCache: Cache<BaseRepo<Dictionary>>;
-	private _branchRepo: BranchRepo | null;
-	private _counterRepo: CounterRepo | null;
 	private _database: DomainDb;
-	private _roleRepo: RoleRepo | null;
-	private _userRepo: UserRepo | null;
 	
 	constructor(core: ModelCore<DomainData>, domainDb: DomainDb) {
 		super(core);
 		
 		this._branchesCache = new Cache();
 		this._repoCache = new Cache();
-		this._branchRepo = null;
-		this._counterRepo = null;
-		this._roleRepo = null;
-		this._userRepo = null;
 		
 		this._database = domainDb;
 	}
@@ -51,30 +49,31 @@ class Domain extends Model<DomainData> {
 	public get database(): DomainDb { return this._database }
 	public get name(): string { return this.data.name }
 
-	static create(name: string, branches: string[], credentials: {username: string, password: string}, say: MessengerFunction): Domain {
+	static create(data: DomainData, say: MessengerFunction): Domain {
+		const name = data.name;
 		const lowcaseName = name.toLowerCase();
-		const data : DomainData = { branches, name, ...credentials};
-
 		const repository = SYS_NAME.toLowerCase() + "_domains";
 		const repoName = "domains";
 		const model = Model._create(say, data, repository, repoName);
 		model.id = lowcaseName;
 
-		const domainDb = DomainDb.create(lowcaseName, credentials, say);
+		const domainDb = DomainDb.create(lowcaseName, { username: data.username, password: data.password }, say);
 		return new Domain(model.toJSON(), domainDb);
 	}
 
-	static async createAndConnect(name: string, branches: string[], credentials: {username: string, password: string}, say: MessengerFunction): Promise<Domain> {
-		const domain = Domain.create(name, branches, credentials, say);
+	static async createAndConnect(data: DomainData, repositories: RepositoryConstructor[], say: MessengerFunction): Promise<Domain> {
+		const name = data.name;
+		const domain = Domain.create(data, say);
 		const status = await domain.connectDb(say);
 		if (status === "failure") throw `Problem connecting to domain database: ${name}!`;
 
-		return domain.initializeRepositories(say);
+		return domain.initializeRepositories(repositories, say);
 	}
 
 	static async createSystem(say: MessengerFunction): Promise<Domain> {
 		const credentials = say(this, "ask", "credentials");
-		const domain = Domain.create(SYS_NAME, [], credentials, say);
+		const data: DomainData = { name: SYS_NAME, branches: [], username: credentials.username, password: credentials.password };
+		const domain = Domain.create(data, say);
 		const result = await domain.database.connect();
 		if (!result) throw "Problem connecting to system_db";
 
@@ -92,7 +91,7 @@ class Domain extends Model<DomainData> {
 
 	static system(say: MessengerFunction): Domain { return Domain.byName(SYS_NAME, say) }
 
-	private async initializeRepositories(say: MessengerFunction) : Promise<Domain> {
+	private async initializeRepositories(repositories: RepositoryConstructor[], say: MessengerFunction) : Promise<Domain> {
 		const domainName = this.name;
 		const db = this.database.db;
 
@@ -107,25 +106,15 @@ class Domain extends Model<DomainData> {
 			this._branchesCache.set(branch, branch.data.name);
 		}
 
-		const counterRepoId = IdCreator.createRepoId(CounterRepo.REPO_NAME, domainName);
-		const counterColl = db.getCollection(counterRepoId);
-		const counterRepo = CounterRepo.create(counterColl, domainName);
-		this._repoCache.set(counterRepo, counterRepo.repoName);
-		await counterRepo.addDefaultData(say);
-
-		const roleRepoId = IdCreator.createRepoId(RoleRepo.REPO_NAME, domainName);
-		const roleColl = db.getCollection(roleRepoId);
-		const roleRepo = RoleRepo.create(roleColl, domainName);
-		this._repoCache.set(roleRepo, roleRepo.repoName);
-		await roleRepo.addDefaultData(say);
-
-		const userRepoId = IdCreator.createRepoId(UserRepo.REPO_NAME, domainName);
-		const userColl = db.getCollection(userRepoId);
-		const userRepo = UserRepo.create(userColl, domainName);
-		this._repoCache.set(userRepo, userRepo.repoName);
+		for (const Repository of repositories) {
+			const repoId = IdCreator.createRepoId(Repository.REPO_NAME, domainName);
+			const dbCollection = db.getCollection(repoId);
+			const counterRepo = Repository.create(dbCollection, domainName);
+			this._repoCache.set(counterRepo, counterRepo.repoName);
+			await counterRepo.addDefaultData(say);
+		}
 
 		this.dispatch("domain connected", this);
-
 		return this;
 	}
 

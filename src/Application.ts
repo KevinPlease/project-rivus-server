@@ -36,9 +36,13 @@ import ImageEnhancement from "./enhancers/ImageEnhancement";
 import { BranchRepo } from "./backend/repos/BranchRepo";
 import { ActionRepo } from "./backend/repos/ActionRepo";
 import { UserRepo } from "./backend/repos/UserRepo";
+import { RoleRepo } from "./backend/repos/RoleRepo";
+import { CounterRepo } from "./backend/repos/CounterRepo";
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
 class Application extends Communicator {
+	private static DOMAIN_REPOSITORIES = [ UserRepo, RoleRepo, CounterRepo ];
+	
 	private _domainCache: Cache<Domain>;
 	private _folder: Folder;
 	private _logger: Logger;
@@ -229,8 +233,7 @@ class Application extends Communicator {
 		let domainsCores = await sysDomain.database.getAllDomainData();
 		let promises = domainsCores.map(core => {
 			const data = core.data;
-			const credentials = { username: data.username, password: data.password };
-			return Domain.createAndConnect(data.name, data.branches, credentials, say);
+			return Domain.createAndConnect(data, Application.DOMAIN_REPOSITORIES, say);
 		});
 		await Promise.all(promises);
 
