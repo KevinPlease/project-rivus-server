@@ -13,62 +13,6 @@ class UserController extends Controller {
 		super("user", say);
 	}
 
-	async postAuth(say: MessengerFunction) : Promise<void> {
-		const request = this.getActiveRequest<Dictionary>(say);
-		const response = this.getActiveResponse<Dictionary>(say);
-		
-		const msngr = (source: Object, purpose: string, what: string, content?: any): any => {
-			if (purpose === "ask" && what === "isSysCall") return true;
-
-			return say(source, purpose, what, content);
-		};
-		const userRepo = UserRepo.getInstance(say);
-		const authOperation = await userRepo.authUser(request.body.username, request.body.password, msngr);
-		
-		return response.sendByInfo(authOperation.status, authOperation.message);
-	}
-
-	async putAuth(say: MessengerFunction) : Promise<void> {
-		const request = this.getActiveRequest<Dictionary>(say);
-		const response = this.getActiveResponse<Dictionary>(say);
-		const userRepo = UserRepo.getInstance(say);
-
-		let reqBody = request.body;
-		const userId = this.getOwningUserId(say);
-		
-		let authOperation: Operation = { status: "failure", message: "Bad Request!" };
-		if (reqBody.oldPassword && reqBody.newPassword) {
-			authOperation = await userRepo.changePassword(userId, reqBody.oldPassword, reqBody.newPassword, say);
-		} else {
-			const userData = reqBody as UserData;
-			authOperation = await userRepo.editData(userId, userData, say);
-		}
-		
-		return response.sendByInfo(authOperation.status, authOperation.message);
-	}
-
-	async getAuth(say: MessengerFunction) : Promise<void> {
-		const request = this.getActiveRequest<Dictionary>(say);
-		const response = this.getActiveResponse<Dictionary>(say);
-
-		const msngr = (source: Object, purpose: string, what: string, content?: any): any => {
-			if (purpose === "ask" && what === "isSysCall") return true;
-
-			return say(source, purpose, what, content);
-		};
-		const userRepo = UserRepo.getInstance(say);
-		const user = await userRepo.findUserByToken(request.query.token, msngr);
-		
-		const authOperation: Operation = { status: "failure", message: "There was a problem with your request!" };
-		
-		if (user) {
-			authOperation.status = "success";
-			authOperation.message = { user };
-		}
-
-		return response.sendByInfo(authOperation.status, authOperation.message);
-	}
-
 	async post(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<UserData>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
