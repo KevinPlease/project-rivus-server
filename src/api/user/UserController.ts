@@ -13,7 +13,7 @@ class UserController extends Controller {
 		super("user", say);
 	}
 
-	async postAuthUser(say: MessengerFunction) : Promise<void> {
+	async postAuth(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		
@@ -28,7 +28,7 @@ class UserController extends Controller {
 		return response.sendByInfo(authOperation.status, authOperation.message);
 	}
 
-	async putAuthUser(say: MessengerFunction) : Promise<void> {
+	async putAuth(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		const userRepo = UserRepo.getInstance(say);
@@ -47,7 +47,7 @@ class UserController extends Controller {
 		return response.sendByInfo(authOperation.status, authOperation.message);
 	}
 
-	async getAuthUser(say: MessengerFunction) : Promise<void> {
+	async getAuth(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
