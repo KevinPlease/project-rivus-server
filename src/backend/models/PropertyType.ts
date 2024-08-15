@@ -9,6 +9,7 @@ import { PropertyTypeRepo } from "../repos/PropertyTypeRepo";
 type PropertyTypeData = {
 	isDraft?: boolean;
 	name: string;
+	order: number;
 };
 
 type PropertyTypeFormDetails = {};
@@ -20,7 +21,8 @@ class PropertyType extends Model<PropertyTypeData> {
 	static emptyData(): PropertyTypeData {
 		return {
 			isDraft: true,
-			name: ""
+			name: "",
+			order: 1
 		};
 	}
 

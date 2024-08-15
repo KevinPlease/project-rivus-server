@@ -109,9 +109,9 @@ class Domain extends Model<DomainData> {
 		for (const Repository of repositories) {
 			const repoId = IdCreator.createRepoId(Repository.REPO_NAME, domainName);
 			const dbCollection = db.getCollection(repoId);
-			const counterRepo = Repository.create(dbCollection, domainName);
-			this._repoCache.set(counterRepo, counterRepo.repoName);
-			await counterRepo.addDefaultData(say);
+			const repo = Repository.create(dbCollection, domainName);
+			this._repoCache.set(repo, repo.repoName);
+			await repo.addDefaultData(say);
 		}
 
 		this.dispatch("domain connected", this);

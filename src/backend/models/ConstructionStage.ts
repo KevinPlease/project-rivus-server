@@ -9,6 +9,7 @@ import { ConstructionStageRepo } from "../repos/ConstructionStageRepo";
 type ConstructionStageData = {
 	isDraft?: boolean;
 	name: string;
+	order: number;
 };
 
 type ConstructionStageFormDetails = {};
@@ -20,7 +21,8 @@ class ConstructionStage extends Model<ConstructionStageData> {
 	static emptyData(): ConstructionStageData {
 		return {
 			isDraft: true,
-			name: ""
+			name: "",
+			order: 1
 		};
 	}
 

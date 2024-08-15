@@ -9,6 +9,7 @@ import { UnitTypeRepo } from "../repos/UnitTypeRepo";
 type UnitTypeData = {
 	isDraft?: boolean;
 	name: string;
+	order: number;
 };
 
 type UnitTypeFormDetails = {};
@@ -20,7 +21,8 @@ class UnitType extends Model<UnitTypeData> {
 	static emptyData(): UnitTypeData {
 		return {
 			isDraft: true,
-			name: ""
+			name: "",
+			order: 1
 		};
 	}
 

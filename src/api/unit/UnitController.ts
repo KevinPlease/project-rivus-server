@@ -1,0 +1,153 @@
+import Controller from "../../network/Controller";
+import { MessengerFunction } from "../../Messenger";
+import { Dictionary } from "../../types/Dictionary";
+import { UnitRepo } from "../../backend/repos/UnitRepo";
+import { IdentifiableDictionary } from "../../types/IdentifiableDictionary";
+import { ListFilter } from "../../backend/types/ListFilter";
+import { Unit, UnitData } from "../../backend/models/Unit";
+
+class UnitController extends Controller {
+
+	constructor(say: MessengerFunction) {
+		super("units", say);
+	}
+
+	async postUnit(say: MessengerFunction) : Promise<void> {
+		const request = this.getActiveRequest<UnitData>(say);
+		const response = this.getActiveResponse<Dictionary>(say);
+
+		const domain = this.getOwningDomain(say);
+		const branch = this.getOwningBranch(say);
+		const repo = UnitRepo.getInstance(say);
+		const units = Unit.create(say, request.body, { domain: domain.name, branch: branch.data.name });
+		const operationStatus = await repo.add(units, say);
+		if (operationStatus === "failure") return response.sendByInfo(operationStatus);
+
+		const content: Dictionary = {}; 
+		if (request.query.isDraft) {
+			const userContent = { formDetails: {}, model: {} };
+			userContent.formDetails = await repo.getFormDetails(say);
+			userContent.model = units;
+			content.units = userContent;
+		} else {
+			content.units = units;
+		}
+
+		return response.sendByInfo(operationStatus, content);
+	}
+
+	async postImagesUnit(say: MessengerFunction) : Promise<void> {
+		const request = this.getActiveRequest<IdentifiableDictionary>(say);
+		const response = this.getActiveResponse<Dictionary>(say);
+
+		const repo = UnitRepo.getInstance(say);
+		const files = request.getUploadedFiles(say);
+		const operationStatus = await repo.setImagesFromFiles(request.body.id, files, say);
+
+		return response.sendByInfo(operationStatus);
+	}
+
+	async getUnits(say: MessengerFunction) : Promise<void> {
+		const request = this.getActiveRequest<ListFilter>(say);
+		const response = this.getActiveResponse<Dictionary>(say);
+
+		const repo = UnitRepo.getInstance(say);
+		const users = await repo.detailedGetMany(say, request.query.filter, request.query.pagination);
+
+		response
+			.setType("success")
+			.content = { users };
+		return response.send();
+	}
+
+	async getUnit(say: MessengerFunction) : Promise<void> {
+		const request = this.getActiveRequest<IdentifiableDictionary>(say);
+		const response = this.getActiveResponse<Dictionary>(say);
+		
+		const repo = UnitRepo.getInstance(say);
+		const units = await repo.detailedFindById(request.query.id, say);
+		const responseType = units ? "success" : "notFound";
+
+		response
+			.setType(responseType)
+			.content = { units };
+
+		return response.send();
+	}
+
+	async getDraftUnit(say: MessengerFunction) : Promise<void> {
+		const response = this.getActiveResponse<Dictionary>(say);
+		
+		const repo = UnitRepo.getInstance(say);
+		const units = await repo.findDraft(say);
+		const responseType = units ? "success" : "notFound";
+
+		response
+			.setType(responseType)
+			.content = { units };
+
+		return response.send();
+	}
+
+	async getImageUnit(say: MessengerFunction) : Promise<void> {
+		const request = this.getActiveRequest<Dictionary>(say);
+		const response = this.getActiveResponse<Dictionary>(say);
+		
+		const branchName = request.query.branch;
+		if (!branchName) return response.setType("badRequest").send();
+		
+		const domain = this.getOwningDomain(say);
+		const branch = domain.getBranchByName(branchName);
+		if (!branch) return response.setType("badRequest").send();
+
+		const repo = UnitRepo.getInstance(say);
+		const imageOperation = await repo.getImageById(branchName, request.params.id, request.query.imageId, say);
+		if (imageOperation.status === "failure") response.setType("notFound");
+
+		const resType = imageOperation.status === "failure" ? "notFound" : "successFile";
+		response
+			.setType(resType)
+			.content = imageOperation.message;
+
+		return response.send();
+	}
+
+	async getFormUnit(say: MessengerFunction) : Promise<void> {
+		const response = this.getActiveResponse<Dictionary>(say);
+		
+		const repo = UnitRepo.getInstance(say);
+		const formDetails = await repo.getFormDetails(say);
+		const responseType = formDetails ? "success" : "notFound";
+
+		response
+			.setType(responseType)
+			.content = { formDetails };
+
+		return response.send();
+	}
+
+	async putUnit(say: MessengerFunction) : Promise<void> {
+		const request = this.getActiveRequest<Dictionary>(say);
+		const response = this.getActiveResponse<Dictionary>(say);
+		const repo = UnitRepo.getInstance(say);
+
+		const userId = this.getOwningUserId(say);
+		const userData = request.body as UnitData;
+		const operation = await repo.editData(userId, userData, say);
+		
+		return response.sendByInfo(operation.status, operation.message);
+	}
+
+	async deleteUnit(say: MessengerFunction) : Promise<void> {
+		const request = this.getActiveRequest<IdentifiableDictionary>(say);
+		const response = this.getActiveResponse<Dictionary>(say);
+
+		const repo = UnitRepo.getInstance(say);
+		const operationStatus = await repo.remove(request.query.id, say);
+		
+		return response.sendByInfo(operationStatus);
+	}
+
+}
+
+export default UnitController;

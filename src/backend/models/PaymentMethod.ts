@@ -9,6 +9,7 @@ import { PaymentMethodRepo } from "../repos/PaymentMethodRepo";
 type PaymentMethodData = {
 	isDraft?: boolean;
 	name: string;
+	order: number;
 };
 
 type PaymentMethodFormDetails = {};
@@ -20,7 +21,8 @@ class PaymentMethod extends Model<PaymentMethodData> {
 	static emptyData(): PaymentMethodData {
 		return {
 			isDraft: true,
-			name: ""
+			name: "",
+			order: 1
 		};
 	}
 

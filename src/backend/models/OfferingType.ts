@@ -9,6 +9,7 @@ import { OfferingTypeRepo } from "../repos/OfferingTypeRepo";
 type OfferingTypeData = {
 	isDraft?: boolean;
 	name: string;
+	order: number;
 };
 
 type OfferingTypeFormDetails = {};
@@ -20,7 +21,8 @@ class OfferingType extends Model<OfferingTypeData> {
 	static emptyData(): OfferingTypeData {
 		return {
 			isDraft: true,
-			name: ""
+			name: "",
+			order: 1
 		};
 	}
 

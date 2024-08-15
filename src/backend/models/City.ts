@@ -10,6 +10,7 @@ type CityData = {
 	isDraft?: boolean;
 	name: string;
 	country: string;
+	order: number;
 };
 
 type CityFormDetails = {};
@@ -22,7 +23,8 @@ class City extends Model<CityData> {
 		return {
 			isDraft: true,
 			name: "",
-			country: ""
+			country: "",
+			order: 1
 		};
 	}
 

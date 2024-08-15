@@ -102,13 +102,13 @@ class WebServer extends Communicator {
 
 		for (const Router of ROUTERS) {
 			const router = await Router
-			.create(Express.Router(), msngr)
-			.addAuthMiddleware	(new DomainAuthorizer())
-			.addAuthMiddleware	(new BranchAuthorizer())
-			.addAuthMiddleware	(new UserAuthorizer())
-			.addAuthMiddleware	(new RoleAuthorizer())
-			.addRateLimiter		(UserRateLimiter.create())
-			.init();
+				.create(Express.Router(), msngr)
+				.addAuthMiddleware	(new DomainAuthorizer())
+				.addAuthMiddleware	(new BranchAuthorizer())
+				.addAuthMiddleware	(new UserAuthorizer())
+				.addAuthMiddleware	(new RoleAuthorizer())
+				.addRateLimiter		(UserRateLimiter.create())
+				.init();
 
 			const path = "/api/" + router.name;
 			express.use(path, router.expRouter);

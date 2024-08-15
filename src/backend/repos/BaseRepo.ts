@@ -210,7 +210,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		const domainName = this._domain;
 		const modelRole = this._modelRole;
 		const repoName = this._repoName;
-		const cores = dataArr.map(data => Model._create(say, data, repoName, modelRole, { domain: domainName, branch: branch.data.name }).toNoIdJSON());
+		const cores = dataArr.map(data => Model._create(say, data, repoName, modelRole, { domain: domainName, branch: branch.data?.name }).toNoIdJSON());
 		return this._collection.insertMany(cores);
 	}
 

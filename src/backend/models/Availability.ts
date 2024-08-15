@@ -9,6 +9,7 @@ import { AvailabilityRepo } from "../repos/AvailabilityRepo";
 type AvailabilityData = {
 	isDraft?: boolean;
 	name: string;
+	order: number;
 };
 
 type AvailabilityFormDetails = {};
@@ -20,7 +21,8 @@ class Availability extends Model<AvailabilityData> {
 	static emptyData(): AvailabilityData {
 		return {
 			isDraft: true,
-			name: ""
+			name: "",
+			order: 1
 		};
 	}
 

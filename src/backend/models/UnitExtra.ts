@@ -9,6 +9,7 @@ import { UnitExtraRepo } from "../repos/UnitExtraRepo";
 type UnitExtraData = {
 	isDraft?: boolean;
 	name: string;
+	order: number;
 };
 
 type UnitExtraFormDetails = {};
@@ -20,7 +21,8 @@ class UnitExtra extends Model<UnitExtraData> {
 	static emptyData(): UnitExtraData {
 		return {
 			isDraft: true,
-			name: ""
+			name: "",
+			order: 1
 		};
 	}
 
