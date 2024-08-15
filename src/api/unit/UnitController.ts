@@ -12,7 +12,7 @@ class UnitController extends Controller {
 		super("units", say);
 	}
 
-	async postUnit(say: MessengerFunction) : Promise<void> {
+	async post(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<UnitData>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
@@ -36,7 +36,7 @@ class UnitController extends Controller {
 		return response.sendByInfo(operationStatus, content);
 	}
 
-	async postImagesUnit(say: MessengerFunction) : Promise<void> {
+	async postImages(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
@@ -47,7 +47,7 @@ class UnitController extends Controller {
 		return response.sendByInfo(operationStatus);
 	}
 
-	async getUnits(say: MessengerFunction) : Promise<void> {
+	async getMany(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<ListFilter>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
@@ -60,7 +60,7 @@ class UnitController extends Controller {
 		return response.send();
 	}
 
-	async getUnit(say: MessengerFunction) : Promise<void> {
+	async get(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		
@@ -75,7 +75,7 @@ class UnitController extends Controller {
 		return response.send();
 	}
 
-	async getDraftUnit(say: MessengerFunction) : Promise<void> {
+	async getDraft(say: MessengerFunction) : Promise<void> {
 		const response = this.getActiveResponse<Dictionary>(say);
 		
 		const repo = UnitRepo.getInstance(say);
@@ -89,7 +89,7 @@ class UnitController extends Controller {
 		return response.send();
 	}
 
-	async getImageUnit(say: MessengerFunction) : Promise<void> {
+	async getImage(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		
@@ -112,7 +112,7 @@ class UnitController extends Controller {
 		return response.send();
 	}
 
-	async getFormUnit(say: MessengerFunction) : Promise<void> {
+	async getForm(say: MessengerFunction) : Promise<void> {
 		const response = this.getActiveResponse<Dictionary>(say);
 		
 		const repo = UnitRepo.getInstance(say);
@@ -126,7 +126,7 @@ class UnitController extends Controller {
 		return response.send();
 	}
 
-	async putUnit(say: MessengerFunction) : Promise<void> {
+	async put(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		const repo = UnitRepo.getInstance(say);
@@ -138,7 +138,7 @@ class UnitController extends Controller {
 		return response.sendByInfo(operation.status, operation.message);
 	}
 
-	async deleteUnit(say: MessengerFunction) : Promise<void> {
+	async delete(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 

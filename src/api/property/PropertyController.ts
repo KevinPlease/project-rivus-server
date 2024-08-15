@@ -12,7 +12,7 @@ class PropertyController extends Controller {
 		super("properties", say);
 	}
 
-	async postProperty(say: MessengerFunction) : Promise<void> {
+	async post(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<PropertyData>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
@@ -36,7 +36,7 @@ class PropertyController extends Controller {
 		return response.sendByInfo(operationStatus, content);
 	}
 
-	async postImagesProperty(say: MessengerFunction) : Promise<void> {
+	async postImages(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
@@ -47,7 +47,7 @@ class PropertyController extends Controller {
 		return response.sendByInfo(operationStatus);
 	}
 
-	async getProperties(say: MessengerFunction) : Promise<void> {
+	async getMany(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<ListFilter>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
@@ -60,7 +60,7 @@ class PropertyController extends Controller {
 		return response.send();
 	}
 
-	async getProperty(say: MessengerFunction) : Promise<void> {
+	async get(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		
@@ -75,7 +75,7 @@ class PropertyController extends Controller {
 		return response.send();
 	}
 
-	async getDraftProperty(say: MessengerFunction) : Promise<void> {
+	async getDraft(say: MessengerFunction) : Promise<void> {
 		const response = this.getActiveResponse<Dictionary>(say);
 		
 		const repo = PropertyRepo.getInstance(say);
@@ -89,7 +89,7 @@ class PropertyController extends Controller {
 		return response.send();
 	}
 
-	async getImageProperty(say: MessengerFunction) : Promise<void> {
+	async getImage(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		
@@ -112,7 +112,7 @@ class PropertyController extends Controller {
 		return response.send();
 	}
 
-	async getFormProperty(say: MessengerFunction) : Promise<void> {
+	async getForm(say: MessengerFunction) : Promise<void> {
 		const response = this.getActiveResponse<Dictionary>(say);
 		
 		const repo = PropertyRepo.getInstance(say);
@@ -126,7 +126,7 @@ class PropertyController extends Controller {
 		return response.send();
 	}
 
-	async putProperty(say: MessengerFunction) : Promise<void> {
+	async put(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		const repo = PropertyRepo.getInstance(say);
@@ -138,7 +138,7 @@ class PropertyController extends Controller {
 		return response.sendByInfo(operation.status, operation.message);
 	}
 
-	async deleteProperty(say: MessengerFunction) : Promise<void> {
+	async delete(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 

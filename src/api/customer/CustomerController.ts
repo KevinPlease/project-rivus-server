@@ -13,7 +13,7 @@ class CustomerController extends Controller {
 		super("customer", say);
 	}
 
-	async postCustomer(say: MessengerFunction) : Promise<void> {
+	async post(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<CustomerData>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
@@ -37,7 +37,7 @@ class CustomerController extends Controller {
 		return response.sendByInfo(operationStatus, content);
 	}
 
-	async postImagesCustomer(say: MessengerFunction) : Promise<void> {
+	async postImages(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
@@ -48,7 +48,7 @@ class CustomerController extends Controller {
 		return response.sendByInfo(operationStatus);
 	}
 
-	async getCustomers(say: MessengerFunction) : Promise<void> {
+	async getMany(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<ListFilter>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
@@ -61,7 +61,7 @@ class CustomerController extends Controller {
 		return response.send();
 	}
 
-	async getCustomer(say: MessengerFunction) : Promise<void> {
+	async get(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		
@@ -76,7 +76,7 @@ class CustomerController extends Controller {
 		return response.send();
 	}
 
-	async getDraftCustomer(say: MessengerFunction) : Promise<void> {
+	async getDraft(say: MessengerFunction) : Promise<void> {
 		const response = this.getActiveResponse<Dictionary>(say);
 		
 		const repo = CustomerRepo.getInstance(say);
@@ -90,7 +90,7 @@ class CustomerController extends Controller {
 		return response.send();
 	}
 
-	async getImageCustomer(say: MessengerFunction) : Promise<void> {
+	async getImage(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		
@@ -113,7 +113,7 @@ class CustomerController extends Controller {
 		return response.send();
 	}
 
-	async getFormCustomer(say: MessengerFunction) : Promise<void> {
+	async getForm(say: MessengerFunction) : Promise<void> {
 		const response = this.getActiveResponse<Dictionary>(say);
 		
 		const repo = CustomerRepo.getInstance(say);
@@ -127,7 +127,7 @@ class CustomerController extends Controller {
 		return response.send();
 	}
 
-	async putCustomer(say: MessengerFunction) : Promise<void> {
+	async put(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		const repo = CustomerRepo.getInstance(say);
@@ -139,7 +139,7 @@ class CustomerController extends Controller {
 		return response.sendByInfo(operation.status, operation.message);
 	}
 
-	async deleteCustomer(say: MessengerFunction) : Promise<void> {
+	async delete(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 

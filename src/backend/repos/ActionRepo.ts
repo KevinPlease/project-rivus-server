@@ -20,17 +20,50 @@ class ActionRepo extends BaseRepo<ActionData> {
 
 	public async getActionIdByName(name: string): Promise<string> {
 		const query = { "data.name": name };
-		const projection = { projection: { _id: 1 }};
-		const actionCore : { _id: ObjectId } = await this.collection.findOne(query, projection);
+		const projection = { projection: { _id: 1 } };
+		const actionCore: { _id: ObjectId } = await this.collection.findOne(query, projection);
 		return actionCore?._id.toString();
 	}
 
 	public async addDefaultData(say: MessengerFunction): Promise<OperationStatus> {
-		const count = await this.collection.count({});
-		if (count > 0) return "success";
+		// const count = await this.collection.count({});
+		// if (count > 0) return "success";
 
-		const actionCores = getDefaultData(this.domain);
-		return this.collection.insertMany(actionCores);
+		const data: ActionData[] = [
+			{ name: "Get Customer", description: "" },
+			{ name: "Get Form Details", description: "" },
+			{ name: "Edit Customer", description: "" },
+			{ name: "Get Customers", description: "" },
+			{ name: "Add Customer", description: "" },
+			{ name: "Public Action", description: "" },
+			{ name: "Remove Customer", description: "" },
+			{ name: "Add Customer Images", description: "" },
+			{ name: "Remove Order", description: "" },
+			{ name: "Get Order", description: "" },
+			{ name: "Get Orders", description: "" },
+			{ name: "Add Order", description: "" },
+			{ name: "Add Order Images", description: "" },
+			{ name: "Edit Order", description: "" },
+			{ name: "Remove Property", description: "" },
+			{ name: "Get Property", description: "" },
+			{ name: "Get Properties", description: "" },
+			{ name: "Add Property", description: "" },
+			{ name: "Add Property Images", description: "" },
+			{ name: "Edit Property", description: "" },
+			{ name: "Remove Unit", description: "" },
+			{ name: "Get Unit", description: "" },
+			{ name: "Get Units", description: "" },
+			{ name: "Add Unit", description: "" },
+			{ name: "Add Unit Images", description: "" },
+			{ name: "Edit Unit", description: "" },
+			{ name: "Remove User", description: "" },
+			{ name: "Get User", description: "" },
+			{ name: "Get Users", description: "" },
+			{ name: "Add User", description: "" },
+			{ name: "Add User Images", description: "" },
+			{ name: "Edit User", description: "" }			  
+		];
+		return this.addMany(data, say);
 	}
 
 }
