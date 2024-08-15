@@ -13,7 +13,7 @@ class UserController extends Controller {
 		super("user", say);
 	}
 
-	async postAuthUser(say: MessengerFunction) : Promise<void> {
+	async postAuth(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		
@@ -28,7 +28,7 @@ class UserController extends Controller {
 		return response.sendByInfo(authOperation.status, authOperation.message);
 	}
 
-	async putAuthUser(say: MessengerFunction) : Promise<void> {
+	async putAuth(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		const userRepo = UserRepo.getInstance(say);
@@ -47,7 +47,7 @@ class UserController extends Controller {
 		return response.sendByInfo(authOperation.status, authOperation.message);
 	}
 
-	async getAuthUser(say: MessengerFunction) : Promise<void> {
+	async getAuth(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
@@ -69,7 +69,7 @@ class UserController extends Controller {
 		return response.sendByInfo(authOperation.status, authOperation.message);
 	}
 
-	async postUser(say: MessengerFunction) : Promise<void> {
+	async post(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<UserData>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
@@ -93,7 +93,7 @@ class UserController extends Controller {
 		return response.sendByInfo(operationStatus, content);
 	}
 
-	async postImagesUser(say: MessengerFunction) : Promise<void> {
+	async postImages(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
@@ -104,7 +104,7 @@ class UserController extends Controller {
 		return response.sendByInfo(operationStatus);
 	}
 
-	async getUsers(say: MessengerFunction) : Promise<void> {
+	async getMany(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<ListFilter>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
@@ -117,7 +117,7 @@ class UserController extends Controller {
 		return response.send();
 	}
 
-	async getUser(say: MessengerFunction) : Promise<void> {
+	async get(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		
@@ -132,7 +132,7 @@ class UserController extends Controller {
 		return response.send();
 	}
 
-	async getDraftUser(say: MessengerFunction) : Promise<void> {
+	async getDraft(say: MessengerFunction) : Promise<void> {
 		const response = this.getActiveResponse<Dictionary>(say);
 		
 		const userRepo = UserRepo.getInstance(say);
@@ -146,7 +146,7 @@ class UserController extends Controller {
 		return response.send();
 	}
 
-	async getImageUser(say: MessengerFunction) : Promise<void> {
+	async getImage(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		
@@ -169,7 +169,7 @@ class UserController extends Controller {
 		return response.send();
 	}
 
-	async getFormUser(say: MessengerFunction) : Promise<void> {
+	async getForm(say: MessengerFunction) : Promise<void> {
 		const response = this.getActiveResponse<Dictionary>(say);
 		
 		const userRepo = UserRepo.getInstance(say);
@@ -183,7 +183,7 @@ class UserController extends Controller {
 		return response.send();
 	}
 
-	async putUser(say: MessengerFunction) : Promise<void> {
+	async put(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		const userRepo = UserRepo.getInstance(say);
@@ -202,7 +202,7 @@ class UserController extends Controller {
 		return response.sendByInfo(operation.status, operation.message);
 	}
 
-	async deleteUser(say: MessengerFunction) : Promise<void> {
+	async delete(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
