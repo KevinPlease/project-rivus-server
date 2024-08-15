@@ -25,7 +25,7 @@ class AuthController extends Controller {
 		return response.sendByInfo(authOperation.status, authOperation.message);
 	}
 
-	async get(say: MessengerFunction) : Promise<void> {
+	async getUser(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
