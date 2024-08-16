@@ -36,12 +36,14 @@ class Router {
 	private _authorizers: IAuthorizer[];
 	private _controller: Controller;
 	private _expRouter: ExpRouter;
+	private _expRouterMany: ExpRouter;
 	private _msngr: MessengerFunction;
 	private _rateLimiter: IRateLimiter | null;
 	private _routes: RawRoutesInfo;
 
-	constructor(expRouter: ExpRouter, controller: Controller, routes: RawRoutesInfo, msngr: MessengerFunction) {
+	constructor(expRouter: ExpRouter, expRouterMany: ExpRouter, controller: Controller, routes: RawRoutesInfo, msngr: MessengerFunction) {
 		this._expRouter = expRouter;
+		this._expRouterMany = expRouterMany;
 		this._controller = controller;
 		this._authorizers = [];
 		this._rateLimiter = null;
@@ -50,12 +52,13 @@ class Router {
 	}
 
 	public get expRouter(): ExpRouter { return this._expRouter }
+	public get expRouterMany(): ExpRouter { return this._expRouterMany }
 	public get single(): string { return this._controller.name }
 	public get many(): string { return this._controller.plural }
 
-	public static create(expRouter: ExpRouter, say: MessengerFunction): Router {
+	public static create(expRouter: ExpRouter, expRouterMany: ExpRouter, say: MessengerFunction): Router {
 		let controller = new Controller("", "", say);
-		return new Router(expRouter, controller, {}, say);
+		return new Router(expRouter, expRouterMany, controller, {}, say);
 	}
 
 	public say(purpose: string, what: string, content: any): any {
@@ -89,7 +92,8 @@ class Router {
 	public addRateLimiter(rateLimiter: IRateLimiter): Router {
 		this._rateLimiter = rateLimiter;
 		// @ts-ignore
-		this.expRouter.all("*", Functions.bound(this, "conformRequest"));
+		this._expRouter.all("*", Functions.bound(this, "conformRequest"));
+		this._expRouterMany.all("*", Functions.bound(this, "conformRequest"));
 		return this;
 	}
 
@@ -180,10 +184,12 @@ class Router {
 	}
 
 	public setRoute(resourceName: string, reqMethod: string, routeInfo: RouteInfo): Router {
+		let router = this._expRouter;
 		let name = resourceName;
 		if (resourceName === "*") {
 			name = "Many";
 			resourceName = "";
+			router = this._expRouterMany;
 		} else {
 			name = ExString.capitalize(ExString.upToBefore(resourceName, "/"));
 		}
@@ -195,7 +201,7 @@ class Router {
 		const uploader = this.getUploader(name);
 		if (uploader) middlewares.push(uploader);
 
-		this.expRouter[reqMethod](`/${resourceName}`, ...middlewares, method);
+		router[reqMethod](`/${resourceName}`, ...middlewares, method);
 
 		return this;
 	}

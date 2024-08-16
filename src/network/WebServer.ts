@@ -102,7 +102,7 @@ class WebServer extends Communicator {
 
 		for (const Router of ROUTERS) {
 			const router = await Router
-				.create(Express.Router(), msngr)
+				.create(Express.Router(), Express.Router(), msngr)
 				.addAuthMiddleware	(new DomainAuthorizer())
 				.addAuthMiddleware	(new BranchAuthorizer())
 				.addAuthMiddleware	(new UserAuthorizer())
@@ -114,7 +114,7 @@ class WebServer extends Communicator {
 			express.use(pathForSingle, router.expRouter);
 
 			const pathForMany = "/api/" + router.many;
-			express.use(pathForMany, router.expRouter);
+			express.use(pathForMany, router.expRouterMany);
 		}
 	}
 

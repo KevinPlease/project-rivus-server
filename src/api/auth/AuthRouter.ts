@@ -7,13 +7,13 @@ import AuthController from "./AuthController";
 import ROUTES from "./routes";
 
 class AuthRouter extends Router {
-	constructor(router: ExpRouter, controller: AuthController, routes: RawRoutesInfo, msngr: MessengerFunction) {
-		super(router, controller, routes, msngr);
+	constructor(router: ExpRouter, routerMany: ExpRouter, controller: AuthController, routes: RawRoutesInfo, msngr: MessengerFunction) {
+		super(router, routerMany, controller, routes, msngr);
 	}
 
-	static create(expRouter: ExpRouter, say: MessengerFunction): AuthRouter {
+	static create(expRouter: ExpRouter, expRouterMany: ExpRouter, say: MessengerFunction): AuthRouter {
 		const controller = new AuthController(say);
-		return new AuthRouter(expRouter, controller, ROUTES, say);
+		return new AuthRouter(expRouter, expRouterMany, controller, ROUTES, say);
 	}
 }
 
