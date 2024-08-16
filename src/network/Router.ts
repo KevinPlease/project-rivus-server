@@ -50,10 +50,11 @@ class Router {
 	}
 
 	public get expRouter(): ExpRouter { return this._expRouter }
-	public get name(): string { return this._controller.name }
+	public get single(): string { return this._controller.name }
+	public get many(): string { return this._controller.plural }
 
 	public static create(expRouter: ExpRouter, say: MessengerFunction): Router {
-		let controller = new Controller("", say);
+		let controller = new Controller("", "", say);
 		return new Router(expRouter, controller, {}, say);
 	}
 
@@ -179,9 +180,15 @@ class Router {
 	}
 
 	public setRoute(resourceName: string, reqMethod: string, routeInfo: RouteInfo): Router {
-		const name = ExString.capitalize(ExString.upToBefore(resourceName, "/"));
+		let name = resourceName;
+		if (resourceName === "*") {
+			name = "Many";
+			resourceName = "";
+		} else {
+			name = ExString.capitalize(ExString.upToBefore(resourceName, "/"));
+		}
+		
 		const methodName = reqMethod + name;
-
 		const method = this.getHandler(methodName);
 		const authorizeRequest = Functions.bound(this, "authorizeRequest", routeInfo);
 		const middlewares = [authorizeRequest];
@@ -210,7 +217,7 @@ class Router {
 	}
 
 	public getUploader(mediaType: string) : RouteHandler | null {
-		const modelRole = ExString.capitalize(this.name);
+		const modelRole = ExString.capitalize(this.single);
 		mediaType = mediaType.toLowerCase();
 		if (mediaType !== "images" && mediaType !== "documents") return null;
 

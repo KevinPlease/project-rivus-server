@@ -7,7 +7,7 @@ import { Operation } from "../../types/Operation";
 class AuthController extends Controller {
 
 	constructor(say: MessengerFunction) {
-		super("auth", say);
+		super("auth", "auth", say);
 	}
 
 	async post(say: MessengerFunction) : Promise<void> {

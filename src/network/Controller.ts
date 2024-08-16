@@ -10,16 +10,20 @@ import { Communicator } from "../communications/Communicator";
 class Controller extends Communicator {
 	private _msngr: MessengerFunction;
 	private _name: string;
+	private _plural: string;
 
-	constructor(name:string, msngr: MessengerFunction) {
+	constructor(name: string, plural: string, msngr: MessengerFunction) {
 		super();
 
 		this._name = name;
+		this._plural = plural;
 		this._msngr = msngr;
 	}
 
 	public get name(): string { return this._name }
 	public set name(value: string) { this._name = value }
+	public get plural(): string { return this._plural }
+	public set plural(value: string) { this._plural = value }
 
 	public say(purpose: string, what: string, content: any): any {
 		return this._msngr(this, purpose, what, content);
