@@ -26,8 +26,8 @@ class ActionRepo extends BaseRepo<ActionData> {
 	}
 
 	public async addDefaultData(say: MessengerFunction): Promise<OperationStatus> {
-		// const count = await this.collection.count({});
-		// if (count > 0) return "success";
+		const count = await this.collection.count({});
+		if (count > 0) return "success";
 
 		const data: ActionData[] = [
 			{ name: "Get Customer", description: "" },
