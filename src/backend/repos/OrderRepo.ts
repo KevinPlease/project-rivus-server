@@ -1,7 +1,6 @@
 import { MessengerFunction } from "../../Messenger";
 import MongoCollection from "../../mongo/MongoCollection";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
-import IRepoMiddleware from "../interfaces/IRepoMiddleware";
 import { IRepoOptions } from "../interfaces/IRepository";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
@@ -18,13 +17,11 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 	public static REPO_NAME = "orders";
 	public static MODEL_ROLE_NAME = Order.ROLE;
 
-	private _middleware?: IRepoMiddleware;
-
 	public static create(collection: MongoCollection, domain: string) {
 		const options: IRepoOptions = { needsDisplayIds: true, needsDraftModels: true };
 		const repo = new OrderRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
 		
-		repo._middleware = new PrivilegeKeeper();
+		repo.middleware = new PrivilegeKeeper();
 
 		return repo;
 	}

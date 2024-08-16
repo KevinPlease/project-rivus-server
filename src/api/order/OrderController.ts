@@ -130,10 +130,7 @@ class OrderController extends Controller {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 		const repo = OrderRepo.getInstance(say);
-
-		const userId = this.getOwningUserId(say);
-		const userData = request.body as OrderData;
-		const operation = await repo.editData(userId, userData, say);
+		const operation = await repo.editData(request.body._id, request.body.data, say);
 		
 		return response.sendByInfo(operation.status, operation.message);
 	}

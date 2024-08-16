@@ -37,7 +37,7 @@ class ActionRepo extends BaseRepo<ActionData> {
 			{ name: "Add Customer", description: "" },
 			{ name: "Public Action", description: "" },
 			{ name: "Remove Customer", description: "" },
-			{ name: "Add Customer Images", description: "" },
+			{ name: "Add Customer Documents", description: "" },
 			{ name: "Remove Order", description: "" },
 			{ name: "Get Order", description: "" },
 			{ name: "Get Orders", description: "" },

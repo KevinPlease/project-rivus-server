@@ -1,7 +1,6 @@
 import { MessengerFunction } from "../../Messenger";
 import MongoCollection from "../../mongo/MongoCollection";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
-import IRepoMiddleware from "../interfaces/IRepoMiddleware";
 import { IRepoOptions } from "../interfaces/IRepository";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
@@ -22,13 +21,11 @@ class UnitRepo extends BaseDocimgRepo<UnitData> {
 	public static REPO_NAME = "units";
 	public static MODEL_ROLE_NAME = Unit.ROLE;
 
-	private _middleware?: IRepoMiddleware;
-
 	public static create(collection: MongoCollection, domain: string) {
 		const options: IRepoOptions = { needsDisplayIds: true, needsDraftModels: true };
 		const repo = new UnitRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
 		
-		repo._middleware = new PrivilegeKeeper();
+		repo.middleware = new PrivilegeKeeper();
 
 		return repo;
 	}

@@ -30,8 +30,8 @@ const ROUTES: RawRoutesInfo = {
 		"": {
 			"actionName": "Add Customer"
 		},
-		"images": {
-			"actionName": "Add Customer Images"
+		"documents": {
+			"actionName": "Add Customer Documents"
 		}
 	},
 
