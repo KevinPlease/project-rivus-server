@@ -10,7 +10,7 @@ import { Operation } from "../../types/Operation";
 class UserController extends Controller {
 
 	constructor(say: MessengerFunction) {
-		super("user", say);
+		super("user", "users", say);
 	}
 
 	async post(say: MessengerFunction) : Promise<void> {

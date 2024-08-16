@@ -110,8 +110,11 @@ class WebServer extends Communicator {
 				.addRateLimiter		(UserRateLimiter.create())
 				.init();
 
-			const path = "/api/" + router.name;
-			express.use(path, router.expRouter);
+			const pathForSingle = "/api/" + router.single;
+			express.use(pathForSingle, router.expRouter);
+
+			const pathForMany = "/api/" + router.many;
+			express.use(pathForMany, router.expRouter);
 		}
 	}
 
