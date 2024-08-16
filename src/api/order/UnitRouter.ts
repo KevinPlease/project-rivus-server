@@ -7,13 +7,13 @@ import { Router } from "../../network/Router";
 import ROUTES from "./routes";
 
 class OrderRouter extends Router {
-	constructor(router: ExpRouter, controller: OrderController, routes: RawRoutesInfo, msngr: MessengerFunction) {
-		super(router, controller, routes, msngr);
+	constructor(router: ExpRouter, routerMany: ExpRouter, controller: OrderController, routes: RawRoutesInfo, msngr: MessengerFunction) {
+		super(router, routerMany, controller, routes, msngr);
 	}
 
-	static create(expRouter: ExpRouter, say: MessengerFunction): OrderRouter {
+	static create(expRouter: ExpRouter, expRouterMany: ExpRouter, say: MessengerFunction): OrderRouter {
 		const controller = new OrderController(say);
-		return new OrderRouter(expRouter, controller, ROUTES, say);
+		return new OrderRouter(expRouter, expRouterMany, controller, ROUTES, say);
 	}
 }
 

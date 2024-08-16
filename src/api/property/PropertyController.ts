@@ -52,11 +52,11 @@ class PropertyController extends Controller {
 		const response = this.getActiveResponse<Dictionary>(say);
 
 		const repo = PropertyRepo.getInstance(say);
-		const users = await repo.detailedGetMany(say, request.query.filter, request.query.pagination);
+		const properties = await repo.detailedGetMany(say, request.query.filter, request.query.pagination);
 
 		response
 			.setType("success")
-			.content = { users };
+			.content = { properties };
 		return response.send();
 	}
 

@@ -52,11 +52,11 @@ class OrderController extends Controller {
 		const response = this.getActiveResponse<Dictionary>(say);
 
 		const repo = OrderRepo.getInstance(say);
-		const users = await repo.detailedGetMany(say, request.query.filter, request.query.pagination);
+		const orders = await repo.detailedGetMany(say, request.query.filter, request.query.pagination);
 
 		response
 			.setType("success")
-			.content = { users };
+			.content = { orders };
 		return response.send();
 	}
 

@@ -106,16 +106,6 @@ class PropertyRepo extends BaseDocimgRepo<PropertyData> {
 		return { assignee, propertyType, constructionStage, country, city, builder };
 	}
 
-	public async detailedFind(query: Dictionary, say: MessengerFunction): Promise<DetailedFind<Property> | null> {
-		const aggregation = this.createAggregation(query, say);
-		const modelCore = await this._readAsAggregation(aggregation, say);
-		if (!modelCore) return null;
-
-		const model = new Property(modelCore);
-		const formDetails = await this.getFormDetails(say);
-		return { formDetails, model };
-	}
-
 }
 
 export { PropertyRepo };

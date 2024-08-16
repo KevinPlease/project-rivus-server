@@ -53,11 +53,11 @@ class CustomerController extends Controller {
 		const response = this.getActiveResponse<Dictionary>(say);
 
 		const repo = CustomerRepo.getInstance(say);
-		const users = await repo.detailedGetMany(say, request.query.filter, request.query.pagination);
+		const customers = await repo.detailedGetMany(say, request.query.filter, request.query.pagination);
 
 		response
 			.setType("success")
-			.content = { users };
+			.content = { customers };
 		return response.send();
 	}
 

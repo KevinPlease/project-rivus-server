@@ -127,16 +127,6 @@ class UnitRepo extends BaseDocimgRepo<UnitData> {
 		return { assignee, property, unitType, availability, country, city, builder, offeringType };
 	}
 
-	public async detailedFind(query: Dictionary, say: MessengerFunction): Promise<DetailedFind<Unit> | null> {
-		const aggregation = this.createAggregation(query, say);
-		const modelCore = await this._readAsAggregation(aggregation, say);
-		if (!modelCore) return null;
-
-		const model = new Unit(modelCore);
-		const formDetails = await this.getFormDetails(say);
-		return { formDetails, model };
-	}
-
 }
 
 export { UnitRepo };

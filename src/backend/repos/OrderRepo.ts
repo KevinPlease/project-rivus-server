@@ -87,16 +87,6 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		return { assignee, customer, availability, paymentMethod };
 	}
 
-	public async detailedFind(query: Dictionary, say: MessengerFunction): Promise<DetailedFind<Order> | null> {
-		const aggregation = this.createAggregation(query, say);
-		const modelCore = await this._readAsAggregation(aggregation, say);
-		if (!modelCore) return null;
-
-		const model = new Order(modelCore);
-		const formDetails = await this.getFormDetails(say);
-		return { formDetails, model };
-	}
-
 }
 
 export { OrderRepo };

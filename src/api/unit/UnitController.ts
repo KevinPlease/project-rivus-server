@@ -52,11 +52,11 @@ class UnitController extends Controller {
 		const response = this.getActiveResponse<Dictionary>(say);
 
 		const repo = UnitRepo.getInstance(say);
-		const users = await repo.detailedGetMany(say, request.query.filter, request.query.pagination);
+		const units = await repo.detailedGetMany(say, request.query.filter, request.query.pagination);
 
 		response
 			.setType("success")
-			.content = { users };
+			.content = { units };
 		return response.send();
 	}
 
