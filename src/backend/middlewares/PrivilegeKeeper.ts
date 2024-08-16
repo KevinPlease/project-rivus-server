@@ -9,7 +9,7 @@ import { AccessType, FieldAccess, RepoAccess } from "../types/Access";
 
 class PrivilegeKeeper implements IRepoMiddleware {
 
-	private static _excludedFields = ["roles", "hunt"];
+	private static _excludedFields = ["roles"];
 
 	private static createData(query: Dictionary, fieldAccess: FieldAccess, parentPath?: string): Dictionary {
 		let data = {};
@@ -101,7 +101,7 @@ class PrivilegeKeeper implements IRepoMiddleware {
 		const writeAccess = accessInfo.global[role].write;
 		if (writeAccess !== AccessType.OVERSEER && writeAccess !== AccessType.SELFISH) return null;
 
-		const fieldAccess = accessInfo.fieldAccess[role];
+		const fieldAccess = accessInfo.fieldAccess[role] || {};
 		if (query instanceof Model) {
 			const newData = PrivilegeKeeper.createData(query.data, fieldAccess);
 			query.data = newData;
