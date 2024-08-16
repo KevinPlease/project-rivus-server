@@ -9,7 +9,7 @@ import { Unit, UnitData } from "../../backend/models/Unit";
 class UnitController extends Controller {
 
 	constructor(say: MessengerFunction) {
-		super("units", say);
+		super("unit", "units", say);
 	}
 
 	async post(say: MessengerFunction) : Promise<void> {

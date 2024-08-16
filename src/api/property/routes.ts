@@ -14,7 +14,7 @@ const ROUTES: RawRoutesInfo = {
 		"draft": {
 			"actionName": "Get Property"
 		},
-		"list": {
+		"*": {
 			"actionName": "Get Properties"
 		},
 		"form": {

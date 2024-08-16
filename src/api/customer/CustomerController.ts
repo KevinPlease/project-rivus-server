@@ -10,7 +10,7 @@ import { Operation } from "../../types/Operation";
 class CustomerController extends Controller {
 
 	constructor(say: MessengerFunction) {
-		super("customer", say);
+		super("customer", "customers", say);
 	}
 
 	async post(say: MessengerFunction) : Promise<void> {

@@ -9,7 +9,7 @@ import { Property, PropertyData } from "../../backend/models/Property";
 class PropertyController extends Controller {
 
 	constructor(say: MessengerFunction) {
-		super("properties", say);
+		super("property", "properties", say);
 	}
 
 	async post(say: MessengerFunction) : Promise<void> {

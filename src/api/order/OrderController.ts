@@ -9,7 +9,7 @@ import { Order, OrderData } from "../../backend/models/Order";
 class OrderController extends Controller {
 
 	constructor(say: MessengerFunction) {
-		super("orders", say);
+		super("order", "orders", say);
 	}
 
 	async post(say: MessengerFunction) : Promise<void> {
