@@ -5,7 +5,6 @@ import { IRepoOptions } from "../interfaces/IRepository";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { Property, PropertyData } from "../models/Property";
-import { DetailedFind } from "../types/DetailedFind";
 import { BaseDocimgRepo } from "./BaseDocRepo";
 import { BuilderRepo } from "./BuilderRepo";
 import { CityRepo } from "./CityRepo";
@@ -39,7 +38,7 @@ class PropertyRepo extends BaseDocimgRepo<PropertyData> {
 		const countryRepoId = CountryRepo.getInstance(say).id;
 		const cityRepoId = CityRepo.getInstance(say).id;
 		const builderRepoId = BuilderRepo.getInstance(say).id;
-		// TODO: Once all repos are available
+		
 		const project = {
 			"data.name": 1,
 			"repository": 1
@@ -88,7 +87,7 @@ class PropertyRepo extends BaseDocimgRepo<PropertyData> {
 		const userRepo = UserRepo.getInstance(say);
 		const assignee = await userRepo.getSimplifiedMany(say);
 
-		const propertyTypeRepo = PropertyRepo.getInstance(say);
+		const propertyTypeRepo = PropertyTypeRepo.getInstance(say);
 		const propertyType = await propertyTypeRepo.getSimplifiedMany(say);
 
 		const constructionStageRepo = ConstructionStageRepo.getInstance(say);

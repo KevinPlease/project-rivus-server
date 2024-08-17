@@ -1,7 +1,10 @@
 import { MessengerFunction } from "../../Messenger";
 import MongoCollection from "../../mongo/MongoCollection";
+import { Dictionary } from "../../types/Dictionary";
 import { OperationStatus } from "../../types/Operation";
 import { Country, CountryData } from "../models/Country";
+import { Filter } from "../types/Filter";
+import { PaginationOptions } from "../types/PaginationOptions";
 import { BaseRepo } from "./BaseRepo";
 
 class CountryRepo extends BaseRepo<CountryData> {
@@ -14,6 +17,13 @@ class CountryRepo extends BaseRepo<CountryData> {
 
 	public static getInstance(say: MessengerFunction): CountryRepo {
 		return super.getInstance(say) as CountryRepo;
+	}
+
+	public getSimplifiedMany(say: MessengerFunction, filter?: Filter | Dictionary, pagination?: PaginationOptions, project?: Dictionary): Promise<Dictionary[]> {
+		if (!project) project = {};
+		
+		const overrideProject = { "_id": 1, "data.name": 1, "data.code": 1, "data.phone": 1, "repository": 1, ...project };
+		return super.getSimplifiedMany(say, filter, pagination, overrideProject);;
 	}
 
 	public async addDefaultData(say: MessengerFunction): Promise<OperationStatus> {

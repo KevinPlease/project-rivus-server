@@ -5,7 +5,6 @@ import { IRepoOptions } from "../interfaces/IRepository";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { Unit, UnitData } from "../models/Unit";
-import { DetailedFind } from "../types/DetailedFind";
 import { AvailabilityRepo } from "./AvailabilityRepo";
 import { BaseDocimgRepo } from "./BaseDocRepo";
 import { BuilderRepo } from "./BuilderRepo";
@@ -44,7 +43,6 @@ class UnitRepo extends BaseDocimgRepo<UnitData> {
 		const builderRepoId = BuilderRepo.getInstance(say).id;
 		const offeringTypeRepoId = OfferingTypeRepo.getInstance(say).id;
 
-		// TODO: Once all repos are available
 		const project = {
 			"data.name": 1,
 			"repository": 1

@@ -323,7 +323,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 	}
 
 	public async addDefaultData(say: MessengerFunction): Promise<OperationStatus> {
-		console.info(`${this.repoName}#createAggregation -> CHECK if this should be custom implemented?`);
+		console.info(`${this.repoName}#addDefaultData -> CHECK if this should be custom implemented?`);
 		return "success";
 	}
 

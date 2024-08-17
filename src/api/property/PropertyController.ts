@@ -19,18 +19,18 @@ class PropertyController extends Controller {
 		const domain = this.getOwningDomain(say);
 		const branch = this.getOwningBranch(say);
 		const repo = PropertyRepo.getInstance(say);
-		const properties = Property.create(say, request.body, { domain: domain.name, branch: branch.data.name });
-		const operationStatus = await repo.add(properties, say);
+		const property = Property.create(say, request.body, { domain: domain.name, branch: branch.data.name });
+		const operationStatus = await repo.add(property, say);
 		if (operationStatus === "failure") return response.sendByInfo(operationStatus);
 
 		const content: Dictionary = {}; 
 		if (request.query.isDraft) {
 			const userContent = { formDetails: {}, model: {} };
 			userContent.formDetails = await repo.getFormDetails(say);
-			userContent.model = properties;
-			content.properties = userContent;
+			userContent.model = property;
+			content.property = userContent;
 		} else {
-			content.properties = properties;
+			content.property = property;
 		}
 
 		return response.sendByInfo(operationStatus, content);
@@ -65,12 +65,12 @@ class PropertyController extends Controller {
 		const response = this.getActiveResponse<Dictionary>(say);
 		
 		const repo = PropertyRepo.getInstance(say);
-		const properties = await repo.detailedFindById(request.query.id, say);
-		const responseType = properties ? "success" : "notFound";
+		const property = await repo.detailedFindById(request.query.id, say);
+		const responseType = property ? "success" : "notFound";
 
 		response
 			.setType(responseType)
-			.content = { properties };
+			.content = { property };
 
 		return response.send();
 	}
@@ -79,12 +79,12 @@ class PropertyController extends Controller {
 		const response = this.getActiveResponse<Dictionary>(say);
 		
 		const repo = PropertyRepo.getInstance(say);
-		const properties = await repo.findDraft(say);
-		const responseType = properties ? "success" : "notFound";
+		const property = await repo.findDraft(say);
+		const responseType = property ? "success" : "notFound";
 
 		response
 			.setType(responseType)
-			.content = { properties };
+			.content = { property };
 
 		return response.send();
 	}

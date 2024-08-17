@@ -19,18 +19,18 @@ class OrderController extends Controller {
 		const domain = this.getOwningDomain(say);
 		const branch = this.getOwningBranch(say);
 		const repo = OrderRepo.getInstance(say);
-		const orders = Order.create(say, request.body, { domain: domain.name, branch: branch.data.name });
-		const operationStatus = await repo.add(orders, say);
+		const order = Order.create(say, request.body, { domain: domain.name, branch: branch.data.name });
+		const operationStatus = await repo.add(order, say);
 		if (operationStatus === "failure") return response.sendByInfo(operationStatus);
 
 		const content: Dictionary = {}; 
 		if (request.query.isDraft) {
 			const userContent = { formDetails: {}, model: {} };
 			userContent.formDetails = await repo.getFormDetails(say);
-			userContent.model = orders;
-			content.orders = userContent;
+			userContent.model = order;
+			content.order = userContent;
 		} else {
-			content.orders = orders;
+			content.order = order;
 		}
 
 		return response.sendByInfo(operationStatus, content);
@@ -65,12 +65,12 @@ class OrderController extends Controller {
 		const response = this.getActiveResponse<Dictionary>(say);
 		
 		const repo = OrderRepo.getInstance(say);
-		const orders = await repo.detailedFindById(request.query.id, say);
-		const responseType = orders ? "success" : "notFound";
+		const order = await repo.detailedFindById(request.query.id, say);
+		const responseType = order ? "success" : "notFound";
 
 		response
 			.setType(responseType)
-			.content = { orders };
+			.content = { order };
 
 		return response.send();
 	}
@@ -79,12 +79,12 @@ class OrderController extends Controller {
 		const response = this.getActiveResponse<Dictionary>(say);
 		
 		const repo = OrderRepo.getInstance(say);
-		const orders = await repo.findDraft(say);
-		const responseType = orders ? "success" : "notFound";
+		const order = await repo.findDraft(say);
+		const responseType = order ? "success" : "notFound";
 
 		response
 			.setType(responseType)
-			.content = { orders };
+			.content = { order };
 
 		return response.send();
 	}

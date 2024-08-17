@@ -19,18 +19,18 @@ class UnitController extends Controller {
 		const domain = this.getOwningDomain(say);
 		const branch = this.getOwningBranch(say);
 		const repo = UnitRepo.getInstance(say);
-		const units = Unit.create(say, request.body, { domain: domain.name, branch: branch.data.name });
-		const operationStatus = await repo.add(units, say);
+		const unit = Unit.create(say, request.body, { domain: domain.name, branch: branch.data.name });
+		const operationStatus = await repo.add(unit, say);
 		if (operationStatus === "failure") return response.sendByInfo(operationStatus);
 
 		const content: Dictionary = {}; 
 		if (request.query.isDraft) {
 			const userContent = { formDetails: {}, model: {} };
 			userContent.formDetails = await repo.getFormDetails(say);
-			userContent.model = units;
-			content.units = userContent;
+			userContent.model = unit;
+			content.unit = userContent;
 		} else {
-			content.units = units;
+			content.unit = unit;
 		}
 
 		return response.sendByInfo(operationStatus, content);
@@ -65,12 +65,12 @@ class UnitController extends Controller {
 		const response = this.getActiveResponse<Dictionary>(say);
 		
 		const repo = UnitRepo.getInstance(say);
-		const units = await repo.detailedFindById(request.query.id, say);
-		const responseType = units ? "success" : "notFound";
+		const unit = await repo.detailedFindById(request.query.id, say);
+		const responseType = unit ? "success" : "notFound";
 
 		response
 			.setType(responseType)
-			.content = { units };
+			.content = { unit };
 
 		return response.send();
 	}
@@ -79,12 +79,12 @@ class UnitController extends Controller {
 		const response = this.getActiveResponse<Dictionary>(say);
 		
 		const repo = UnitRepo.getInstance(say);
-		const units = await repo.findDraft(say);
-		const responseType = units ? "success" : "notFound";
+		const unit = await repo.findDraft(say);
+		const responseType = unit ? "success" : "notFound";
 
 		response
 			.setType(responseType)
-			.content = { units };
+			.content = { unit };
 
 		return response.send();
 	}
