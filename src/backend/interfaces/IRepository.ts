@@ -41,6 +41,8 @@ interface IRepository<Data extends Dictionary> {
 
 	detailedGetMany(say: MessengerFunction, filter?: Filter | Dictionary, pagination?: PaginationOptions): Promise<DetailedGetMany<ModelCore<Data>>>;
 
+	getSimplifiedMany(say: MessengerFunction, filter?: Filter | Dictionary, pagination?: PaginationOptions, project?: Dictionary): Promise<Dictionary[]>;
+
 	getFormDetails(say: MessengerFunction): Promise<GenericDictionary<Dictionary[]>>;
 
 	remove(id: string, say: MessengerFunction): Promise<OperationStatus>;

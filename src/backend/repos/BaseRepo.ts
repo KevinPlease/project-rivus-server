@@ -266,10 +266,13 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		return { count, formDetails, models: cores };
 	}
 
-	public getSimplifiedMany(say: MessengerFunction, filter?: Filter | Dictionary, pagination?: PaginationOptions): Promise<Dictionary[]> {
+	public getSimplifiedMany(say: MessengerFunction, filter?: Filter | Dictionary, pagination?: PaginationOptions, project?: Dictionary): Promise<Dictionary[]> {
 		const query = this.createQueryFromFilter(filter);
-		const project = { "_id": 1, "data.name": 1, "repository": 1 };
-		return this._readMany(say, query, project, undefined, pagination);
+		
+		if (!project) project = {};
+		
+		const overrideProject = { "_id": 1, "data.name": 1, "repository": 1, ...project };
+		return this._readMany(say, query, overrideProject, undefined, pagination);
 	}
 
 	public async getFormDetails(say: MessengerFunction): Promise<GenericDictionary<Dictionary[]>> {
