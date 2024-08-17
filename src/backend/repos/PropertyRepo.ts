@@ -5,6 +5,8 @@ import { IRepoOptions } from "../interfaces/IRepository";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { Property, PropertyData } from "../models/Property";
+import { Filter } from "../types/Filter";
+import { PaginationOptions } from "../types/PaginationOptions";
 import { BaseDocimgRepo } from "./BaseDocRepo";
 import { BuilderRepo } from "./BuilderRepo";
 import { CityRepo } from "./CityRepo";
@@ -81,6 +83,23 @@ class PropertyRepo extends BaseDocimgRepo<PropertyData> {
 		};
 
 		return MongoQuery.makeAggregation(aggInfo, query, sort);
+	}
+
+	public getSimplifiedMany(say: MessengerFunction, filter?: Filter | Dictionary, pagination?: PaginationOptions, project?: Dictionary): Promise<Dictionary[]> {
+		if (!project) project = {};
+		
+		const overrideProject = {
+			"_id": 1,
+			"data.title": 1,
+			"data.country": 1,
+			"data.city": 1,
+			"data.zone": 1,
+			"data.constructionStage": 1,
+			"data.propertyType": 1,
+			"repository": 1,
+			...project
+		};
+		return super.getSimplifiedMany(say, filter, pagination, overrideProject);
 	}
 
 	public async getFormDetails(say: MessengerFunction): Promise<GenericDictionary<Dictionary[]>> {

@@ -12,9 +12,6 @@ type UnitData = {
 	isDraft?: boolean;
 	unitType: string;
 	availability: string;
-	country: string;
-	city: string;
-	zone: string;
 	offeringType: string;
 	price: number;
 	currency: string;
@@ -22,7 +19,6 @@ type UnitData = {
 	assignee: string;
 	unitExtra: any[];
 	title: string;
-	address: string;
 	description: string;
 	livingRoomCount: number;
 	kitchenCount: number;
@@ -57,9 +53,6 @@ class Unit extends Model<UnitData> {
 			isDraft: true,
 			unitType: "",
 			availability: "",
-			country: "",
-			city: "",
-			zone: "",
 			offeringType: "",
 			price: 1,
 			currency: "",
@@ -67,7 +60,6 @@ class Unit extends Model<UnitData> {
 			assignee: "",
 			unitExtra: [],
 			title: "",
-			address: "",
 			description: "",
 			livingRoomCount: 1,
 			kitchenCount: 1,
