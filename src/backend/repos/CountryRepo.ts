@@ -31,7 +31,7 @@ class CountryRepo extends BaseRepo<CountryData> {
 		if (count > 0) return "success";
 
 		const data: CountryData[] = [
-			{ "name": "Albania", "order": 1 }
+			{ "code": "AL", "name": "Albania", "order": 1, "phone": "355" }
 		];
 		return this.addMany(data, say);
 	}

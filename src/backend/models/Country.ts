@@ -8,8 +8,10 @@ import { CountryRepo } from "../repos/CountryRepo";
 
 type CountryData = {
 	isDraft?: boolean;
+	code: string;
 	name: string;
 	order: number;
+	phone: string;
 };
 
 type CountryFormDetails = {};
@@ -21,8 +23,10 @@ class Country extends Model<CountryData> {
 	static emptyData(): CountryData {
 		return {
 			isDraft: true,
+			code: "",
 			name: "",
-			order: 1
+			order: 1,
+			phone: ""
 		};
 	}
 
