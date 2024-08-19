@@ -12,6 +12,7 @@ import { CityRepo } from "./CityRepo";
 import { CountryRepo } from "./CountryRepo";
 import { OfferingTypeRepo } from "./OfferingTypeRepo";
 import { PropertyRepo } from "./PropertyRepo";
+import { UnitExtraRepo } from "./UnitExtraRepo";
 import { UnitTypeRepo } from "./UnitTypeRepo";
 import { UserRepo } from "./UserRepo";
 
@@ -104,6 +105,9 @@ class UnitRepo extends BaseDocimgRepo<UnitData> {
 		const unitTypeRepo = UnitTypeRepo.getInstance(say);
 		const unitType = await unitTypeRepo.getSimplifiedMany(say);
 
+		const unitExtraRepo = UnitExtraRepo.getInstance(say);
+		const unitExtra = await unitExtraRepo.getSimplifiedMany(say);
+
 		const availabilityRepo = AvailabilityRepo.getInstance(say);
 		const availability = await availabilityRepo.getSimplifiedMany(say);
 
@@ -122,7 +126,7 @@ class UnitRepo extends BaseDocimgRepo<UnitData> {
 		const propertyRepo = PropertyRepo.getInstance(say);
 		const property = await propertyRepo.getSimplifiedMany(say);
 
-		return { assignee, property, unitType, availability, country, city, builder, offeringType };
+		return { assignee, property, unitType, unitExtra, availability, country, city, builder, offeringType };
 	}
 
 }

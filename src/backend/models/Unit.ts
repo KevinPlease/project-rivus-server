@@ -42,6 +42,7 @@ type UnitFormDetails = {
 	assignee: any[];
 	offeringType: any[];
 	property: any[];
+	unitExtra: any[];
 };
 
 class Unit extends Model<UnitData> {
