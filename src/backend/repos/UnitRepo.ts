@@ -48,6 +48,11 @@ class UnitRepo extends BaseDocimgRepo<UnitData> {
 			"data.name": 1,
 			"repository": 1
 		};
+		const propertyProject = {
+			"data.title": 1,
+			"data.zone": 1,
+			"repository": 1
+		};
 		const aggInfo : AggregationInfo[] = [
 			{
 				repoToJoinFrom: userRepoId,
@@ -57,7 +62,7 @@ class UnitRepo extends BaseDocimgRepo<UnitData> {
 			{
 				repoToJoinFrom: propertyRepoId,
 				fieldToSet: "data.property",
-				project
+				project: propertyProject
 			},
 			{
 				repoToJoinFrom: unitTypeRepoId,
