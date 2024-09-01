@@ -26,7 +26,7 @@ type OrderFormDetails = {
 
 class Order extends Model<OrderData> {
 
-	static ROLE = "unit";
+	static ROLE = "order";
 
 	static emptyData(): OrderData {
 		return {
