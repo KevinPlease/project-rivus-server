@@ -20,10 +20,6 @@ type UnitData = {
 	unitExtra: any[];
 	title: string;
 	description: string;
-	livingRoomCount: number;
-	kitchenCount: number;
-	bedroomCount: number;
-	bathroomCount: number;
 	floorCount: number;
 	grossArea: number;
 	interiorArea: number;
@@ -62,10 +58,6 @@ class Unit extends Model<UnitData> {
 			unitExtra: [],
 			title: "",
 			description: "",
-			livingRoomCount: 1,
-			kitchenCount: 1,
-			bedroomCount: 1,
-			bathroomCount: 1,
 			floorCount: 1,
 			grossArea: 1,
 			interiorArea: 1,
