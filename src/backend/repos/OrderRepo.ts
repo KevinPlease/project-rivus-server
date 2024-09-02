@@ -9,6 +9,7 @@ import { AvailabilityRepo } from "./AvailabilityRepo";
 import { BaseDocimgRepo } from "./BaseDocRepo";
 import { CustomerRepo } from "./CustomerRepo";
 import { PaymentMethodRepo } from "./PaymentMethodRepo";
+import { UnitRepo } from "./UnitRepo";
 import { UserRepo } from "./UserRepo";
 
 
@@ -82,7 +83,10 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		const paymentMethodRepo = PaymentMethodRepo.getInstance(say);
 		const paymentMethod = await paymentMethodRepo.getSimplifiedMany(say);
 
-		return { assignee, customer, availability, paymentMethod };
+		const unitRepo = UnitRepo.getInstance(say);
+		const unit = await unitRepo.getSimplifiedMany(say);
+
+		return { assignee, customer, availability, paymentMethod, unit };
 	}
 
 }

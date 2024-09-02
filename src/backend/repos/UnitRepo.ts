@@ -5,6 +5,8 @@ import { IRepoOptions } from "../interfaces/IRepository";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { Unit, UnitData } from "../models/Unit";
+import { Filter } from "../types/Filter";
+import { PaginationOptions } from "../types/PaginationOptions";
 import { AvailabilityRepo } from "./AvailabilityRepo";
 import { BaseDocimgRepo } from "./BaseDocRepo";
 import { BuilderRepo } from "./BuilderRepo";
@@ -132,6 +134,24 @@ class UnitRepo extends BaseDocimgRepo<UnitData> {
 		const property = await propertyRepo.getSimplifiedMany(say);
 
 		return { assignee, property, unitType, unitExtra, availability, country, city, builder, offeringType };
+	}
+
+	public getSimplifiedMany(say: MessengerFunction, filter?: Filter | Dictionary, pagination?: PaginationOptions, project?: Dictionary): Promise<Dictionary[]> {
+		if (!project) project = {};
+		
+		const overrideProject = {
+			"_id": 1,
+			"data.title": 1,
+			"data.country": 1,
+			"data.city": 1,
+			"data.zone": 1,
+			"data.price": 1,
+			"data.grossArea": 1,
+			"data.unitType": 1,
+			"repository": 1,
+			...project
+		};
+		return super.getSimplifiedMany(say, filter, pagination, overrideProject);
 	}
 
 }

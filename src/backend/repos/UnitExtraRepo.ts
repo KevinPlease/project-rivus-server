@@ -21,9 +21,9 @@ class UnitExtraRepo extends BaseRepo<UnitExtraData> {
 		if (count > 0) return "success";
 
 		const data: UnitExtraData[] = [
-			{ "name": "Garazhd i hapur", "order": 1 },
-			{ "name": "Garazhd i mbyllur", "order": 1 },
-			{ "name": "Parkim i jashtem", "order": 1 }
+			{ "name": "Garazhd i hapur", "order": 1, "price": 1 },
+			{ "name": "Garazhd i mbyllur", "order": 1, "price": 1 },
+			{ "name": "Parkim i jashtem", "order": 1, "price": 1 }
 		];
 		return this.addMany(data, say);
 	}
