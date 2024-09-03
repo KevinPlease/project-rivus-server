@@ -9,6 +9,7 @@ import { OrderRepo } from "../repos/OrderRepo";
 type OrderData = {
 	isDraft?: boolean;
 	currency: string;
+	date: number;
     customer: string;
     units: string[];
     paymentMethod: string;
@@ -33,6 +34,7 @@ class Order extends Model<OrderData> {
 			isDraft: true,
 			currency: "",
 			customer: "",
+			date: Date.now(),
 			units: [],
 			paymentMethod: "",
 			availability: "",
