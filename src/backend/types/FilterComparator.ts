@@ -1,1 +1,3 @@
-export type FilterComparator = "EQUALS" | "INCLUDES";
+type FilterComparator = "EQUALS" | "INCLUDES";
+
+export type { FilterComparator };

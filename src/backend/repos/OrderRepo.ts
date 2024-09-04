@@ -5,6 +5,8 @@ import { IRepoOptions } from "../interfaces/IRepository";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { Order, OrderData } from "../models/Order";
+import { Filter } from "../types/Filter";
+import { FilterType } from "../types/FilterType";
 import { AvailabilityRepo } from "./AvailabilityRepo";
 import { BaseDocimgRepo } from "./BaseDocRepo";
 import { CustomerRepo } from "./CustomerRepo";
@@ -84,7 +86,17 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		const paymentMethod = await paymentMethodRepo.getSimplifiedMany(say);
 
 		const unitRepo = UnitRepo.getInstance(say);
-		const unit = await unitRepo.getSimplifiedMany(say);
+		const unitFilter: Filter = {
+			type: FilterType.CONJUNCTION,
+			data: {
+				availability: {
+					comparator: "INCLUDES",
+					type: "basic",
+					values: ["66be60c2f80c0b00b38cc2fb"]
+				}
+			}
+		};
+		const unit = await unitRepo.getSimplifiedMany(say, unitFilter);
 
 		return { assignee, customer, availability, paymentMethod, unit };
 	}
