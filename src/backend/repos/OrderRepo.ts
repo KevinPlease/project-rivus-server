@@ -40,7 +40,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 			// NOTE: Test log to determine if this subscriber is called from different model operations
 			if (model.id !== m.model.id) throw "MISMATCHING IDS IN SUBSCRIBER EVENT!";
 
-			self.dispatch("order created", m.model);
+			self.dispatch("order touched", { type: "creation", order: m.model });
 			return "success";
 		});
 

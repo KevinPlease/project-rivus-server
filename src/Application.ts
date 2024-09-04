@@ -158,16 +158,21 @@ class Application extends Communicator {
 			userRepo.addRoleToUsers({}, branch.data.name, process.env.DEFAULT_ROLE_ID || "");
 		});
 
-		application.subscribe("order created", (source: Object, order: Order) => {
+		application.subscribe("order touched", (source: Object, msg: any) => {
 			const msngr = (source: Object, purpose: string, what: string, content?: any): any => {
 				if (purpose === "ask" && what === "isSysCall") return true;
 	
 				return application._msngr(source, purpose, what, content);
 			};
 
+			const order = msg.order;
 			const domain = application.getDomainByRepoId(order.repository);
 			const unitRepo = domain.getRepoByName(UnitRepo.REPO_NAME) as UnitRepo;
-			unitRepo.changeUnitAvailability(order.id, "", msngr);
+			if (msg.type === "creation") {
+				unitRepo.changeUnitAvailability(order.id, "66be60c2f80c0b00b38cc2fd", msngr);
+			} else if (msg.type === "deletion") {
+				unitRepo.changeUnitAvailability(order.id, "66be60c2f80c0b00b38cc2fb", msngr);
+			}
 		});
 
 		return application.run();
