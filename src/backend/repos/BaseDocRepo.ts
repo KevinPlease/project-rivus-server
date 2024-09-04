@@ -37,7 +37,7 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		return status;
 	}
 
-	private handleBeforeEdit(data: ModelData): { images: DocumentDetails[], documents: DocumentDetails[] } {
+	private handleBeforeEdit(data: Partial<ModelData>): { images: DocumentDetails[], documents: DocumentDetails[] } {
 		const images = data.images || [];
 		const documents = data.documents || [];
 		delete data.images;
@@ -55,7 +55,7 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		return;
 	}
 	
-	public editData(id: string, data: ModelData, say: MessengerFunction): Promise<Operation> {
+	public editData(id: string, data: Partial<ModelData>, say: MessengerFunction): Promise<Operation> {
 		let newImages: DocumentDetails[] = [];
 		let newDocuments: DocumentDetails[] = [];
 
@@ -66,7 +66,7 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 			return "success";
 		});
 		
-		this.subscribeOnce(ERepoEvents.AFTER_UPDATE, (source: Object, content: any) => {
+		this.subscribeOnce(ERepoEvents.AFTER_UPDATE, (source: Object, content: { status: OperationStatus, model: Model<ModelData> }) => {
 			const idQuery = { _id: new ObjectId(content.model.id) };
 			return this.handleAfterEdit(content.status, newImages, newDocuments, content.model, idQuery);
 		});

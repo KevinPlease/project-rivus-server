@@ -223,7 +223,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		return this.update({ _id: new ObjectId(id) }, model, say);
 	}
 
-	public async editData(id: string, data: ModelData, say: MessengerFunction): Promise<Operation> {
+	public async editData(id: string, data: Partial<ModelData>, say: MessengerFunction): Promise<Operation> {
 		if (this.options.needsLastUpdateTime) {
 			this._lastUpdated = Date.now();
 		}
