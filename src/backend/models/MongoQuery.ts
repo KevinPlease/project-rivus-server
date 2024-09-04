@@ -286,12 +286,14 @@ class MongoQuery {
 
 		} else {
 			if (query["$or"]) {
-				query = {
-					$and: [
-						{ $or: value },
-						{ $or: query["$or"] }
-					]
-				};
+				const andQuery = [
+					{ $or: value },
+					{ $or: query["$or"] }
+				];
+
+				if (query["$and"]) andQuery.unshift({ $or: query["$and"] });
+
+				query = { $and: andQuery };
 			} else {
 				query["$or"] = value;
 			}	
