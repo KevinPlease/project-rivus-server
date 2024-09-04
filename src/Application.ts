@@ -52,6 +52,7 @@ import { PaymentMethodRepo } from "./backend/repos/PaymentMethodRepo";
 import { UnitRepo } from "./backend/repos/UnitRepo";
 import { UnitTypeRepo } from "./backend/repos/UnitTypeRepo";
 import { UnitExtraRepo } from "./backend/repos/UnitExtraRepo";
+import { Order } from "./backend/models/Order";
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
 class Application extends Communicator {
@@ -155,6 +156,18 @@ class Application extends Communicator {
 
 			const userRepo = UserRepo.getInstance(onMessage);
 			userRepo.addRoleToUsers({}, branch.data.name, process.env.DEFAULT_ROLE_ID || "");
+		});
+
+		application.subscribe("order created", (source: Object, order: Order) => {
+			const msngr = (source: Object, purpose: string, what: string, content?: any): any => {
+				if (purpose === "ask" && what === "isSysCall") return true;
+	
+				return application._msngr(source, purpose, what, content);
+			};
+
+			const domain = application.getDomainByRepoId(order.repository);
+			const unitRepo = domain.getRepoByName(UnitRepo.REPO_NAME) as UnitRepo;
+			unitRepo.changeUnitAvailability(order.id, "", msngr);
 		});
 
 		return application.run();

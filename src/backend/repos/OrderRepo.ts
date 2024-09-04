@@ -1,6 +1,7 @@
 import { MessengerFunction } from "../../Messenger";
 import MongoCollection from "../../mongo/MongoCollection";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
+import { OperationStatus } from "../../types/Operation";
 import { IRepoOptions } from "../interfaces/IRepository";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
@@ -9,6 +10,7 @@ import { Filter } from "../types/Filter";
 import { FilterType } from "../types/FilterType";
 import { AvailabilityRepo } from "./AvailabilityRepo";
 import { BaseDocimgRepo } from "./BaseDocRepo";
+import { ERepoEvents } from "./BaseRepo";
 import { CustomerRepo } from "./CustomerRepo";
 import { PaymentMethodRepo } from "./PaymentMethodRepo";
 import { UnitRepo } from "./UnitRepo";
@@ -30,6 +32,19 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 
 	public static getInstance(say: MessengerFunction): OrderRepo {
 		return super.getInstance(say) as OrderRepo;
+	}
+
+	public async add(model: Order, say: MessengerFunction): Promise<OperationStatus> {
+		const self = this;
+		this.subscribeOnce(ERepoEvents.AFTER_ADD, async (source: Object, m: { model: Order }) => {
+			// NOTE: Test log to determine if this subscriber is called from different model operations
+			if (model.id !== m.model.id) throw "MISMATCHING IDS IN SUBSCRIBER EVENT!";
+
+			self.dispatch("order created", m.model);
+			return "success";
+		});
+
+		return super.add(model, say);
 	}
 
 	public createAggregation(query: Dictionary, say: MessengerFunction): Dictionary[] {
