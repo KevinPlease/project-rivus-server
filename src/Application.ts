@@ -53,6 +53,7 @@ import { UnitRepo } from "./backend/repos/UnitRepo";
 import { UnitTypeRepo } from "./backend/repos/UnitTypeRepo";
 import { UnitExtraRepo } from "./backend/repos/UnitExtraRepo";
 import { Order } from "./backend/models/Order";
+import { availabilityFor } from "./backend/data/availability";
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
 class Application extends Communicator {
@@ -168,10 +169,9 @@ class Application extends Communicator {
 			const order = msg.order;
 			const domain = application.getDomainByRepoId(order.repository);
 			const unitRepo = domain.getRepoByName(UnitRepo.REPO_NAME) as UnitRepo;
-			if (msg.type === "creation") {
-				unitRepo.changeUnitAvailability(order.id, "66be60c2f80c0b00b38cc2fd", msngr);
-			} else if (msg.type === "deletion") {
-				unitRepo.changeUnitAvailability(order.id, "66be60c2f80c0b00b38cc2fb", msngr);
+			const availability = availabilityFor[msg.type];
+			if (availability) {
+				unitRepo.changeUnitAvailability(order.id, availability, msngr);
 			}
 		});
 
