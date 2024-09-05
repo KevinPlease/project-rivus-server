@@ -1,7 +1,7 @@
 import { MessengerFunction } from "../../Messenger";
 import MongoCollection from "../../mongo/MongoCollection";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
-import { OperationStatus } from "../../types/Operation";
+import { Operation, OperationStatus } from "../../types/Operation";
 import { IRepoOptions } from "../interfaces/IRepository";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
@@ -34,17 +34,31 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		return super.getInstance(say) as OrderRepo;
 	}
 
-	public async add(model: Order, say: MessengerFunction): Promise<OperationStatus> {
+	public async editData(id: string, data: Partial<OrderData>, say: MessengerFunction): Promise<Operation> {
 		const self = this;
-		this.subscribeOnce(ERepoEvents.AFTER_ADD, async (source: Object, m: { model: Order }) => {
+		this.subscribeOnce(ERepoEvents.AFTER_UPDATE, async (source: Object, m: { model: Order }) => {
 			// NOTE: Test log to determine if this subscriber is called from different model operations
-			if (model.id !== m.model.id) throw "MISMATCHING IDS IN SUBSCRIBER EVENT!";
+			if (id !== m.model.id) throw "MISMATCHING IDS IN SUBSCRIBER EVENT!";
 
-			self.dispatch("order touched", { type: "creation", order: m.model });
+			self.dispatch("order touched", { type: "creation", order: m.model, data });
 			return "success";
 		});
 
-		return super.add(model, say);
+		return super.editData(id, data, say);
+	}
+
+	public async remove(id: string, say: MessengerFunction): Promise<OperationStatus> {
+		const self = this;
+		const existingModel = await this.findById(id, say);
+
+		this.subscribeOnce(ERepoEvents.AFTER_REMOVE, async (source: Object, m: { id: string, status: OperationStatus }) => {
+			// NOTE: Test log to determine if this subscriber is called from different model operations
+			if (id !== m.id) throw "MISMATCHING IDS IN SUBSCRIBER EVENT!";
+
+			if (m.status) self.dispatch("order touched", { type: "deletion", order: existingModel });
+			return "success";
+		});
+		return super.remove(id, say);
 	}
 
 	public createAggregation(query: Dictionary, say: MessengerFunction): Dictionary[] {

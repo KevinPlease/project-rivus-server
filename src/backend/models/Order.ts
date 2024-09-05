@@ -13,14 +13,12 @@ type OrderData = {
     customer: string;
     units: string[];
     paymentMethod: string;
-    availability: string;
     totalAmount: number;
     assignee: string;
 };
 
 type OrderFormDetails = {
 	customer: any[];
-	availability: any[];
 	paymentMethod: any[];
 	assignee: any[];
 };
@@ -37,7 +35,6 @@ class Order extends Model<OrderData> {
 			date: Date.now(),
 			units: [],
 			paymentMethod: "",
-			availability: "",
 			totalAmount: 1,
 			assignee: ""
 		};

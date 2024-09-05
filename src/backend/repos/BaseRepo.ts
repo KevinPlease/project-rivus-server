@@ -20,7 +20,9 @@ enum ERepoEvents {
 	BEFORE_UPDATE = "BEFORE_UPDATE",
 	AFTER_UPDATE = "AFTER_UPDATE",
 	BEFORE_ADD = "BEFORE_ADD",
-	AFTER_ADD = "AFTER_ADD"
+	AFTER_ADD = "AFTER_ADD",
+	BEFORE_REMOVE = "BEFORE_REMOVE",
+	AFTER_REMOVE = "AFTER_REMOVE"
 }
 
 class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRepository<ModelData> {
@@ -281,8 +283,14 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		return { source: [], assignee: [] };
 	}
 
-	public remove(id: string, say: MessengerFunction): Promise<OperationStatus> {
-		return this._delete({ _id: new ObjectId(id) }, say);
+	public async remove(id: string, say: MessengerFunction): Promise<OperationStatus> {
+		await this.dispatch(ERepoEvents.BEFORE_REMOVE, { id });
+		
+		const status = await this._delete({ _id: new ObjectId(id) }, say);
+		
+		this.dispatch(ERepoEvents.AFTER_REMOVE, { id, status });
+		
+		return status;
 	}
 
 	public async findById(id: string, say: MessengerFunction, projection?: Dictionary): Promise<Model<ModelData> | null> {
