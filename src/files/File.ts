@@ -24,15 +24,15 @@ class File {
 	}
 
 	public static timestampedName(name: string, extension?: string) : string {
-		if (name.includes("-ubrix-")) {
-			name = ExString.sinceAfter(name, "-ubrix-");
+		if (name.includes("-rivus-")) {
+			name = ExString.sinceAfter(name, "-rivus-");
 		}
 
 		if (!extension) {
 			extension = "";
 		}
 
-		return Date.now() + "-ubrix-" + name.toLowerCase() + extension;
+		return Date.now() + "-rivus-" + name.toLowerCase() + extension;
 	}
 
 	public get path(): string { return this._path }
