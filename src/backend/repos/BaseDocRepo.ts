@@ -10,6 +10,7 @@ import { BaseRepo, ERepoEvents } from "./BaseRepo";
 import ModelFolder from "../../files/ModelFolder";
 import File from "../../files/File";
 import { DocumentDetails } from "../types/DocumentDetails";
+import { ImageDetails } from "../types/ImageDetails";
 
 class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 
@@ -37,7 +38,7 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		return status;
 	}
 
-	private handleBeforeEdit(data: Partial<ModelData>): { images: DocumentDetails[], documents: DocumentDetails[] } {
+	private handleBeforeEdit(data: Partial<ModelData>): { images: ImageDetails[], documents: DocumentDetails[] } {
 		const images = data.images || [];
 		const documents = data.documents || [];
 		delete data.images;
@@ -45,18 +46,18 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		return { images, documents };
 	}
 
-	private handleAfterEdit(status: OperationStatus, images: DocumentDetails[], documents: DocumentDetails[], model: Model<ModelData>, idQuery: Dictionary) {
+	private handleAfterEdit(status: OperationStatus, images: ImageDetails[], documents: DocumentDetails[], model: Model<ModelData>, idQuery: Dictionary) {
 		if (status === "success") {
-			if (images) 	this._editUpload("image", images, model, idQuery);
+			if (!ExArray.isEmpty(images)) 	this._editUpload("image", images, model, idQuery);
 
-			if (documents) 	this._editUpload("document", documents, model, idQuery);
+			if (!ExArray.isEmpty(documents)) 	this._editUpload("document", documents, model, idQuery);
 		}
 		
 		return;
 	}
 	
 	public editData(id: string, data: Partial<ModelData>, say: MessengerFunction): Promise<Operation> {
-		let newImages: DocumentDetails[] = [];
+		let newImages: ImageDetails[] = [];
 		let newDocuments: DocumentDetails[] = [];
 
 		this.subscribeOnce(ERepoEvents.BEFORE_UPDATE, (source: Object, content: any) => {
