@@ -10,13 +10,13 @@ const CONFIG = {
 		"PORT": 5000,
 		"protocol": "https",
 		"URL": "141.94.205.232",
-		"DOMAIN_NAME": "rivus-io.com"
+		"DOMAIN_NAME": "catasta.com"
 	},
 	"production": {
-		"PORT": 5000,
+		"PORT": 3000,
 		"protocol": "https",
 		"URL": "141.94.205.232",
-		"DOMAIN_NAME": "rivus-io.com"
+		"DOMAIN_NAME": "catasta.com"
 	}
 };
 

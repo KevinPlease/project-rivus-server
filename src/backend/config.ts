@@ -24,14 +24,14 @@ const config = {
 
 	"SERVER_CERTIFICATION": {
 		"testing": {
-			"privateKey": "/etc/letsencrypt/live/rivus-io.com/privkey.pem",
-			"certification": "/etc/letsencrypt/live/rivus-io.com/cert.pem",
-			"chain": "/etc/letsencrypt/live/rivus-io.com/chain.pem"
+			"privateKey": "/etc/letsencrypt/live/catasta.com/privkey.pem",
+			"certification": "/etc/letsencrypt/live/catasta.com/cert.pem",
+			"chain": "/etc/letsencrypt/live/catasta.com/chain.pem"
 		},
 		"production": {
-			"privateKey": "/etc/letsencrypt/live/rivus-io.com/privkey.pem",
-			"certification": "/etc/letsencrypt/live/rivus-io.com/cert.pem",
-			"chain": "/etc/letsencrypt/live/rivus-io.com/chain.pem"
+			"privateKey": "/etc/letsencrypt/live/catasta.com/privkey.pem",
+			"certification": "/etc/letsencrypt/live/catasta.com/cert.pem",
+			"chain": "/etc/letsencrypt/live/catasta.com/chain.pem"
 		}
 	},
 	
