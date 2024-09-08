@@ -143,7 +143,6 @@ class UnitRepo extends BaseDocimgRepo<UnitData> {
 		if (!project) project = {};
 		
 		const overrideProject = {
-			"_id": 1,
 			"data.title": 1,
 			"data.availability": 1,
 			"data.country": 1,
@@ -152,7 +151,6 @@ class UnitRepo extends BaseDocimgRepo<UnitData> {
 			"data.price": 1,
 			"data.grossArea": 1,
 			"data.unitType": 1,
-			"repository": 1,
 			...project
 		};
 		return super.getSimplifiedMany(say, filter, pagination, overrideProject);

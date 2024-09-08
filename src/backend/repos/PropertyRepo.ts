@@ -89,14 +89,12 @@ class PropertyRepo extends BaseDocimgRepo<PropertyData> {
 		if (!project) project = {};
 		
 		const overrideProject = {
-			"_id": 1,
 			"data.title": 1,
 			"data.country": 1,
 			"data.city": 1,
 			"data.zone": 1,
 			"data.constructionStage": 1,
 			"data.propertyType": 1,
-			"repository": 1,
 			...project
 		};
 		return super.getSimplifiedMany(say, filter, pagination, overrideProject);

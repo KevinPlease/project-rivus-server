@@ -22,7 +22,7 @@ class CountryRepo extends BaseRepo<CountryData> {
 	public getSimplifiedMany(say: MessengerFunction, filter?: Filter | Dictionary, pagination?: PaginationOptions, project?: Dictionary): Promise<Dictionary[]> {
 		if (!project) project = {};
 		
-		const overrideProject = { "_id": 1, "data.name": 1, "data.code": 1, "data.phone": 1, "repository": 1, ...project };
+		const overrideProject = { "data.name": 1, "data.code": 1, "data.phone": 1, ...project };
 		return super.getSimplifiedMany(say, filter, pagination, overrideProject);;
 	}
 
