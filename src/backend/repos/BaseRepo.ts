@@ -271,7 +271,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		
 		if (!project) project = {};
 		
-		const overrideProject = { "_id": 1, "data.name": 1, "repository": 1, ...project };
+		const overrideProject = { "_id": 1, "data.name": 1, "repository": 1, "meta": 1, ...project };
 		return this._readMany(say, query, overrideProject, undefined, pagination);
 	}
 
