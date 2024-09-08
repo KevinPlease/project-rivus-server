@@ -24,14 +24,14 @@ const config = {
 
 	"SERVER_CERTIFICATION": {
 		"testing": {
-			"privateKey": "/etc/letsencrypt/live/catasta.com/privkey.pem",
-			"certification": "/etc/letsencrypt/live/catasta.com/cert.pem",
-			"chain": "/etc/letsencrypt/live/catasta.com/chain.pem"
+			"privateKey": "/etc/letsencrypt/live/catasta.io/privkey.pem",
+			"certification": "/etc/letsencrypt/live/catasta.io/cert.pem",
+			"chain": "/etc/letsencrypt/live/catasta.io/chain.pem"
 		},
 		"production": {
-			"privateKey": "/etc/letsencrypt/live/catasta.com/privkey.pem",
-			"certification": "/etc/letsencrypt/live/catasta.com/cert.pem",
-			"chain": "/etc/letsencrypt/live/catasta.com/chain.pem"
+			"privateKey": "/etc/letsencrypt/live/catasta.io/privkey.pem",
+			"certification": "/etc/letsencrypt/live/catasta.io/cert.pem",
+			"chain": "/etc/letsencrypt/live/catasta.io/chain.pem"
 		}
 	},
 	
