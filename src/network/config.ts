@@ -10,13 +10,13 @@ const CONFIG = {
 		"PORT": 5000,
 		"protocol": "https",
 		"URL": "141.94.205.232",
-		"DOMAIN_NAME": "catasta.com"
+		"DOMAIN_NAME": "catasta.io"
 	},
 	"production": {
 		"PORT": 3000,
 		"protocol": "https",
 		"URL": "141.94.205.232",
-		"DOMAIN_NAME": "catasta.com"
+		"DOMAIN_NAME": "catasta.io"
 	}
 };
 
