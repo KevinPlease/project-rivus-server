@@ -114,18 +114,18 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		const paymentMethodRepo = PaymentMethodRepo.getInstance(say);
 		const paymentMethod = await paymentMethodRepo.getSimplifiedMany(say);
 
-		const unitRepo = UnitRepo.getInstance(say);
-		const unitFilter: Filter = {
-			type: FilterType.CONJUNCTION,
-			data: {
-				availability: {
-					comparator: "INCLUDES",
-					type: "basic",
-					values: ["66be60c2f80c0b00b38cc2fb"]
-				}
-			}
-		};
-		const unit = await unitRepo.getSimplifiedMany(say, unitFilter);
+		const unitRepo = UnitRepo.getInstance(say); 
+		// const unitFilter: Filter = {
+		// 	type: FilterType.CONJUNCTION,
+		// 	data: {
+		// 		availability: {
+		// 			comparator: "INCLUDES",
+		// 			type: "basic",
+		// 			values: ["66be60c2f80c0b00b38cc2fb"]
+		// 		}
+		// 	}
+		// };
+		const unit = await unitRepo.getSimplifiedMany(say);
 
 		return { assignee, customer, availability, paymentMethod, unit };
 	}
