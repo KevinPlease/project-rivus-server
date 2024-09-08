@@ -145,6 +145,7 @@ class UnitRepo extends BaseDocimgRepo<UnitData> {
 		const overrideProject = {
 			"_id": 1,
 			"data.title": 1,
+			"data.availability": 1,
 			"data.country": 1,
 			"data.city": 1,
 			"data.zone": 1,
