@@ -23,6 +23,9 @@ const ROUTES: RawRoutesInfo = {
 		"image/:id?": {
 			"actionName": "Public Action",
 			"needsAuth": false
+		},
+		"document/:id?": {
+			"actionName": "Get Property Document"
 		}
 	},
 

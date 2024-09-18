@@ -23,6 +23,9 @@ const ROUTES: RawRoutesInfo = {
 		"image/:id?": {
 			"actionName": "Public Action",
 			"needsAuth": false
+		},
+		"document/:id?": {
+			"actionName": "Get Unit Document"
 		}
 	},
 
@@ -32,6 +35,9 @@ const ROUTES: RawRoutesInfo = {
 		},
 		"images": {
 			"actionName": "Add Unit Images"
+		},
+		"documents": {
+			"actionName": "Add Unit Documents"
 		}
 	},
 
