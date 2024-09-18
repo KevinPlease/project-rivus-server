@@ -87,7 +87,7 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 				const uploadedFile = files.find(file => file.originalName === fileInfo.file.name);
 				if (!uploadedFile) continue;
 
-				const fileDetails: DocumentDetails = {
+				const fileDetails: DocumentDetails | ImageDetails = {
 					alt: fileInfo.alt,
 					url: uploadedFile.src,
 					src: "",
@@ -103,7 +103,8 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 			}
 		}
 
-		const updateQuery = { "data.documents": existingDocs };
+		const typeInPlural = type + "s";
+		const updateQuery = { [`data.${typeInPlural}`]: existingDocs };
 		return this.update({ _id: new ObjectId(id) }, updateQuery, say);
 	}
 
