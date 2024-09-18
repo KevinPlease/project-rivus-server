@@ -132,7 +132,7 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 	}
 
 	public async getDocById(type: "image" | "document", branchName:string, owningModelId: string, id: string, say: MessengerFunction): Promise<Operation> {
-		const imageFile = await this.getFileDocById(type, owningModelId, branchName, id, say);
+		const imageFile = await this.getFileDocById(type, branchName, owningModelId, id, say);
 		if (!imageFile) return { status: "failure", message: null };
 
 		return { status: "success", message: imageFile.path };
