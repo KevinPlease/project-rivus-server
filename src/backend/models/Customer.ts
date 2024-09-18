@@ -13,7 +13,7 @@ type CustomerData = {
 	title: string;
 	mobile: string;
 	email: string;
-	birthdate: Date;
+	birthdate: number;
 	address: string;
 	personalId: string;
 	assignee: string;
@@ -37,7 +37,7 @@ class Customer extends Model<CustomerData> {
 			title: "",
 			mobile: "",
 			email: "",
-			birthdate: new Date(Date.now()),
+			birthdate: Date.now(),
 			address: "",
 			personalId: "",
 			assignee: "",
