@@ -196,9 +196,8 @@ class WebServer extends Communicator {
 
 		let protocol = config[CONNECTION_MODE].protocol;
 		let subdomain = domainName.toLowerCase();
-		let host = ExString.deprefix(configForMode.DOMAIN_NAME, `${subdomain}.`);
 		let port = CONNECTION_MODE === "development" ? configForMode.PORT : null;
-		return NetworkUrl.fromParts(protocol, subdomain, host, port);
+		return NetworkUrl.fromParts(protocol, subdomain, configForMode.DOMAIN_NAME, port);
 	}
 }
 
