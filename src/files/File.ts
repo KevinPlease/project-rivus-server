@@ -1,7 +1,9 @@
-import FS from "fs/promises";
+import FS, { open } from "fs/promises";
 
 import { Functions, OperationStatus } from "../shared/Function";
 import { ExString } from "../shared/String";
+import { WriteStream } from "fs";
+import { Operation } from "../types/Operation";
 
 const ENCODING_PER_TYPE = {
 	"jpg": "binary",
@@ -91,6 +93,18 @@ class File {
 	read(): Promise<string> {
 		let encodingType = ENCODING_PER_TYPE[this._extension];
 		return this.readWithEncoding(encodingType);
+	}
+
+
+	async openAsWriteStream(): Promise<Operation> {
+		try {
+			const fileHandle = await open(this._path, "a+");
+			const stream = fileHandle.createWriteStream();
+			return { status: "success", message: stream };
+
+		} catch (error: any) {
+			return { status: "failure", message: null };
+		}
 	}
 }
 
