@@ -2,8 +2,7 @@ import { Model } from "../../core/Model";
 import { MessengerFunction } from "../../Messenger";
 import { Dictionary } from "../../types/Dictionary";
 import { Operation } from "../../types/Operation";
-
-type DocType = "pdf";
+import { DocType } from "../types/DocType";
 
 interface IDocGenerator {
 
