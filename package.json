@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/KevinPlease/project-rivus-server#readme",
   "dependencies": {
+    "@types/pdfkit": "^0.13.5",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
