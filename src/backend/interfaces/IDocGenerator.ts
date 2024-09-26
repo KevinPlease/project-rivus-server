@@ -7,7 +7,9 @@ import { DocType } from "../types/DocType";
 interface IDocGenerator {
 
 	type: DocType;
-
+	
+	options: Dictionary;
+	
 	generate(model: Model<Dictionary> | Dictionary, say: MessengerFunction): Promise<Operation>;
 
 }

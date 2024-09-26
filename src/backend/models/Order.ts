@@ -5,13 +5,14 @@ import ExObject from "../../shared/Object";
 import Metadata from "../../core/types/Metadata";
 import OwnershipInfo from "../types/OwnershipInfo";
 import { OrderRepo } from "../repos/OrderRepo";
+import { UnitData } from "./Unit";
 
 type OrderData = {
 	isDraft?: boolean;
 	currency: string;
 	date: number;
     customer: string;
-    units: string[];
+    units: ModelCore<UnitData>[];
     paymentMethod: string;
     totalAmount: number;
     assignee: string;
