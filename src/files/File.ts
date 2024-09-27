@@ -2,8 +2,8 @@ import FS, { open } from "fs/promises";
 
 import { Functions, OperationStatus } from "../shared/Function";
 import { ExString } from "../shared/String";
-import { WriteStream } from "fs";
 import { Operation } from "../types/Operation";
+import Path from "./Path";
 
 const ENCODING_PER_TYPE = {
 	"jpg": "binary",
@@ -25,6 +25,10 @@ class File {
 		this._extension = extension;
 	}
 
+	public get extension(): string { return this._extension }
+	public get path(): string { return this._path }
+	public get name(): string { return this._name }
+
 	public static timestampedName(name: string, extension?: string) : string {
 		if (name.includes("-rivus-")) {
 			name = ExString.sinceAfter(name, "-rivus-");
@@ -37,8 +41,6 @@ class File {
 		return Date.now() + "-rivus-" + name.toLowerCase() + extension;
 	}
 
-	public get path(): string { return this._path }
-
 	static fromInfo(path: string, fullName: string): File {
 		let name = ExString.upToBeforeLast(fullName, ".");
 		let extension = ExString.sinceAfterLast(fullName, ".");
@@ -46,7 +48,7 @@ class File {
 	}
 
 	static fromPath(path: string): File {
-		let fullName = ExString.sinceAfterLast(path, "/");
+		let fullName = ExString.sinceAfterLast(path, Path.FS_SEPARATOR);
 		let name = ExString.upToBeforeLast(fullName, ".");
 		let extension = ExString.sinceAfterLast(fullName, ".");
 		return new File(path, name, extension);
@@ -100,9 +102,10 @@ class File {
 		try {
 			const fileHandle = await open(this._path, "a+");
 			const stream = fileHandle.createWriteStream();
-			return { status: "success", message: stream };
+			return { status: "success", message: { stream, path: this._path } };
 
-		} catch (error: any) {
+		} catch (error) {
+			console.error(error);
 			return { status: "failure", message: null };
 		}
 	}
