@@ -100,6 +100,29 @@ class PropertyController extends Controller {
 		return response.send();
 	}
 
+	async getDocument(say: MessengerFunction) : Promise<void> {
+		const request = this.getActiveRequest<Dictionary>(say);
+		const response = this.getActiveResponse<Dictionary>(say);
+		
+		const branchName = request.query.branch;
+		if (!branchName) return response.setType("badRequest").send();
+		
+		const domain = this.getOwningDomain(say);
+		const branch = domain.getBranchByName(branchName);
+		if (!branch) return response.setType("badRequest").send();
+
+		const repo = PropertyRepo.getInstance(say);
+		const operation = await repo.getDocumentById(branchName, request.params.id, request.query.documentId, say);
+		if (operation.status === "failure") response.setType("notFound");
+
+		const resType = operation.status === "failure" ? "notFound" : "successFile";
+		response
+			.setType(resType)
+			.content = operation.message;
+
+		return response.send();
+	}
+
 	async getImage(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
