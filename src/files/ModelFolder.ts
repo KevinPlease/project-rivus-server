@@ -3,6 +3,7 @@ import { ExString } from "../shared/String";
 import { OperationStatus } from "../types/Operation";
 import File from "./File";
 import Folder from "./Folder";
+import Path from "./Path";
 
 class ModelFolder extends Folder {
 
@@ -40,7 +41,7 @@ class ModelFolder extends Folder {
 	}
 
 	public getImageFile(id: string): File {
-		return this.getFile(ModelFolder.IMG_FOLDER + Folder.FS_SEPARATOR + id);
+		return this.getFile(ModelFolder.IMG_FOLDER + Path.FS_SEPARATOR + id);
 	}
 
 	public async deleteAllImages(): Promise<OperationStatus> {
@@ -77,7 +78,18 @@ class ModelFolder extends Folder {
 	}
 
 	public getDocumentFile(id: string): File {
-		return this.getFile(ModelFolder.DOC_FOLDER + Folder.FS_SEPARATOR + id);
+		return this.getFile(ModelFolder.DOC_FOLDER + Path.FS_SEPARATOR + id);
+	}
+
+	public getReportsPath(say: MessengerFunction): string {
+		return Folder.createPath(say, this.path, ModelFolder.GEN_FOLDER);
+	}
+
+	public async ensureReportsExist(say: MessengerFunction) : Promise<string> {
+		const opStatus = await this.createFolderIfMissing(ModelFolder.GEN_FOLDER);
+		if (opStatus === "failure") return "";
+
+		return this.getDocumentsPath(say);
 	}
 
 	public getGeneratedFile(id: string): File {
