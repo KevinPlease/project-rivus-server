@@ -6,8 +6,6 @@ import { IRepoOptions } from "../interfaces/IRepository";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { Order, OrderData } from "../models/Order";
-import { Filter } from "../types/Filter";
-import { FilterType } from "../types/FilterType";
 import { AvailabilityRepo } from "./AvailabilityRepo";
 import { BaseDocimgRepo } from "./BaseDocRepo";
 import { ERepoEvents } from "./BaseRepo";

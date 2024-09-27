@@ -36,6 +36,17 @@ class UnitController extends Controller {
 		return response.sendByInfo(operationStatus, content);
 	}
 
+	async postDocuments(say: MessengerFunction) : Promise<void> {
+		const request = this.getActiveRequest<IdentifiableDictionary>(say);
+		const response = this.getActiveResponse<Dictionary>(say);
+
+		const repo = UnitRepo.getInstance(say);
+		const files = request.getUploadedFiles(say);
+		const operationStatus = await repo.setDocumentsFromFiles(request.body.id, files, say);
+
+		return response.sendByInfo(operationStatus);
+	}
+
 	async postImages(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
