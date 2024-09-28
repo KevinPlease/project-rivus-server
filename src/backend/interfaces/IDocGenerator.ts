@@ -10,7 +10,7 @@ interface IDocGenerator {
 	
 	options: Dictionary;
 	
-	generate(model: Model<Dictionary> | Dictionary, say: MessengerFunction): Promise<Operation>;
+	generate(model: Model<Dictionary> | Dictionary, reportId: string, say: MessengerFunction): Promise<Operation>;
 
 }
 

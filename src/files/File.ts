@@ -30,15 +30,15 @@ class File {
 	public get name(): string { return this._name }
 
 	public static timestampedName(name: string, extension?: string) : string {
-		if (name.includes("-rivus-")) {
-			name = ExString.sinceAfter(name, "-rivus-");
+		if (name.includes("_rivus_")) {
+			name = ExString.sinceAfter(name, "_rivus_");
 		}
 
 		if (!extension) {
 			extension = "";
 		}
 
-		return Date.now() + "-rivus-" + name.toLowerCase() + extension;
+		return Date.now() + "_rivus_" + name.toLowerCase() + extension;
 	}
 
 	static fromInfo(path: string, fullName: string): File {
