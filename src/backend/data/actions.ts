@@ -143,7 +143,21 @@ const getDefaultData = (domain: string) => {
 				"timeUpdated": 1715626111,
 				"creator": ""
 			}
-		}
+		},
+		{
+			"_id": new ObjectId("66f71e4008f07f5100cc2424"),
+			"repository": `actions@${domain}_sys`,
+			"role": "action",
+			"data": {
+			  "name": "Get Order Pdf",
+			  "description": ""
+			},
+			"meta": {
+			  "timeCreated": 1715626111,
+			  "timeUpdated": 1715626111,
+			  "creator": ""
+			}
+		  }
 	]
 }
 

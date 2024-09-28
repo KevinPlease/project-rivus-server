@@ -112,6 +112,30 @@ class OrderController extends Controller {
 		return response.send();
 	}
 
+	async getReport(say: MessengerFunction) : Promise<void> {
+		const request = this.getActiveRequest<Dictionary>(say);
+		const response = this.getActiveResponse<Dictionary>(say);
+		
+		const branchName = request.query.branch;
+		if (!branchName) return response.setType("badRequest").send();
+		
+		const domain = this.getOwningDomain(say);
+		const branch = domain.getBranchByName(branchName);
+		if (!branch) return response.setType("badRequest").send();
+
+		const repo = OrderRepo.getInstance(say);
+		const operation = await repo.getReportById(branchName, request.params.id, request.query.reportId, say);
+		if (operation.status === "failure") response.setType("notFound");
+
+		const file = operation.message;
+		const resType = operation.status === "failure" ? "notFound" : "successDownload";
+		response
+			.setType(resType)
+			.content = file.path;
+
+		return response.send();
+	}
+
 	async getForm(say: MessengerFunction) : Promise<void> {
 		const response = this.getActiveResponse<Dictionary>(say);
 		

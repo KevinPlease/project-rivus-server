@@ -1,5 +1,7 @@
+import { OrderPdf } from "../../generators/OrderPdf";
 import { MessengerFunction } from "../../Messenger";
 import MongoCollection from "../../mongo/MongoCollection";
+import File from "../../files/File";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
 import { Operation, OperationStatus } from "../../types/Operation";
 import { IRepoOptions } from "../interfaces/IRepository";
@@ -126,6 +128,26 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		const unit = await unitRepo.getSimplifiedMany(say);
 
 		return { assignee, customer, availability, paymentMethod, unit };
+	}
+
+	public async getReportById(branchName: string, owningModelId: string, id: string, say: MessengerFunction): Promise<Operation> {
+		const msngr = (source: Object, purpose: string, what: string, content?: any): any => {
+			if (purpose === "ask" && what === "isSysCall") return true;
+
+			return say(source, purpose, what, content);
+		};
+		const order = await this.findById(owningModelId, msngr);
+		if (!order) return { status: "failure", message: "No Order found for that id." };
+
+		const domain = say(this, "ask", "ownDomain");
+		const branch = domain.getBranchByName(branchName);
+		const orderPdf = new OrderPdf({ domain, branch });
+				
+		const pdfGenOperation = await orderPdf.generate(order, id, say);
+		if (pdfGenOperation.status === "failure") return { status: "failure", message: "Problem generating the report!" };
+
+		const reportFile = File.fromPath(pdfGenOperation.message);
+		return { status: "success", message: reportFile };
 	}
 
 }

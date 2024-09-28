@@ -7,16 +7,15 @@ import { Dictionary } from "../types/Dictionary";
 import { Operation } from "../types/Operation";
 import ModelFolder from "../files/ModelFolder";
 import File from "../files/File";
+import Folder from "../files/Folder";
 
 class PdfGenerator implements IDocGenerator {
 
-	private _model: Model<Dictionary> | Dictionary;
 	private _type: DocType;
 	private _options: Dictionary;
 	private _doc: PDFKit.PDFDocument;
 
-	constructor(model: Model<Dictionary> | Dictionary, options: Dictionary) {
-		this._model = model;
+	constructor(options: Dictionary) {
 		this._type = "pdf";
 		this._options = options;
 
@@ -27,8 +26,6 @@ class PdfGenerator implements IDocGenerator {
 		this._doc = new PDFDocument(docOptions);
 	}
 
-	public get model(): Model<Dictionary> | Dictionary { return this._model }
-	public set model(value: Model<Dictionary> | Dictionary) { this._model = value }
 	public get type(): DocType { return this._type }
 	public set type(value: DocType) { this._type = value }
 	public get options(): Dictionary { return this._options }
@@ -36,22 +33,25 @@ class PdfGenerator implements IDocGenerator {
 	public get doc(): PDFKit.PDFDocument { return this._doc }
 	public set doc(value: PDFKit.PDFDocument) { this._doc = value }
 
-	private prepareFileStream(model: Model<Dictionary> | Dictionary, say: MessengerFunction): Promise<Operation> {
-		const ownDomain = say(this, "ask", "ownDomain");
-		const ownBranch = say(this, "ask", "ownBranch");
-		const folder = ModelFolder.fromInfo(model.role, ownDomain.name, ownBranch.data.name, model.id, say);
-		const fileName = File.timestampedName("GEN_" + model.id);
+	private async prepareFileStream(model: Model<Dictionary> | Dictionary, reportId: string, say: MessengerFunction): Promise<Operation> {
+		const domain = this.options.domain;
+		const branch = this.options.branch;
+		const folder = ModelFolder.fromInfo(model.role, domain.name, branch.data.name, model.id, say);
+		
+		await folder.ensureReportsExist(say);
+
+		const fileName = File.timestampedName("GEN_" + reportId);
 		return folder.getGeneratedFile(fileName).openAsWriteStream();
 	}
 
-	public addHeader(): PdfGenerator {
+	public addHeader(model: Model<Dictionary> | Dictionary, say: MessengerFunction): PdfGenerator {
 		const options = this._options;
 		const domain = options.domain;
 		const branch = options.branch;
 		const domainName = domain.name;
 
 		this._doc
-			.image("logo.png", 50, 45, { width: 50 })
+			.image("shared/icons/Logo_01.png", 50, 45, { width: 50 })
 			.fillColor("#444444")
 			.fontSize(20)
 			.text(domainName, 110, 57)
@@ -64,7 +64,7 @@ class PdfGenerator implements IDocGenerator {
 		return this;
 	}
 
-	public addBody(): PdfGenerator {
+	public addBody(model: Model<Dictionary> | Dictionary): PdfGenerator {
 		// CUSTOM IMPLEMENTATION BY CHILD
 		return this;
 	}
@@ -80,11 +80,11 @@ class PdfGenerator implements IDocGenerator {
 		return this;
 	}
 
-	public addFooter(): PdfGenerator {
+	public addFooter(model: Model<Dictionary> | Dictionary): PdfGenerator {
 		this._doc
 			.fontSize(10)
 			.text(
-				"Payment is due within 15 days. Thank you for your business.",
+				"Gjeneruar automatikisht nga sistemi Catasta",
 				50,
 				780,
 				{ align: "center", width: 500 }
@@ -93,20 +93,34 @@ class PdfGenerator implements IDocGenerator {
 		return this;
 	}
 
-	public async generate(model: Model<Dictionary> | Dictionary, say: MessengerFunction): Promise<Operation> {
+	public async generate(model: Model<Dictionary> | Dictionary, reportId: string, say: MessengerFunction): Promise<Operation> {
 		const doc = this._doc;
 
-		const fileStreamOperation = await this.prepareFileStream(model, say);
+		const fileStreamOperation = await this.prepareFileStream(model, reportId, say);
 		if (!fileStreamOperation.status) return { status: "failure", message: "Failed to open file for writing!" };
 
-		this.addHeader()
-			.addBody()
-			.addFooter();
+		const fileStream = fileStreamOperation.message;
+		try {
+			this.addHeader(model, say)
+				.addBody(model)
+				.addFooter(model);
 
-		doc.end();
-		doc.pipe(fileStreamOperation.message);
+			doc.pipe(fileStream.stream);
+			doc.end();
 
-		return { status: "success", message: "TODO" };
+			return new Promise((resolve) => {
+				fileStream.stream.on("finish", () => {
+					resolve({ status: "success", message: fileStream.path });
+				});
+			});
+
+		} catch (error) {
+			console.error(error);
+			fileStream.stream.destroy();
+			doc.end();
+			return { status: "failure", message: "" };
+		}
+
 	}
 
 }
