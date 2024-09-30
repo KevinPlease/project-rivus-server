@@ -25,8 +25,7 @@ const ROUTES: RawRoutesInfo = {
 			"needsAuth": false
 		},
 		"report/:id?": {
-			"actionName": "Get Order Pdf",
-			"needsAuth": false
+			"actionName": "Get Order Pdf"
 		}
 	},
 

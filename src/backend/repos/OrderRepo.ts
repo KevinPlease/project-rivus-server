@@ -131,12 +131,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 	}
 
 	public async getReportById(branchName: string, owningModelId: string, id: string, say: MessengerFunction): Promise<Operation> {
-		const msngr = (source: Object, purpose: string, what: string, content?: any): any => {
-			if (purpose === "ask" && what === "isSysCall") return true;
-
-			return say(source, purpose, what, content);
-		};
-		const order = await this.findById(owningModelId, msngr);
+		const order = await this.findById(owningModelId, say);
 		if (!order) return { status: "failure", message: "No Order found for that id." };
 
 		const domain = say(this, "ask", "ownDomain");
