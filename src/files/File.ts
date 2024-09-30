@@ -29,6 +29,18 @@ class File {
 	public get path(): string { return this._path }
 	public get name(): string { return this._name }
 
+	public static basicName(name: string, extension?: string) : string {
+		if (name.includes("_rivus_")) {
+			name = ExString.sinceAfter(name, "_rivus_");
+		}
+
+		if (!extension) {
+			extension = "";
+		}
+
+		return "_rivus_" + name.toLowerCase() + extension;
+	}
+
 	public static timestampedName(name: string, extension?: string) : string {
 		if (name.includes("_rivus_")) {
 			name = ExString.sinceAfter(name, "_rivus_");

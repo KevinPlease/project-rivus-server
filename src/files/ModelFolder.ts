@@ -9,7 +9,7 @@ class ModelFolder extends Folder {
 
 	public static IMG_FOLDER = "images";
 	public static DOC_FOLDER = "documents";
-	public static GEN_FOLDER = "generated";
+	public static REP_FOLDER = "reports";
 
 	public static fromInfo(role: string, domainName: string, branchName: string, id: string, say: MessengerFunction) : ModelFolder {
 		role = ExString.uncapitalize(role);
@@ -82,18 +82,18 @@ class ModelFolder extends Folder {
 	}
 
 	public getReportsPath(say: MessengerFunction): string {
-		return Folder.createPath(say, this.path, ModelFolder.GEN_FOLDER);
+		return Folder.createPath(say, this.path, ModelFolder.REP_FOLDER);
 	}
 
 	public async ensureReportsExist(say: MessengerFunction) : Promise<string> {
-		const opStatus = await this.createFolderIfMissing(ModelFolder.GEN_FOLDER);
+		const opStatus = await this.createFolderIfMissing(ModelFolder.REP_FOLDER);
 		if (opStatus === "failure") return "";
 
-		return this.getDocumentsPath(say);
+		return this.getReportsPath(say);
 	}
 
-	public getGeneratedFile(id: string): File {
-		const curModelFolder = this.getChildFolder(ModelFolder.GEN_FOLDER);
+	public getReportFile(id: string): File {
+		const curModelFolder = this.getChildFolder(ModelFolder.REP_FOLDER);
 		return curModelFolder.getFile(id);
 	}
 

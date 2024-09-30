@@ -116,9 +116,18 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		return this.setDocsFromFiles("image", id, files, say);
 	}
 
-	public async getFileDocById(type: "image" | "document", branchName: string, owningModelId: string, id: string, say: MessengerFunction): Promise<File | null> {
+	public async getFileDocById(type: "image" | "document" | "report", branchName: string, owningModelId: string, id: string, say: MessengerFunction): Promise<File | null> {
 		const folder = ModelFolder.fromInfo(this.modelRole, this.domain, branchName, owningModelId, say);
-		const file = type === "document" ? folder.getDocumentFile(id) : folder.getImageFile(id);
+		let file: File | null = null;
+
+		if (type === "image") {
+			file = folder.getImageFile(id);
+		} else if (type === "document") {
+			file = folder.getDocumentFile(id);
+		} else {
+			file = folder.getReportFile(id);
+		}
+		
 		const exists = await file.exists();
 		if (!exists) return null;
 
@@ -130,8 +139,11 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 	public getFileImageById(branchName:string, owningModelId: string, id: string, say: MessengerFunction): Promise<File | null> {
 		return this.getFileDocById("image", branchName, owningModelId, id, say);
 	}
+	public getFileReportById(branchName:string, owningModelId: string, id: string, say: MessengerFunction): Promise<File | null> {
+		return this.getFileDocById("report", branchName, owningModelId, id, say);
+	}
 
-	public async getDocById(type: "image" | "document", branchName:string, owningModelId: string, id: string, say: MessengerFunction): Promise<Operation> {
+	public async getDocById(type: "image" | "document" | "report", branchName:string, owningModelId: string, id: string, say: MessengerFunction): Promise<Operation> {
 		const imageFile = await this.getFileDocById(type, branchName, owningModelId, id, say);
 		if (!imageFile) return { status: "failure", message: null };
 
@@ -142,6 +154,9 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 	}
 	public getImageById(branchName: string, owningModelId: string, id: string, say: MessengerFunction): Promise<Operation> {
 		return this.getDocById("image", branchName, owningModelId, id, say);
+	}
+	public getReportById(branchName: string, owningModelId: string, id: string, say: MessengerFunction): Promise<Operation> {
+		return this.getDocById("report", branchName, owningModelId, id, say);
 	}
 
 	public async getRawImageById(branchName: string, propertyId: string, id: string, say: MessengerFunction): Promise<string> {
@@ -157,6 +172,14 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		if (!docFile) return "";
 
 		const base64 = await docFile.readWithEncoding("base64");
+		return `data:text;base64,${base64}`;
+	}
+
+	public async getRawReportById(branchName: string, propertyId: string, id: string, say: MessengerFunction): Promise<string> {
+		const file = await this.getFileReportById(branchName, propertyId, id, say);
+		if (!file) return "";
+
+		const base64 = await file.readWithEncoding("base64");
 		return `data:text;base64,${base64}`;
 	}
 
