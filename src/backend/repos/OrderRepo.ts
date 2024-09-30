@@ -130,14 +130,18 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		return { assignee, customer, availability, paymentMethod, unit };
 	}
 
-	public async getReportById(branchName: string, owningModelId: string, id: string, say: MessengerFunction): Promise<Operation> {
+	public async generateReportById(owningModelId: string, id: string, say: MessengerFunction): Promise<Operation> {
 		const order = await this.findById(owningModelId, say);
 		if (!order) return { status: "failure", message: "No Order found for that id." };
 
 		const domain = say(this, "ask", "ownDomain");
-		const branch = domain.getBranchByName(branchName);
+		const branch = say(this, "ask", "ownBranch");
 		const orderPdf = new OrderPdf({ domain, branch });
-				
+
+		const fileId = File.basicName(id + ".pdf");
+		const existingReport = await this.getFileReportById(branch.data.name, owningModelId, fileId, say);
+		if (existingReport) return { status: "success", message: existingReport };
+
 		const pdfGenOperation = await orderPdf.generate(order, id, say);
 		if (pdfGenOperation.status === "failure") return { status: "failure", message: "Problem generating the report!" };
 

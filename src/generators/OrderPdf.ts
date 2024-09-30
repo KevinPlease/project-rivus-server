@@ -6,7 +6,7 @@ import { PdfGenerator } from "./PdfGenerator";
 class OrderPdf extends PdfGenerator {
 
 	public formatCurrency(cents: number) {
-		return "€" + (cents / 100).toFixed(2);
+		return "€" + (cents).toFixed(2);
 	}
 
 	public formatDate(time: number) {
