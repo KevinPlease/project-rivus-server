@@ -52,8 +52,8 @@ import { PaymentMethodRepo } from "./backend/repos/PaymentMethodRepo";
 import { UnitRepo } from "./backend/repos/UnitRepo";
 import { UnitTypeRepo } from "./backend/repos/UnitTypeRepo";
 import { UnitExtraRepo } from "./backend/repos/UnitExtraRepo";
-import { Order } from "./backend/models/Order";
-import { availabilityFor } from "./backend/data/availability";
+import { unitAvailabilityFor } from "./backend/data/availability";
+import { OrderStatusRepo } from "./backend/repos/OrderStatusRepo";
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
 class Application extends Communicator {
@@ -66,6 +66,7 @@ class Application extends Communicator {
 		UnitRepo,
 		OrderRepo,
 		PropertyTypeRepo,
+		OrderStatusRepo,
 		ConstructionStageRepo,
 		CountryRepo,
 		CityRepo,
@@ -170,7 +171,7 @@ class Application extends Communicator {
 			const units = msg.data?.units || order.data.units;
 			const domain = application.getDomainByRepoId(order.repository);
 			const unitRepo = domain.getRepoByName(UnitRepo.REPO_NAME) as UnitRepo;
-			const availability = availabilityFor[msg.type];
+			const availability = unitAvailabilityFor[msg.type][msg.data.orderStatus] || unitAvailabilityFor[msg.type];
 			if (availability) {
 				units.forEach((u: any) => unitRepo.changeUnitAvailability(u._id, availability, msngr));
 			}
