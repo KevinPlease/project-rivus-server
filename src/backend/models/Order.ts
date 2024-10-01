@@ -10,6 +10,7 @@ import { UnitData } from "./Unit";
 type OrderData = {
 	isDraft?: boolean;
 	currency: string;
+	status: string;
 	date: number;
     customer: string;
     units: ModelCore<UnitData>[];
@@ -32,6 +33,7 @@ class Order extends Model<OrderData> {
 		return {
 			isDraft: true,
 			currency: "",
+			status: "",
 			customer: "",
 			date: Date.now(),
 			units: [],

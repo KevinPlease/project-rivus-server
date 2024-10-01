@@ -15,6 +15,7 @@ import { CustomerRepo } from "./CustomerRepo";
 import { PaymentMethodRepo } from "./PaymentMethodRepo";
 import { UnitRepo } from "./UnitRepo";
 import { UserRepo } from "./UserRepo";
+import { OrderStatusRepo } from "./OrderStatusRepo";
 
 
 class OrderRepo extends BaseDocimgRepo<OrderData> {
@@ -40,7 +41,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 			// NOTE: Test log to determine if this subscriber is called from different model operations
 			if (id !== m.model.id) throw "MISMATCHING IDS IN SUBSCRIBER EVENT!";
 
-			self.dispatch("order touched", { type: "creation", order: m.model, data });
+			self.dispatch("order touched", { type: "update", order: m.model, data });
 			return "success";
 		});
 
@@ -55,7 +56,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 			// NOTE: Test log to determine if this subscriber is called from different model operations
 			if (id !== m.id) throw "MISMATCHING IDS IN SUBSCRIBER EVENT!";
 
-			if (m.status) self.dispatch("order touched", { type: "deletion", order: existingModel });
+			if (m.status) self.dispatch("order touched", { type: "delete", order: existingModel });
 			return "success";
 		});
 		return super.remove(id, say);
@@ -66,6 +67,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		const customerRepoId = CustomerRepo.getInstance(say).id;
 		const availabilityRepoId = AvailabilityRepo.getInstance(say).id;
 		const paymentMethodRepoId = PaymentMethodRepo.getInstance(say).id;
+		const orderStatusRepoId = OrderStatusRepo.getInstance(say).id;
 
 		const project = {
 			"data.name": 1,
@@ -91,6 +93,11 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 				repoToJoinFrom: paymentMethodRepoId,
 				fieldToSet: "data.paymentMethod",
 				project
+			},
+			{
+				repoToJoinFrom: orderStatusRepoId,
+				fieldToSet: "data.orderStatus",
+				project
 			}
 		];
 
@@ -114,6 +121,9 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		const paymentMethodRepo = PaymentMethodRepo.getInstance(say);
 		const paymentMethod = await paymentMethodRepo.getSimplifiedMany(say);
 
+		const orderStatusRepo = OrderStatusRepo.getInstance(say);
+		const orderStatus = await orderStatusRepo.getSimplifiedMany(say);
+
 		const unitRepo = UnitRepo.getInstance(say); 
 		// const unitFilter: Filter = {
 		// 	type: FilterType.CONJUNCTION,
@@ -127,7 +137,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		// };
 		const unit = await unitRepo.getSimplifiedMany(say);
 
-		return { assignee, customer, availability, paymentMethod, unit };
+		return { assignee, customer, availability, paymentMethod, unit, orderStatus };
 	}
 
 	public async generateReportById(owningModelId: string, id: string, say: MessengerFunction): Promise<Operation> {
