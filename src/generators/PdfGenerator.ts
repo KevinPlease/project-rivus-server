@@ -7,7 +7,7 @@ import { Dictionary } from "../types/Dictionary";
 import { Operation } from "../types/Operation";
 import ModelFolder from "../files/ModelFolder";
 import File from "../files/File";
-import Folder from "../files/Folder";
+import { DetailedFind } from "../backend/types/DetailedFind";
 
 class PdfGenerator implements IDocGenerator {
 
@@ -44,7 +44,7 @@ class PdfGenerator implements IDocGenerator {
 		return folder.getGeneratedFile(fileName).openAsWriteStream();
 	}
 
-	public addHeader(model: Model<Dictionary> | Dictionary, say: MessengerFunction): PdfGenerator {
+	public addHeader(detailedFind: DetailedFind<Model<Dictionary>> | Dictionary, say: MessengerFunction): PdfGenerator {
 		const options = this._options;
 		const domain = options.domain;
 		const branch = options.branch;
@@ -64,7 +64,7 @@ class PdfGenerator implements IDocGenerator {
 		return this;
 	}
 
-	public addBody(model: Model<Dictionary> | Dictionary): PdfGenerator {
+	public addBody(detailedFind: DetailedFind<Model<Dictionary>> | Dictionary): PdfGenerator {
 		// CUSTOM IMPLEMENTATION BY CHILD
 		return this;
 	}
@@ -80,7 +80,7 @@ class PdfGenerator implements IDocGenerator {
 		return this;
 	}
 
-	public addFooter(model: Model<Dictionary> | Dictionary): PdfGenerator {
+	public addFooter(detailedFind: DetailedFind<Model<Dictionary>> | Dictionary): PdfGenerator {
 		this._doc
 			.fontSize(10)
 			.text(
@@ -93,17 +93,18 @@ class PdfGenerator implements IDocGenerator {
 		return this;
 	}
 
-	public async generate(model: Model<Dictionary> | Dictionary, reportId: string, say: MessengerFunction): Promise<Operation> {
+	public async generate(detailedFind: DetailedFind<Model<Dictionary>> | Dictionary, reportId: string, say: MessengerFunction): Promise<Operation> {
 		const doc = this._doc;
+		const model = detailedFind.model;
 
 		const fileStreamOperation = await this.prepareFileStream(model, reportId, say);
 		if (!fileStreamOperation.status) return { status: "failure", message: "Failed to open file for writing!" };
 
 		const fileStream = fileStreamOperation.message;
 		try {
-			this.addHeader(model, say)
-				.addBody(model)
-				.addFooter(model);
+			this.addHeader(detailedFind, say)
+				.addBody(detailedFind)
+				.addFooter(detailedFind);
 
 			doc.pipe(fileStream.stream);
 			doc.end();

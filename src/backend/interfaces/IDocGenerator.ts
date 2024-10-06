@@ -2,6 +2,7 @@ import { Model } from "../../core/Model";
 import { MessengerFunction } from "../../Messenger";
 import { Dictionary } from "../../types/Dictionary";
 import { Operation } from "../../types/Operation";
+import { DetailedFind } from "../types/DetailedFind";
 import { DocType } from "../types/DocType";
 
 interface IDocGenerator {
@@ -10,7 +11,7 @@ interface IDocGenerator {
 	
 	options: Dictionary;
 	
-	generate(model: Model<Dictionary> | Dictionary, say: MessengerFunction): Promise<Operation>;
+	generate(model: DetailedFind<Model<Dictionary>> | Dictionary, reportId: string, say: MessengerFunction): Promise<Operation>;
 
 }
 
