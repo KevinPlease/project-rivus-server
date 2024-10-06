@@ -8,6 +8,8 @@ import { DetailedFind } from "../types/DetailedFind";
 import { BaseDocimgRepo } from "./BaseDocRepo";
 import { UserRepo } from "./UserRepo";
 import { IRepoOptions } from "../interfaces/IRepository";
+import { Filter } from "../types/Filter";
+import { PaginationOptions } from "../types/PaginationOptions";
 
 
 class CustomerRepo extends BaseDocimgRepo<CustomerData> {
@@ -46,6 +48,19 @@ class CustomerRepo extends BaseDocimgRepo<CustomerData> {
 		};
 
 		return MongoQuery.makeAggregation(aggInfo, query, sort);
+	}
+
+	public getSimplifiedMany(say: MessengerFunction, filter?: Filter | Dictionary, pagination?: PaginationOptions, project?: Dictionary): Promise<Dictionary[]> {
+		if (!project) project = {};
+		
+		const overrideProject = {
+			"data.title": 1,
+			"data.name": 1,
+			"data.address": 1,
+			"data.mobile": 1,
+			...project
+		};
+		return super.getSimplifiedMany(say, filter, pagination, overrideProject);
 	}
 
 	public async getFormDetails(say: MessengerFunction): Promise<GenericDictionary<Dictionary[]>> {

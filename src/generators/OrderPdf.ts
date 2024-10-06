@@ -1,4 +1,5 @@
 import { Order } from "../backend/models/Order";
+import { DetailedFind } from "../backend/types/DetailedFind";
 import Folder from "../files/Folder";
 import { MessengerFunction } from "../Messenger";
 import { PdfGenerator } from "./PdfGenerator";
@@ -18,7 +19,7 @@ class OrderPdf extends PdfGenerator {
 		return year + "/" + month + "/" + day;
 	}
 
-	public addHeader(order: Order, say: MessengerFunction): OrderPdf {
+	public addHeader(detailedFind: DetailedFind<Order>, say: MessengerFunction): OrderPdf {
 		const options = this.options;
 		const domain = options.domain;
 		const branch = options.branch;
@@ -40,7 +41,7 @@ class OrderPdf extends PdfGenerator {
 		return this;
 	}
 
-	public addCustomerInformation(order: Order): OrderPdf {
+	public addCustomerInformation(detailedFind: DetailedFind<Order>): OrderPdf {
 		this.doc
 			.fillColor("#444444")
 			.fontSize(20)
@@ -48,8 +49,12 @@ class OrderPdf extends PdfGenerator {
 
 		this.addDivider(185);
 
+		const order = detailedFind.model;
+		const formDetails = detailedFind.formDetails;
 		const modelData = order.data;
 		const customerInformationTop = 200;
+		const customer = formDetails.customer.find(c => c._id.toString() === modelData.customer);
+		const paymentMethod = formDetails.paymentMethod.find(p => p._id.toString() === modelData.paymentMethod);
 
 		this.doc
 			.fontSize(10)
@@ -66,12 +71,12 @@ class OrderPdf extends PdfGenerator {
 				customerInformationTop + 30
 				)
 			.text("Menyra e Pageses:", 50, customerInformationTop + 45)
-			.text(modelData.paymentMethod, 150, customerInformationTop + 45)
+			.text(paymentMethod.data.name, 150, customerInformationTop + 45)
 			
 			.font("Helvetica-Bold")
-			.text(modelData.customer, 300, customerInformationTop)
+			.text(customer.data.name, 300, customerInformationTop)
 			.font("Helvetica")
-			.text(modelData.customer, 300, customerInformationTop + 15)
+			.text(customer.data.address, 300, customerInformationTop + 15)
 			// .text(
 			// 	invoice.shipping.city +
 			// 	", " +
@@ -88,10 +93,11 @@ class OrderPdf extends PdfGenerator {
 		return this;
 	}
 
-	public addInvoiceTable(order: Order): OrderPdf {
+	public addInvoiceTable(detailedFind: DetailedFind<Order>): OrderPdf {
 		const doc = this.doc;
 		const invoiceTableTop = 330;
-		
+		const order = detailedFind.model;
+
 		doc.font("Helvetica-Bold");
 		this.addTableRow(
 			invoiceTableTop,
@@ -167,9 +173,9 @@ class OrderPdf extends PdfGenerator {
 		return this;
 	}
 
-	public addBody(order: Order): OrderPdf {
-		this.addCustomerInformation(order)
-			.addInvoiceTable(order)
+	public addBody(detailedFind: DetailedFind<Order> ): OrderPdf {
+		this.addCustomerInformation(detailedFind)
+			.addInvoiceTable(detailedFind)
 		
 		return this;
 	}
