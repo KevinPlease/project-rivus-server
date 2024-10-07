@@ -14,8 +14,9 @@ class PdfGenerator implements IDocGenerator {
 	private _type: DocType;
 	private _options: Dictionary;
 	private _doc: PDFKit.PDFDocument;
+	private _say: MessengerFunction;
 
-	constructor(options: Dictionary) {
+	constructor(options: Dictionary, say: MessengerFunction) {
 		this._type = "pdf";
 		this._options = options;
 
@@ -24,6 +25,7 @@ class PdfGenerator implements IDocGenerator {
 			margin: 50
 		};
 		this._doc = new PDFDocument(docOptions);
+		this._say = say;
 	}
 
 	public get type(): DocType { return this._type }
@@ -32,6 +34,8 @@ class PdfGenerator implements IDocGenerator {
 	public set options(value: Dictionary) { this._options = value }
 	public get doc(): PDFKit.PDFDocument { return this._doc }
 	public set doc(value: PDFKit.PDFDocument) { this._doc = value }
+	public get say(): MessengerFunction { return this._say }
+	public set say(value: MessengerFunction) { this._say = value }
 
 	private async prepareFileStream(model: Model<Dictionary> | Dictionary, reportId: string, say: MessengerFunction): Promise<Operation> {
 		const domain = this.options.domain;
@@ -102,16 +106,24 @@ class PdfGenerator implements IDocGenerator {
 
 		const fileStream = fileStreamOperation.message;
 		try {
+			
+			doc.pipe(fileStream.stream);
+			
 			this.addHeader(detailedFind, say)
 				.addBody(detailedFind)
 				.addFooter(detailedFind);
 
-			doc.pipe(fileStream.stream);
 			doc.end();
-
-			return new Promise((resolve) => {
+			
+			return new Promise((resolve, reject) => {
 				fileStream.stream.on("finish", () => {
+					fileStream.stream.close();
 					resolve({ status: "success", message: fileStream.path });
+				});
+
+				fileStream.stream.on("error", (e: Error) => {
+					fileStream.stream.close();
+					reject({ status: "failure", message: e.stack || e.message });
 				});
 			});
 
