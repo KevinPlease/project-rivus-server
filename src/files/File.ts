@@ -66,6 +66,12 @@ class File {
 		return new File(path, name, extension);
 	}
 	
+	public getFullPath(): string {
+		if (this._path.endsWith(this.extension)) return this._path;
+
+		return this._path + Path.FS_SEPARATOR + this._name + "." + this.extension;
+	}
+
 	async exists(): Promise<boolean> {
 		let result = await Functions.doAsync(FS, "access", this.path);
 		return result === null ? false : true;
