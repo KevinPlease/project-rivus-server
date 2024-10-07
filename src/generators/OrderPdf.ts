@@ -1,6 +1,9 @@
 import { Order } from "../backend/models/Order";
+import { Unit } from "../backend/models/Unit";
 import { DetailedFind } from "../backend/types/DetailedFind";
 import Folder from "../files/Folder";
+import File from "../files/File";
+import ModelFolder from "../files/ModelFolder";
 import { MessengerFunction } from "../Messenger";
 import { PdfGenerator } from "./PdfGenerator";
 
@@ -34,14 +37,14 @@ class OrderPdf extends PdfGenerator {
 			.text(domainName, 110, 57)
 			.fontSize(10)
 			.text(domainName, 200, 50, { align: "right" })
-			.text(`Dega '${branch.data.name}'`, 200, 65, { align: "right" })
+			.text(`Dega "${branch.data.name}"`, 200, 65, { align: "right" })
 			.text(branch.data.address || "", 200, 80, { align: "right" })
 			.moveDown();
 		
 		return this;
 	}
 
-	public addCustomerInformation(detailedFind: DetailedFind<Order>): OrderPdf {
+	private addCustomerInformation(detailedFind: DetailedFind<Order>): OrderPdf {
 		this.doc
 			.fillColor("#444444")
 			.fontSize(20)
@@ -93,7 +96,7 @@ class OrderPdf extends PdfGenerator {
 		return this;
 	}
 
-	public addInvoiceTable(detailedFind: DetailedFind<Order>): OrderPdf {
+	private addInvoiceTable(detailedFind: DetailedFind<Order>): OrderPdf {
 		const doc = this.doc;
 		const invoiceTableTop = 330;
 		const order = detailedFind.model;
@@ -161,7 +164,7 @@ class OrderPdf extends PdfGenerator {
 		return this;
 	}
 
-	public addTableRow(y: number, id: string, title: string, price: string, area: string, unitTotal: string): OrderPdf {
+	private addTableRow(y: number, id: string, title: string, price: string, area: string, unitTotal: string): OrderPdf {
 		this.doc
 			.fontSize(10)
 			.text(id, 50, y)
@@ -173,9 +176,47 @@ class OrderPdf extends PdfGenerator {
 		return this;
 	}
 
+	private addImages(detailedFind: DetailedFind<Order>): OrderPdf {
+		const doc = this.doc;
+		const imagesStruct = doc.struct("Images");
+		doc.addStructure(imagesStruct);
+		
+		const order = detailedFind.model;
+		for (let i = 0; i < order.data.units.length; i++) {
+			doc.addPage();
+
+			const unit = order.data.units[i];
+			const images = unit.data.images || [];
+			if (images.length === 0) continue;
+			
+			imagesStruct.add(
+				doc.struct("H1", {}, () => {
+					doc.fontSize(18).text(`Unit ${unit.displayId}`);
+				})
+			);
+
+			for (let y = 0; y < images.length; y++) {
+				const curImage = images[y];
+				const file = File.fromInfo(curImage.fsPath, curImage.id);
+				imagesStruct.add(
+					doc.struct(
+						`Image ${y + 1}`,
+						{ alt: "Unit Image." },
+						() => doc.image(file.getFullPath(), (doc.page.width / 4) - 30, 100 + (y * 320), { fit: [400, 400], valign: "center", align: "center" })
+					)
+				)
+			}
+		}
+
+		imagesStruct.end();
+
+		return this;
+	}
+
 	public addBody(detailedFind: DetailedFind<Order> ): OrderPdf {
 		this.addCustomerInformation(detailedFind)
 			.addInvoiceTable(detailedFind)
+			.addImages(detailedFind);
 		
 		return this;
 	}

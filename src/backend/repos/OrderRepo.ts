@@ -16,6 +16,7 @@ import { PaymentMethodRepo } from "./PaymentMethodRepo";
 import { UnitRepo } from "./UnitRepo";
 import { UserRepo } from "./UserRepo";
 import { OrderStatusRepo } from "./OrderStatusRepo";
+import { Unit } from "../models/Unit";
 
 
 class OrderRepo extends BaseDocimgRepo<OrderData> {
@@ -146,12 +147,20 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 
 		const domain = say(this, "ask", "ownDomain");
 		const branch = say(this, "ask", "ownBranch");
-		const orderPdf = new OrderPdf({ domain, branch });
-
 		const fileId = File.basicName(id + ".pdf");
 		const existingReport = await this.getFileReportById(branch.data.name, owningModelId, fileId, say);
 		if (existingReport) return { status: "success", message: existingReport };
+		
+		const orderPdf = new OrderPdf({ domain, branch }, say);
+		const unitRepo = UnitRepo.getInstance(say);
+		const units = await Promise.all(
+			detailedOrder.model.data.units.map(u => unitRepo.findById(u._id || "", say))
+		);
+		if (units.some(u => u === null || u === undefined)) {
+			return { status: "failure", message: "Problem getting units' information!" };
+		} 
 
+		detailedOrder.model.data.units = units as Unit[];
 		const pdfGenOperation = await orderPdf.generate(detailedOrder, id, say);
 		if (pdfGenOperation.status === "failure") return { status: "failure", message: "Problem generating the report!" };
 
