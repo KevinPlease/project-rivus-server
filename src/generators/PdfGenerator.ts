@@ -44,6 +44,40 @@ class PdfGenerator implements IDocGenerator {
 		return folder.getGeneratedFile(fileName).openAsWriteStream();
 	}
 
+	public addTitle(): PdfGenerator {
+		const options = this._options;
+		const domain = options.domain;
+
+		const doc = this._doc;
+		const title = "Order Summary";
+		const subtitle = `For ${domain.name}`;
+		const version = "By Catasta";
+
+		// doc.font("fonts/AlegreyaSans-Light.ttf", 60);
+		doc.fontSize(60);
+		doc.y = doc.page.height / 2 - doc.currentLineHeight();
+		doc.text(title, { align: "center" });
+		const w = doc.widthOfString(title);
+		// doc.h1Outline = doc.outline.addItem(title);
+
+		doc.fontSize(20);
+		doc.y -= 10;
+		doc.text(subtitle, {
+			align: "center",
+			indent: w - doc.widthOfString(subtitle)
+		});
+
+		doc.fontSize(10);
+		// doc.font(styles.para.font, 10);
+		doc.text(version, {
+			align: "center",
+			indent: w - doc.widthOfString(version)
+		});
+
+		doc.addPage();
+		return this;
+	}
+
 	public addHeader(detailedFind: DetailedFind<Model<Dictionary>> | Dictionary, say: MessengerFunction): PdfGenerator {
 		const options = this._options;
 		const domain = options.domain;
@@ -57,7 +91,7 @@ class PdfGenerator implements IDocGenerator {
 			.text(domainName, 110, 57)
 			.fontSize(10)
 			.text(domainName, 200, 50, { align: "right" })
-			.text(`Dega '${branch.data.name}'`, 200, 65, { align: "right" })
+			.text(`Dega "${branch.data.name}"`, 200, 65, { align: "right" })
 			.text(branch.data.address || "", 200, 80, { align: "right" })
 			.moveDown();
 		
@@ -102,7 +136,8 @@ class PdfGenerator implements IDocGenerator {
 
 		const fileStream = fileStreamOperation.message;
 		try {
-			this.addHeader(detailedFind, say)
+			this.addTitle()
+				.addHeader(detailedFind, say)
 				.addBody(detailedFind)
 				.addFooter(detailedFind);
 
