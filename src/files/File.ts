@@ -65,7 +65,7 @@ class File {
 		let extension = ExString.sinceAfterLast(fullName, ".");
 		return new File(path, name, extension);
 	}
-	
+
 	public getFullPath(): string {
 		if (this._path.endsWith(this.extension)) return this._path;
 
