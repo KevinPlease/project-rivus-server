@@ -29,16 +29,28 @@ class File {
 	public get path(): string { return this._path }
 	public get name(): string { return this._name }
 
-	public static timestampedName(name: string, extension?: string) : string {
-		if (name.includes("-rivus-")) {
-			name = ExString.sinceAfter(name, "-rivus-");
+	public static basicName(name: string, extension?: string) : string {
+		if (name.includes("_rivus_")) {
+			name = ExString.sinceAfter(name, "_rivus_");
 		}
 
 		if (!extension) {
 			extension = "";
 		}
 
-		return Date.now() + "-rivus-" + name.toLowerCase() + extension;
+		return "_rivus_" + name.toLowerCase() + extension;
+	}
+
+	public static timestampedName(name: string, extension?: string) : string {
+		if (name.includes("_rivus_")) {
+			name = ExString.sinceAfter(name, "_rivus_");
+		}
+
+		if (!extension) {
+			extension = "";
+		}
+
+		return Date.now() + "_rivus_" + name.toLowerCase() + extension;
 	}
 
 	static fromInfo(path: string, fullName: string): File {
@@ -53,7 +65,7 @@ class File {
 		let extension = ExString.sinceAfterLast(fullName, ".");
 		return new File(path, name, extension);
 	}
-	
+
 	public getFullPath(): string {
 		if (this._path.endsWith(this.extension)) return this._path;
 
