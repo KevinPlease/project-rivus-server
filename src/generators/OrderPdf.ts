@@ -1,9 +1,7 @@
 import { Order } from "../backend/models/Order";
-import { Unit } from "../backend/models/Unit";
 import { DetailedFind } from "../backend/types/DetailedFind";
 import Folder from "../files/Folder";
 import File from "../files/File";
-import ModelFolder from "../files/ModelFolder";
 import { MessengerFunction } from "../Messenger";
 import { PdfGenerator } from "./PdfGenerator";
 
@@ -176,7 +174,7 @@ class OrderPdf extends PdfGenerator {
 		return this;
 	}
 
-	private addImages(detailedFind: DetailedFind<Order>): OrderPdf {
+	private addUnits(detailedFind: DetailedFind<Order>): OrderPdf {
 		const doc = this.doc;
 		const imagesStruct = doc.struct("Images");
 		doc.addStructure(imagesStruct);
@@ -202,7 +200,7 @@ class OrderPdf extends PdfGenerator {
 					doc.struct(
 						`Image ${y + 1}`,
 						{ alt: "Unit Image." },
-						() => doc.image(file.getFullPath(), (doc.page.width / 4) - 30, 100 + (y * 320), { fit: [400, 400], valign: "center", align: "center" })
+						() => doc.image(file.getFullPath(), (doc.page.width / 4) - 30, 80 + (y * 350), { fit: [400, 400], valign: "center", align: "center" })
 					)
 				)
 			}
@@ -216,7 +214,7 @@ class OrderPdf extends PdfGenerator {
 	public addBody(detailedFind: DetailedFind<Order> ): OrderPdf {
 		this.addCustomerInformation(detailedFind)
 			.addInvoiceTable(detailedFind)
-			.addImages(detailedFind);
+			.addUnits(detailedFind);
 		
 		return this;
 	}
