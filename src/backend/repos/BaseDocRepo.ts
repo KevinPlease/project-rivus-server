@@ -81,9 +81,11 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 
 		if (ExArray.isEmpty(files)) return "success";
 
+		let finalDocs: DocumentDetails[] | ImageDetails[] = [];
 		const existingDocs = type === "document" ? model.data.documents : model.data.images;
-		if (existingDocs) {
-			for (const fileInfo of existingDocs) {
+		if (existingDocs && !(ExArray.isEmpty(existingDocs))) {
+			finalDocs = [...existingDocs];
+			for (const fileInfo of finalDocs) {
 				const uploadedFile = files.find(file => file.originalName === fileInfo.file.name);
 				if (!uploadedFile) continue;
 
@@ -99,12 +101,24 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 
 				this.dispatch("BEFORE_DOC_UPDATE", fileDetails);
 
-				ExArray.replace(existingDocs, fileInfo, fileDetails);
+				ExArray.replace(finalDocs, fileInfo, fileDetails);
 			}
+		} else {
+			finalDocs = files.map(f => {
+				return {
+					alt: "",
+					url: f.src,
+					src: "",
+					isImg: type === "image",
+					id: f.name,
+					fsPath: f.fsPath,
+					file: { name: f.name, type: f.type, size: f.size }
+				}
+			}); 
 		}
 
 		const typeInPlural = type + "s";
-		const updateQuery = { [`data.${typeInPlural}`]: existingDocs };
+		const updateQuery = { [`data.${typeInPlural}`]: finalDocs };
 		return this.update({ _id: new ObjectId(id) }, updateQuery, say);
 	}
 
