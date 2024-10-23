@@ -145,6 +145,76 @@ const getDefaultData = (domain: string) => {
 			}
 		},
 		{
+			"_id": new ObjectId("6719777686bb1afe1bb039c7"),
+			"repository": "actions@rivus_sys",
+			"role": "action",
+			"data": {
+				"name": "Remove Role",
+				"description": ""
+			},
+			"meta": {
+				"timeCreated": 1715626111,
+				"timeUpdated": 1715626111,
+				"creator": ""
+			}
+		},
+		{
+			"_id": new ObjectId("6719777686bb1afe1bb039c8"),
+			"repository": "actions@rivus_sys",
+			"role": "action",
+			"data": {
+				"name": "Get Role",
+				"description": ""
+			},
+			"meta": {
+				"timeCreated": 1715626111,
+				"timeUpdated": 1715626111,
+				"creator": ""
+			}
+		},
+		{
+			"_id": new ObjectId("6719777686bb1afe1bb039c9"),
+			"repository": "actions@rivus_sys",
+			"role": "action",
+			"data": {
+				"name": "Get Roles",
+				"description": ""
+			},
+			"meta": {
+				"timeCreated": 1715626111,
+				"timeUpdated": 1715626111,
+				"creator": ""
+			}
+		},
+		{
+			"_id": new ObjectId("6719777686bb1afe1bb039ca"),
+			"repository": "actions@rivus_sys",
+			"role": "action",
+			"data": {
+				"name": "Add Role",
+				"description": ""
+			},
+			"meta": {
+				"timeCreated": 1715626111,
+				"timeUpdated": 1715626111,
+				"creator": ""
+			}
+		},
+		{
+			"_id": new ObjectId("6719777686bb1afe1bb039cb"),
+			"repository": "actions@rivus_sys",
+			"role": "action",
+			"data": {
+				"name": "Edit Role",
+				"description": ""
+			},
+			"meta": {
+				"timeCreated": 1715626111,
+				"timeUpdated": 1715626111,
+				"creator": ""
+			}
+		},
+		{
 			"_id": new ObjectId("66f71e4008f07f5100cc2424"),
 			"repository": `actions@${domain}_sys`,
 			"role": "action",
