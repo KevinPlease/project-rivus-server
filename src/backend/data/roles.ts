@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
 import { ExString } from "../../shared/String";
+import { AccessType } from "../types/Access";
 
 const getDefaultData = (domain: string) => {
 	domain = ExString.uncapitalize(domain);
@@ -54,327 +55,353 @@ const getDefaultData = (domain: string) => {
 				"accessInfo": {
 				  "global": {
 					"user": {
-					  "read": 240,
-					  "write": 240
+					  "read": AccessType.OVERSEER,
+					  "write": AccessType.OVERSEER
 					},
 					"customer": {
-					  "read": 240,
-					  "write": 240
+					  "read": AccessType.OVERSEER,
+					  "write": AccessType.OVERSEER
 					},
 					"order": {
-					  "read": 240,
-					  "write": 240
+					  "read": AccessType.OVERSEER,
+					  "write": AccessType.OVERSEER
 					},
 					"property": {
-					  "read": 240,
-					  "write": 240
+					  "read": AccessType.OVERSEER,
+					  "write": AccessType.OVERSEER
 					},
 					"unit": {
-					  "read": 240,
-					  "write": 240
+					  "read": AccessType.OVERSEER,
+					  "write": AccessType.OVERSEER
+					},
+					"role": {
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					}
 				  },
 				  "fieldAccess": {
 					"user": {
 					  "isDraft": {
-						"read": 4,
-						"write": 4
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "name": {
-						"read": 4,
-						"write": 4
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "role": {
-						"read": 4,
-						"write": 4
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "images": {
-						"read": 4,
-						"write": 4
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "email": {
-						"read": 4,
-						"write": 4
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "username": {
-						"read": 4,
-						"write": 4
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "password": {
-						"read": 4,
-						"write": 4
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "phone": {
-						"read": 4,
-						"write": 4
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "token": {
-						"read": 4,
-						"write": 4
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "roles": {
-						"read": 4,
-						"write": 4
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  }
+					},
+					"role": {
+						"isDraft": {
+							"read": AccessType.OVERSEER,
+							"write": AccessType.OVERSEER
+						},
+						"name": {
+							"read": AccessType.OVERSEER,
+							"write": AccessType.OVERSEER
+						},
+						"description": {
+							"read": AccessType.OVERSEER,
+							"write": AccessType.OVERSEER
+						},
+						"actions": {
+							"read": AccessType.OVERSEER,
+							"write": AccessType.OVERSEER
+						},
+						"accessInfo": {
+							"read": AccessType.OVERSEER,
+							"write": AccessType.OVERSEER
+						}
 					},
 					"customer": {
 					  "isDraft": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "name": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "title": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "mobile": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "email": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "birthdate": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "address": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "personalId": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "assignee": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "idImage": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "description": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "documents": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  }
 					},
 					"property": {
 					  "isDraft": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "propertyType": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "constructionStage": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "country": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "city": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "zone": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "builder": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "assignee": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "title": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "address": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "description": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "startOfConstruction": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "endOfConstruction": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "landArea": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "images": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "documents": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "imageThumbnail": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  }
 					},
 					"unit": {
 					  "isDraft": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "unitType": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "availability": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "country": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "city": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "zone": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "offeringType": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "price": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "currency": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "property": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "assignee": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "unitExtra": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "title": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "address": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "description": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "livingRoomCount": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "kitchenCount": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "bedroomCount": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "bathroomCount": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "floorCount": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "grossArea": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "interiorArea": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "landArea": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "images": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "documents": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "imageThumbnail": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  }
 					},
 					"order": {
 					  "isDraft": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "currency": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "customer": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "units": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "paymentMethod": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "orderStatus": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "totalAmount": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  },
 					  "assignee": {
-						"read": 240,
-						"write": 240
+						"read": AccessType.OVERSEER,
+						"write": AccessType.OVERSEER
 					  }
 					}
 				  }
