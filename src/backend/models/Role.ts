@@ -49,7 +49,7 @@ class Role extends Model<RoleData> {
 						read: AccessType.SELFISH,
 						write: AccessType.SELFISH
 					},
-					"image": {
+					"images": {
 						read: AccessType.SELFISH,
 						write: AccessType.SELFISH
 					},

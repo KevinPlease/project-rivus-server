@@ -88,7 +88,7 @@ const getDefaultData = (domain: string) => {
 						"read": 4,
 						"write": 4
 					  },
-					  "details.image": {
+					  "details.images": {
 						"read": 4,
 						"write": 4
 					  },
