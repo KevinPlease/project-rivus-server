@@ -46,7 +46,7 @@ const getDefaultData = (domain: string) => {
 								"read": AccessType.SELFISH,
 								"write": AccessType.SELFISH
 							},
-							"details.image": {
+							"details.images": {
 								"read": AccessType.SELFISH,
 								"write": AccessType.SELFISH
 							},
