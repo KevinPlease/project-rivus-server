@@ -46,27 +46,27 @@ const getDefaultData = (domain: string) => {
 								"read": AccessType.SELFISH,
 								"write": AccessType.SELFISH
 							},
-							"details.images": {
+							"images": {
 								"read": AccessType.SELFISH,
 								"write": AccessType.SELFISH
 							},
-							"details.email": {
+							"email": {
 								"read": AccessType.SELFISH,
 								"write": AccessType.SELFISH
 							},
-							"details.username": {
+							"username": {
 								"read": AccessType.SELFISH,
 								"write": AccessType.SELFISH
 							},
-							"details.password": {
+							"password": {
 								"read": AccessType.SELFISH,
 								"write": AccessType.SELFISH
 							},
-							"details.phone": {
+							"phone": {
 								"read": AccessType.SELFISH,
 								"write": AccessType.SELFISH
 							},
-							"details.token": {
+							"token": {
 								"read": AccessType.SELFISH,
 								"write": AccessType.SELFISH
 							},
