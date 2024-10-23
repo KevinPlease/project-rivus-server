@@ -88,27 +88,27 @@ const getDefaultData = (domain: string) => {
 						"read": 4,
 						"write": 4
 					  },
-					  "details.images": {
+					  "images": {
 						"read": 4,
 						"write": 4
 					  },
-					  "details.email": {
+					  "email": {
 						"read": 4,
 						"write": 4
 					  },
-					  "details.username": {
+					  "username": {
 						"read": 4,
 						"write": 4
 					  },
-					  "details.password": {
+					  "password": {
 						"read": 4,
 						"write": 4
 					  },
-					  "details.phone": {
+					  "phone": {
 						"read": 4,
 						"write": 4
 					  },
-					  "details.token": {
+					  "token": {
 						"read": 4,
 						"write": 4
 					  },
