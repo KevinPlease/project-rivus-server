@@ -29,6 +29,10 @@ class Role extends Model<RoleData> {
 				[User.ROLE]: {
 					read: AccessType.SELFISH,
 					write: AccessType.SELFISH
+				},
+				[Role.ROLE]: {
+					read: AccessType.SELFISH,
+					write: AccessType.SELFISH
 				}
 			},
 			fieldAccess: {
@@ -70,6 +74,28 @@ class Role extends Model<RoleData> {
 						write: AccessType.SELFISH
 					},
 					"token": {
+						read: AccessType.SELFISH,
+						write: AccessType.SELFISH
+					}
+				},
+				[Role.ROLE]: {
+					"isDraft": {
+						read: AccessType.SELFISH,
+						write: AccessType.SELFISH
+					},
+					"name": {
+						read: AccessType.SELFISH,
+						write: AccessType.SELFISH
+					},
+					"description": {
+						read: AccessType.SELFISH,
+						write: AccessType.SELFISH
+					},
+					"actions": {
+						read: AccessType.SELFISH,
+						write: AccessType.SELFISH
+					},
+					"accessInfo": {
 						read: AccessType.SELFISH,
 						write: AccessType.SELFISH
 					}
