@@ -133,14 +133,11 @@ class UserController extends Controller {
 		const userRepo = UserRepo.getInstance(say);
 
 		const reqBody = request.body;
-		const userId = this.getOwningUserId(say);
-		
 		let operation: Operation = { status: "failure", message: "Bad Request!" };
 		if (reqBody.oldPassword && reqBody.newPassword) {
-			operation = await userRepo.changePassword(userId, reqBody.oldPassword, reqBody.newPassword, say);
+			operation = await userRepo.changePassword(reqBody._id, reqBody.oldPassword, reqBody.newPassword, say);
 		} else {
-			const userData = reqBody as UserData;
-			operation = await userRepo.editData(userId, userData, say);
+			operation = await userRepo.editData(reqBody._id, reqBody.data, say);
 		}
 		
 		return response.sendByInfo(operation.status, operation.message);
