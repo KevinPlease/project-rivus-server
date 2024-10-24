@@ -71,6 +71,8 @@ class UserRepo extends BaseDocimgRepo<UserData> {
 
 	public async add(model: User, say: MessengerFunction): Promise<OperationStatus> {
 		this.subscribeOnce(ERepoEvents.BEFORE_ADD, async (source:Object, m: { model: User }) => {
+			if (model.data.isDraft) return "success";
+
 			const userOperation = await this.validateRequestForNewUser(m.model.data.email);
 			if (userOperation.status === "failure") return "failure";
 			
