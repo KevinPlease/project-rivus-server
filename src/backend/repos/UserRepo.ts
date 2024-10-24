@@ -5,6 +5,7 @@ import MongoCollection from "../../mongo/MongoCollection";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
 import { Operation, OperationStatus } from "../../types/Operation";
 import IRepoMiddleware from "../interfaces/IRepoMiddleware";
+import { IRepoOptions } from "../interfaces/IRepository";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { User, UserData } from "../models/User";
@@ -22,7 +23,8 @@ class UserRepo extends BaseDocimgRepo<UserData> {
 	private _middleware?: IRepoMiddleware;
 
 	public static create(collection: MongoCollection, domain: string) {
-		const userRepo = new UserRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain);
+		const options: IRepoOptions = { needsDisplayIds: true, needsDraftModels: true };
+		const userRepo = new UserRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
 		
 		userRepo._middleware = new PrivilegeKeeper()
 
