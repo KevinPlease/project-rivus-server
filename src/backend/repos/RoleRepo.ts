@@ -8,17 +8,26 @@ import { ModelCore } from "../../core/Model";
 import { Access, RepoAccess } from "../types/Access";
 import { OperationStatus } from "../../types/Operation";
 import { getDefaultData } from "../data/roles";
+import { Dictionary, GenericDictionary } from "../../types/Dictionary";
+import { IRepoOptions } from "../interfaces/IRepository";
 
 class RoleRepo extends BaseRepo<RoleData> {
 	public static REPO_NAME = "roles";
 	public static MODEL_ROLE_NAME = Role.ROLE;
 
 	public static create(collection: MongoCollection, domain: string) {
-		return new RoleRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain);
+		const options: IRepoOptions = { needsDisplayIds: true, needsDraftModels: true };
+		return new RoleRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
 	}
 
 	public static getInstance(say: MessengerFunction): RoleRepo {
 		return super.getInstance(say) as RoleRepo;
+	}
+
+	public async getFormDetails(say: MessengerFunction): Promise<GenericDictionary<Dictionary[]>> {
+		const userRepo = UserRepo.getInstance(say);
+		const assignee = await userRepo.getSimplifiedMany(say);
+		return { assignee };
 	}
 
 	public async isActionPresent(actionId: string, roleId: string | ObjectId): Promise<boolean> {
