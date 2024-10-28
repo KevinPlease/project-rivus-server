@@ -1,7 +1,7 @@
 import { Model } from "../../core/Model";
 import Metadata from "../../core/types/Metadata";
+import ExObject from "../../shared/Object";
 import { MessengerFunction } from "../../Messenger";
-import { RoleRepo } from "../repos/RoleRepo";
 import { Access, AccessType } from "../types/Access";
 import OwnershipInfo from "../types/OwnershipInfo";
 import { User } from "./User";
@@ -19,8 +19,27 @@ class Role extends Model<RoleData> {
 	public static ROLE = "role";
 	public static PUBLIC = "guest";
 
+	static emptyData(): RoleData {
+		return {
+			isDraft: true,
+			name: "",
+			description: "",
+			accessInfo: {
+				global: {},
+				fieldAccess: {}
+			},
+			actions: []
+		};
+	}
+
 	public static create(say: MessengerFunction, data: RoleData, ownership: OwnershipInfo, meta?: Metadata): Role {
-		return Model._create(say, data, RoleRepo.REPO_NAME, Role.ROLE, { domain: ownership.domain }, meta);
+		if (ExObject.isDictEmpty(data)) data = Role.emptyData();
+
+		if (!ownership.branch) throw "Role: Missing branch from ownership info!";
+
+		// NOTE: cyclic dependency if importing UserRepo, therefore we use direct dependency injection
+		const repo = say(this, "ask", "repo", "roles");
+		return Role._create(say, data, repo.repoName, Role.ROLE, ownership, meta);
 	}
 
 	public static defaultAccessInfo(): Access {
