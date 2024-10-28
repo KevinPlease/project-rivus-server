@@ -39,10 +39,22 @@ class CounterRepo extends BaseRepo<CounterData> {
 		const count = await this.collection.count({});
 		if (count > 0) return "success";
 
-		console.error("CounterRepo#addDefaultData -> No models to add counter information!");
-		return "failure";
-
-		const data: CounterData[] = [];
+		const data: CounterData[] = [
+			{
+				counter: 1,
+				isDraft: false,
+				prefix: "RU",
+				role: "user",
+				value: "UU 1"
+			},
+			{
+				counter: 1,
+				isDraft: false,
+				prefix: "RR",
+				role: "role",
+				value: "RR 1"
+			}
+		];
 		return this.addMany(data, say);
 	}
 }
