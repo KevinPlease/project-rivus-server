@@ -5,6 +5,9 @@ import { BaseRepo } from "./BaseRepo";
 import { MessengerFunction } from "../../Messenger";
 import { getDefaultData } from "../data/actions";
 import { OperationStatus } from "../../types/Operation";
+import { Filter } from "../types/Filter";
+import { Dictionary } from "../../types/Dictionary";
+import { PaginationOptions } from "../types/PaginationOptions";
 
 class ActionRepo extends BaseRepo<ActionData> {
 	public static REPO_NAME = "actions";
@@ -16,6 +19,16 @@ class ActionRepo extends BaseRepo<ActionData> {
 
 	public static getInstance(say: MessengerFunction): ActionRepo {
 		return super.getInstance(say) as ActionRepo;
+	}
+
+	public getSimplifiedMany(say: MessengerFunction, filter?: Filter | Dictionary, pagination?: PaginationOptions, project?: Dictionary): Promise<Dictionary[]> {
+		if (!project) project = {};
+		
+		const overrideProject = {
+			"data.description": 1,
+			...project
+		};
+		return super.getSimplifiedMany(say, filter, pagination, overrideProject);
 	}
 
 	public async getActionIdByName(name: string): Promise<string> {
