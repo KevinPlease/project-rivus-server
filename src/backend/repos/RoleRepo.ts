@@ -10,6 +10,7 @@ import { OperationStatus } from "../../types/Operation";
 import { getDefaultData } from "../data/roles";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
 import { IRepoOptions } from "../interfaces/IRepository";
+import { ActionRepo } from "./ActionRepo";
 
 class RoleRepo extends BaseRepo<RoleData> {
 	public static REPO_NAME = "roles";
@@ -25,9 +26,12 @@ class RoleRepo extends BaseRepo<RoleData> {
 	}
 
 	public async getFormDetails(say: MessengerFunction): Promise<GenericDictionary<Dictionary[]>> {
+		const actionRepo = ActionRepo.getInstance(say);
+		const action = await actionRepo.getSimplifiedMany(say);
+
 		const userRepo = UserRepo.getInstance(say);
 		const assignee = await userRepo.getSimplifiedMany(say);
-		return { assignee };
+		return { assignee, action };
 	}
 
 	public async isActionPresent(actionId: string, roleId: string | ObjectId): Promise<boolean> {
