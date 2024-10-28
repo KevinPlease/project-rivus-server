@@ -11,6 +11,8 @@ import { getDefaultData } from "../data/roles";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
 import { IRepoOptions } from "../interfaces/IRepository";
 import { ActionRepo } from "./ActionRepo";
+import { PaginationOptions } from "../types/PaginationOptions";
+import { Filter } from "../types/Filter";
 
 class RoleRepo extends BaseRepo<RoleData> {
 	public static REPO_NAME = "roles";
@@ -23,6 +25,16 @@ class RoleRepo extends BaseRepo<RoleData> {
 
 	public static getInstance(say: MessengerFunction): RoleRepo {
 		return super.getInstance(say) as RoleRepo;
+	}
+
+	public getSimplifiedMany(say: MessengerFunction, filter?: Filter | Dictionary, pagination?: PaginationOptions, project?: Dictionary): Promise<Dictionary[]> {
+		if (!project) project = {};
+		
+		const overrideProject = {
+			"data.description": 1,
+			...project
+		};
+		return super.getSimplifiedMany(say, filter, pagination, overrideProject);
 	}
 
 	public async getFormDetails(say: MessengerFunction): Promise<GenericDictionary<Dictionary[]>> {
