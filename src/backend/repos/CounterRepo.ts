@@ -45,7 +45,7 @@ class CounterRepo extends BaseRepo<CounterData> {
 				isDraft: false,
 				prefix: "RU",
 				role: "user",
-				value: "UU 1"
+				value: "RU 1"
 			},
 			{
 				counter: 1,
