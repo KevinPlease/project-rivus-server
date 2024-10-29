@@ -24,11 +24,8 @@ class Role extends Model<RoleData> {
 			isDraft: true,
 			name: "",
 			description: "",
-			accessInfo: {
-				global: {},
-				fieldAccess: {}
-			},
-			actions: []
+			accessInfo: Role.defaultAccessInfo(),
+			actions: Role.defaultActions()
 		};
 	}
 
