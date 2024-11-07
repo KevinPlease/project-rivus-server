@@ -120,11 +120,12 @@ class PdfGenerator implements IDocGenerator {
 
 	public addFooter(detailedFind: DetailedFind<Model<Dictionary>> | Dictionary): PdfGenerator {
 		this._doc
+			.font("Helvetica")	
 			.fontSize(10)
 			.text(
 				"Gjeneruar automatikisht nga sistemi Catasta",
 				50,
-				780,
+				765,
 				{ align: "center", width: 500 }
 			);
 		

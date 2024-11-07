@@ -177,16 +177,15 @@ class OrderPdf extends PdfGenerator {
 	private addUnits(detailedFind: DetailedFind<Order>): OrderPdf {
 		const doc = this.doc;
 		const unitsStruct = doc.struct("Units");
-		const imagesStruct = doc.struct("Images");
 		doc.addStructure(unitsStruct);
-		doc.addStructure(imagesStruct);
 		
 		const order = detailedFind.model;
 		const formDetails = detailedFind.formDetails;
 
 		const unitsStartY = 100;
-		const imagesStartY = 150;
-		const imagesSpacing = 250;
+		const imagesHeaderStartY = 170;
+		const imagesStartY = 200;
+		const imagesSpacing = 320;
 		for (let i = 0; i < order.data.units.length; i++) {
 			const unit = order.data.units[i];
 			const unitData = unit.data;
@@ -221,31 +220,30 @@ class OrderPdf extends PdfGenerator {
 						.text(unitData.grossArea.toFixed(), 150, unitsStartY + 30);
 				})
 			);
-
+			
 			const images = unit.data.images || [];
 			if (images.length === 0) continue;
 			
-			imagesStruct.add(
+			unitsStruct.add(
 				doc.struct("H2", {}, () => {
-					doc.font("Helvetica-Bold").fontSize(16).text("Images", 50, imagesStartY);
+					doc.font("Helvetica-Bold").fontSize(16).text("Imazhet", 50, imagesHeaderStartY);
 				})
 			);
 
 			for (let y = 0; y < images.length; y++) {
 				const curImage = images[y];
 				const file = File.fromInfo(curImage.fsPath, curImage.id);
-				imagesStruct.add(
+				unitsStruct.add(
 					doc.struct(
 						`Image ${y + 1}`,
 						{ alt: "Unit Image." },
-						() => doc.image(file.getFullPath(), (doc.page.width / 4) - 30, imagesStartY + (y * imagesSpacing), { fit: [300, 300], valign: "center", align: "center" })
+						() => doc.image(file.getFullPath(), 150, imagesStartY + (y * imagesSpacing), { fit: [300, 300] })
 					)
 				)
 			}
 		}
-
+		
 		unitsStruct.end();
-		imagesStruct.end();
 
 		return this;
 	}
