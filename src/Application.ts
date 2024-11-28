@@ -38,6 +38,7 @@ import { ActionRepo } from "./backend/repos/ActionRepo";
 import { UserRepo } from "./backend/repos/UserRepo";
 import { RoleRepo } from "./backend/repos/RoleRepo";
 import { CounterRepo } from "./backend/repos/CounterRepo";
+import { NotificationRepo } from "./backend/repos/NotificationRepo";
 import { AvailabilityRepo } from "./backend/repos/AvailabilityRepo";
 import { BuilderRepo } from "./backend/repos/BuilderRepo";
 import { CityRepo } from "./backend/repos/CityRepo";
@@ -53,8 +54,8 @@ import { UnitRepo } from "./backend/repos/UnitRepo";
 import { UnitTypeRepo } from "./backend/repos/UnitTypeRepo";
 import { UnitExtraRepo } from "./backend/repos/UnitExtraRepo";
 import { unitAvailabilityFor } from "./backend/data/availability";
-import { NotificationRepo } from "./backend/repos/NotificationRepo";
 import { OrderStatusRepo } from "./backend/repos/OrderStatusRepo";
+
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
 class Application extends Communicator {

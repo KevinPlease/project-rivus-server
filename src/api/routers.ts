@@ -7,6 +7,8 @@ import OrderRouter from "./order/UnitRouter";
 import PropertyRouter from "./property/PropertyRouter";
 import UnitRouter from "./unit/UnitRouter";
 import UserRouter from "./user/UserRouter";
+import NotificationRouter from "./notification/NotificationRouter";
+
 
 const ROUTERS: typeof Router[] = [
 	AuthRouter,

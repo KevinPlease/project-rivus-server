@@ -238,13 +238,13 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 			meta.timeCreated = meta.timeUpdated;
 		}
 
-		await this.dispatch(ERepoEvents.BEFORE_UPDATE, { id, data, meta });
+		await this.dispatchOnce(ERepoEvents.BEFORE_UPDATE, { id, data, meta });
 
 		const query = MongoQuery.createUpdateData({ meta, data });
 		const idQuery = { _id: new ObjectId(id) };
 		const status = await this.update(idQuery, query, say);
 		
-		await this.dispatch(ERepoEvents.AFTER_UPDATE, { model: existingModel, data, meta, status });
+		await this.dispatchOnce(ERepoEvents.AFTER_UPDATE, { model: existingModel, data, meta, status });
 		
 		return { status, message: status ? "Success!" : "Failed to Update!" };
 	}
