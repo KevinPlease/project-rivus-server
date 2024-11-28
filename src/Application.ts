@@ -38,10 +38,17 @@ import { ActionRepo } from "./backend/repos/ActionRepo";
 import { UserRepo } from "./backend/repos/UserRepo";
 import { RoleRepo } from "./backend/repos/RoleRepo";
 import { CounterRepo } from "./backend/repos/CounterRepo";
+import { NotificationRepo } from "./backend/repos/NotificationRepo";
+
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
 class Application extends Communicator {
-	private static DOMAIN_REPOSITORIES = [ UserRepo, RoleRepo, CounterRepo ];
+	private static DOMAIN_REPOSITORIES = [
+		CounterRepo,
+		RoleRepo,
+		UserRepo,
+		NotificationRepo
+	];
 	
 	private _domainCache: Cache<Domain>;
 	private _folder: Folder;
