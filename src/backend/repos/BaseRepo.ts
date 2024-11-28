@@ -20,7 +20,9 @@ enum ERepoEvents {
 	BEFORE_UPDATE = "BEFORE_UPDATE",
 	AFTER_UPDATE = "AFTER_UPDATE",
 	BEFORE_ADD = "BEFORE_ADD",
-	AFTER_ADD = "AFTER_ADD"
+	AFTER_ADD = "AFTER_ADD",
+	BEFORE_REMOVE = "BEFORE_REMOVE",
+	AFTER_REMOVE = "AFTER_REMOVE"
 }
 
 class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRepository<ModelData> {
@@ -192,7 +194,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		model.meta.timeCreated = timeCreated;
 
 		const operation: Operation = await this.dispatchOnce(ERepoEvents.BEFORE_ADD, { model });
-		if (operation.status === "failure") return "failure";
+		if (operation?.status === "failure") return "failure";
 
 		const insertedId = await this._create(model, say);
 		if (!insertedId) return "failure";
@@ -210,7 +212,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		const domainName = this._domain;
 		const modelRole = this._modelRole;
 		const repoName = this._repoName;
-		const cores = dataArr.map(data => Model._create(say, data, repoName, modelRole, { domain: domainName, branch: branch.data.name }).toNoIdJSON());
+		const cores = dataArr.map(data => Model._create(say, data, repoName, modelRole, { domain: domainName, branch: branch.data?.name }).toNoIdJSON());
 		return this._collection.insertMany(cores);
 	}
 
@@ -223,7 +225,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		return this.update({ _id: new ObjectId(id) }, model, say);
 	}
 
-	public async editData(id: string, data: ModelData, say: MessengerFunction): Promise<Operation> {
+	public async editData(id: string, data: Partial<ModelData>, say: MessengerFunction): Promise<Operation> {
 		if (this.options.needsLastUpdateTime) {
 			this._lastUpdated = Date.now();
 		}
@@ -236,13 +238,13 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 			meta.timeCreated = meta.timeUpdated;
 		}
 
-		await this.dispatch(ERepoEvents.BEFORE_UPDATE, { id, data, meta });
+		await this.dispatchOnce(ERepoEvents.BEFORE_UPDATE, { id, data, meta });
 
 		const query = MongoQuery.createUpdateData({ meta, data });
 		const idQuery = { _id: new ObjectId(id) };
 		const status = await this.update(idQuery, query, say);
 		
-		await this.dispatch(ERepoEvents.AFTER_UPDATE, { model: existingModel, data, meta, status });
+		await this.dispatchOnce(ERepoEvents.AFTER_UPDATE, { model: existingModel, data, meta, status });
 		
 		return { status, message: status ? "Success!" : "Failed to Update!" };
 	}
@@ -266,10 +268,13 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		return { count, formDetails, models: cores };
 	}
 
-	public getSimplifiedMany(say: MessengerFunction, filter?: Filter | Dictionary, pagination?: PaginationOptions): Promise<Dictionary[]> {
+	public getSimplifiedMany(say: MessengerFunction, filter?: Filter | Dictionary, pagination?: PaginationOptions, project?: Dictionary): Promise<Dictionary[]> {
 		const query = this.createQueryFromFilter(filter);
-		const project = { "_id": 1, "data.name": 1, "repository": 1 };
-		return this._readMany(say, query, project, undefined, pagination);
+		
+		if (!project) project = {};
+		
+		const overrideProject = { "_id": 1, "data.name": 1, "repository": 1, "meta": 1, ...project };
+		return this._readMany(say, query, overrideProject, undefined, pagination);
 	}
 
 	public async getFormDetails(say: MessengerFunction): Promise<GenericDictionary<Dictionary[]>> {
@@ -278,8 +283,14 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		return { source: [], assignee: [] };
 	}
 
-	public remove(id: string, say: MessengerFunction): Promise<OperationStatus> {
-		return this._delete({ _id: new ObjectId(id) }, say);
+	public async remove(id: string, say: MessengerFunction): Promise<OperationStatus> {
+		await this.dispatchOnce(ERepoEvents.BEFORE_REMOVE, { id });
+		
+		const status = await this._delete({ _id: new ObjectId(id) }, say);
+		
+		this.dispatchOnce(ERepoEvents.AFTER_REMOVE, { id, status });
+		
+		return status;
 	}
 
 	public async findById(id: string, say: MessengerFunction, projection?: Dictionary): Promise<Model<ModelData> | null> {
@@ -317,6 +328,11 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		const creator = say(this, "ask", "ownUserId");
 		const query = { "data.isDraft": true, "meta.creator": creator };
 		return this.detailedFind(query, say);
+	}
+
+	public async addDefaultData(say: MessengerFunction): Promise<OperationStatus> {
+		console.info(`${this.repoName}#addDefaultData -> CHECK if this should be custom implemented?`);
+		return "success";
 	}
 
 }
