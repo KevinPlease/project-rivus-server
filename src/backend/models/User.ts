@@ -16,7 +16,7 @@ type UserData = {
 	name: string;
 	role: Role | null;
 	roles: BranchRole;
-	image: ImageDetails
+	images: ImageDetails[];
 	email: string;
 	username: string;
 	password: string;
@@ -40,19 +40,7 @@ class User extends Model<UserData> {
 			name: "",
 			role: null,
 			roles: {},
-			image: {
-				file: {
-					name: "",
-					size: 0,
-					type: ""
-				},
-				alt: "",
-				src: "",
-				url: "",
-				isImg: true,
-				id: "",
-				fsPath: ""
-			},
+			images: [],
 			username: "",
 			email: "",
 			password: "",

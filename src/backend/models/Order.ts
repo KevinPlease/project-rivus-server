@@ -4,12 +4,12 @@ import IdCreator from "../IdCreator";
 import ExObject from "../../shared/Object";
 import Metadata from "../../core/types/Metadata";
 import OwnershipInfo from "../types/OwnershipInfo";
-import { OrderRepo } from "../repos/OrderRepo";
 import { UnitData } from "./Unit";
 
 type OrderData = {
 	isDraft?: boolean;
 	currency: string;
+	status: string;
 	date: number;
     customer: string;
     units: ModelCore<UnitData>[];
@@ -32,6 +32,7 @@ class Order extends Model<OrderData> {
 		return {
 			isDraft: true,
 			currency: "",
+			status: "",
 			customer: "",
 			date: Date.now(),
 			units: [],
@@ -43,7 +44,7 @@ class Order extends Model<OrderData> {
 
 	public static create(say: MessengerFunction, data: OrderData, ownership: OwnershipInfo, meta?: Metadata): Order {
 		if (ExObject.isDictEmpty(data)) data = Order.emptyData();
-		const repository = IdCreator.createBranchedRepoId(OrderRepo.REPO_NAME, ownership.branch || "", ownership.domain);
+		const repository = IdCreator.createBranchedRepoId("orders", ownership.branch || "", ownership.domain);
 
 		const now = Date.now();
 		const creator = say(this, "ask", "ownUserId");

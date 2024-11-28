@@ -5,7 +5,6 @@ import ExObject from "../../shared/Object";
 import Metadata from "../../core/types/Metadata";
 import OwnershipInfo from "../types/OwnershipInfo";
 import { DocumentDetails } from "../types/DocumentDetails";
-import { PropertyRepo } from "../repos/PropertyRepo";
 import { ImageDetails } from "../types/ImageDetails";
 
 type PropertyData = {
@@ -65,7 +64,7 @@ class Property extends Model<PropertyData> {
 
 	public static create(say: MessengerFunction, data: PropertyData, ownership: OwnershipInfo, meta?: Metadata): Property {
 		if (ExObject.isDictEmpty(data)) data = Property.emptyData();
-		const repository = IdCreator.createBranchedRepoId(PropertyRepo.REPO_NAME, ownership.branch || "", ownership.domain);
+		const repository = IdCreator.createBranchedRepoId("properties", ownership.branch || "", ownership.domain);
 
 		const now = Date.now();
 		const creator = say(this, "ask", "ownUserId");

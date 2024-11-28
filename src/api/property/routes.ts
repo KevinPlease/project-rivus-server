@@ -35,6 +35,9 @@ const ROUTES: RawRoutesInfo = {
 		},
 		"images": {
 			"actionName": "Add Property Images"
+		},
+		"documents": {
+			"actionName": "Add Property Documents"
 		}
 	},
 

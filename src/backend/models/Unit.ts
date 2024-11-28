@@ -5,7 +5,6 @@ import ExObject from "../../shared/Object";
 import Metadata from "../../core/types/Metadata";
 import OwnershipInfo from "../types/OwnershipInfo";
 import { DocumentDetails } from "../types/DocumentDetails";
-import { UnitRepo } from "../repos/UnitRepo";
 import { ImageDetails } from "../types/ImageDetails";
 
 type UnitData = {
@@ -70,7 +69,7 @@ class Unit extends Model<UnitData> {
 
 	public static create(say: MessengerFunction, data: UnitData, ownership: OwnershipInfo, meta?: Metadata): Unit {
 		if (ExObject.isDictEmpty(data)) data = Unit.emptyData();
-		const repository = IdCreator.createBranchedRepoId(UnitRepo.REPO_NAME, ownership.branch || "", ownership.domain);
+		const repository = IdCreator.createBranchedRepoId("units", ownership.branch || "", ownership.domain);
 
 		const now = Date.now();
 		const creator = say(this, "ask", "ownUserId");

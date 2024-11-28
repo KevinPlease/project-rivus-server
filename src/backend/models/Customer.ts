@@ -5,7 +5,6 @@ import ExObject from "../../shared/Object";
 import Metadata from "../../core/types/Metadata";
 import OwnershipInfo from "../types/OwnershipInfo";
 import { DocumentDetails } from "../types/DocumentDetails";
-import { CustomerRepo } from "../repos/CustomerRepo";
 
 type CustomerData = {
 	isDraft?: boolean;
@@ -49,7 +48,7 @@ class Customer extends Model<CustomerData> {
 
 	public static create(say: MessengerFunction, data: CustomerData, ownership: OwnershipInfo, meta?: Metadata): Customer {
 		if (ExObject.isDictEmpty(data)) data = Customer.emptyData();
-		const repository = IdCreator.createBranchedRepoId(CustomerRepo.REPO_NAME, ownership.branch || "", ownership.domain);
+		const repository = IdCreator.createBranchedRepoId("customers", ownership.branch || "", ownership.domain);
 
 		const now = Date.now();
 		const creator = say(this, "ask", "ownUserId");

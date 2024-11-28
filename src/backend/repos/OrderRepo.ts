@@ -1,13 +1,13 @@
+import { OrderPdf } from "../../generators/OrderPdf";
 import { MessengerFunction } from "../../Messenger";
 import MongoCollection from "../../mongo/MongoCollection";
+import File from "../../files/File";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
 import { Operation, OperationStatus } from "../../types/Operation";
 import { IRepoOptions } from "../interfaces/IRepository";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { Order, OrderData } from "../models/Order";
-import { Filter } from "../types/Filter";
-import { FilterType } from "../types/FilterType";
 import { AvailabilityRepo } from "./AvailabilityRepo";
 import { BaseDocimgRepo } from "./BaseDocRepo";
 import { ERepoEvents } from "./BaseRepo";
@@ -15,6 +15,10 @@ import { CustomerRepo } from "./CustomerRepo";
 import { PaymentMethodRepo } from "./PaymentMethodRepo";
 import { UnitRepo } from "./UnitRepo";
 import { UserRepo } from "./UserRepo";
+import { OrderStatusRepo } from "./OrderStatusRepo";
+import { Unit } from "../models/Unit";
+import { PropertyRepo } from "./PropertyRepo";
+import { UnitTypeRepo } from "./UnitTypeRepo";
 
 
 class OrderRepo extends BaseDocimgRepo<OrderData> {
@@ -40,7 +44,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 			// NOTE: Test log to determine if this subscriber is called from different model operations
 			if (id !== m.model.id) throw "MISMATCHING IDS IN SUBSCRIBER EVENT!";
 
-			self.dispatch("order touched", { type: "creation", order: m.model, data });
+			self.dispatch("order touched", { type: "update", order: m.model, data });
 			return "success";
 		});
 
@@ -55,7 +59,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 			// NOTE: Test log to determine if this subscriber is called from different model operations
 			if (id !== m.id) throw "MISMATCHING IDS IN SUBSCRIBER EVENT!";
 
-			if (m.status) self.dispatch("order touched", { type: "deletion", order: existingModel });
+			if (m.status) self.dispatch("order touched", { type: "delete", order: existingModel });
 			return "success";
 		});
 		return super.remove(id, say);
@@ -66,6 +70,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		const customerRepoId = CustomerRepo.getInstance(say).id;
 		const availabilityRepoId = AvailabilityRepo.getInstance(say).id;
 		const paymentMethodRepoId = PaymentMethodRepo.getInstance(say).id;
+		const orderStatusRepoId = OrderStatusRepo.getInstance(say).id;
 
 		const project = {
 			"data.name": 1,
@@ -91,6 +96,11 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 				repoToJoinFrom: paymentMethodRepoId,
 				fieldToSet: "data.paymentMethod",
 				project
+			},
+			{
+				repoToJoinFrom: orderStatusRepoId,
+				fieldToSet: "data.orderStatus",
+				project
 			}
 		];
 
@@ -114,6 +124,15 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		const paymentMethodRepo = PaymentMethodRepo.getInstance(say);
 		const paymentMethod = await paymentMethodRepo.getSimplifiedMany(say);
 
+		const orderStatusRepo = OrderStatusRepo.getInstance(say);
+		const orderStatus = await orderStatusRepo.getSimplifiedMany(say);
+		
+		const propertyRepo = PropertyRepo.getInstance(say);
+		const property = await propertyRepo.getSimplifiedMany(say);
+		
+		const unitTypeRepo = UnitTypeRepo.getInstance(say);
+		const unitType = await unitTypeRepo.getSimplifiedMany(say);
+
 		const unitRepo = UnitRepo.getInstance(say); 
 		// const unitFilter: Filter = {
 		// 	type: FilterType.CONJUNCTION,
@@ -127,7 +146,34 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		// };
 		const unit = await unitRepo.getSimplifiedMany(say);
 
-		return { assignee, customer, availability, paymentMethod, unit };
+		return { assignee, customer, availability, paymentMethod, unit, orderStatus, property, unitType };
+	}
+
+	public async generateReportById(owningModelId: string, id: string, say: MessengerFunction): Promise<Operation> {
+		const detailedOrder = await this.detailedFindById(owningModelId, say);
+		if (!detailedOrder) return { status: "failure", message: "No Order found for that id." };
+
+		const domain = say(this, "ask", "ownDomain");
+		const branch = say(this, "ask", "ownBranch");
+		const fileId = File.basicName(id + ".pdf");
+		const existingReport = await this.getFileReportById(branch.data.name, owningModelId, fileId, say);
+		if (existingReport) return { status: "success", message: existingReport };
+		
+		const orderPdf = new OrderPdf({ domain, branch }, say);
+		const unitRepo = UnitRepo.getInstance(say);
+		const units = await Promise.all(
+			detailedOrder.model.data.units.map(u => unitRepo.findById(u._id || "", say))
+		);
+		if (units.some(u => u === null || u === undefined)) {
+			return { status: "failure", message: "Problem getting units' information!" };
+		} 
+
+		detailedOrder.model.data.units = units as Unit[];
+		const pdfGenOperation = await orderPdf.generate(detailedOrder, id, say);
+		if (pdfGenOperation.status === "failure") return { status: "failure", message: "Problem generating the report!" };
+
+		const reportFile = File.fromPath(pdfGenOperation.message);
+		return { status: "success", message: reportFile };
 	}
 
 }

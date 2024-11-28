@@ -10,7 +10,6 @@ import Path from "./Path";
 class Folder {
 	
 	public static SYS_FOLDER = "sys";
-	public static FS_SEPARATOR = process.platform === "win32" ? "\\" : "/";
 
 	private _path: string;
 	private _name: string;
@@ -23,11 +22,11 @@ class Folder {
 	public get path(): string { return this._path }
 
 	static nameFromPath(path: string): string {
-		return ExString.betweenLastTwo(path, Folder.FS_SEPARATOR);
+		return ExString.betweenLastTwo(path, Path.FS_SEPARATOR);
 	}
 
 	static createPath(say: MessengerFunction, ...args: any[]) : string {
-		const path = args.join(Folder.FS_SEPARATOR);
+		const path = args.join(Path.FS_SEPARATOR);
 		return SysPath.isAbsolute(path) ? path : Path.rootOf(path, say);
 	}
 

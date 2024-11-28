@@ -10,6 +10,7 @@ import { MessengerFunction } from "../Messenger";
 type ResponseTypes =
 	"success" |
 	"successFile" |
+	"successDownload" |
 	"noContent" |
 	"redirection" |
 	"badRequest" |
@@ -21,6 +22,7 @@ type ResponseTypes =
 const CODE_FOR_TYPE = {
 	success: 200,
 	successFile: 200,
+	successDownload: 200,
 	noContent: 204,
 	redirection: 307,
 	badRequest: 400,
@@ -51,6 +53,11 @@ class Response<Data> extends Communicator {
 	static successFile<Data>(res: ExpResponse, content?: Data) {
 		let response = Response.success<Data>(res, content);
 		response._resMethod = "sendFile";
+		return response;
+	}
+	static successDownload<Data>(res: ExpResponse, content?: Data) {
+		let response = Response.success<Data>(res, content);
+		response._resMethod = "download";
 		return response;
 	}
 	static noContent<Data>(res: ExpResponse, content?: Data) { return new Response<Data>(CODE_FOR_TYPE.noContent, res, content) }
@@ -113,7 +120,12 @@ class Response<Data> extends Communicator {
 
 	public setType(type: ResponseTypes): Response<Data> {
 		this._status = CODE_FOR_TYPE[type];
-		if (type === "successFile") this._resMethod = "sendFile";
+		if (type === "successFile") {
+			this._resMethod = "sendFile";
+		} else if (type === "successDownload") {
+			this._resMethod = "download";
+		}
+
 		return this;
 	}
 
@@ -122,7 +134,7 @@ class Response<Data> extends Communicator {
 		this._res.status(status);
 
 		const resMethod = this._resMethod;
-		const content = resMethod === "sendFile" ? this.content : { status, content: this.content };
+		const content = resMethod === "sendFile" || resMethod === "download" ? this.content : { status, content: this.content };
 
 		const result = Functions.doTryCatch(this._res, this._resMethod, content);
 		if (result === null) return Response.serverError(this._res, "WIP").send();

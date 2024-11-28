@@ -1,5 +1,6 @@
 import { Router } from "../network/Router";
 import AuthRouter from "./auth/AuthRouter";
+import RoleRouter from "./role/RoleRouter";
 import CustomerRouter from "./customer/CustomerRouter";
 import NotificationRouter from "./notification/NotificationRouter";
 import OrderRouter from "./order/UnitRouter";
@@ -11,6 +12,7 @@ const ROUTERS: typeof Router[] = [
 	AuthRouter,
 	UserRouter,
 	NotificationRouter,
+	RoleRouter,
 	CustomerRouter,
 	PropertyRouter,
 	UnitRouter,
