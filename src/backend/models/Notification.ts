@@ -7,22 +7,43 @@ import OwnershipInfo from "../types/OwnershipInfo";
 import IdCreator from "../IdCreator";
 import { ModelCore } from "../../core/Model";
 
+enum ENotificationSubject {
+    create = 101,
+    update = 102,
+    delete = 103
+}
+
+enum ENotificationPriority {
+    bottom = -2,
+    low = -1,
+    normal = 0,
+    high = 1,
+    top = 2
+}
+
+enum ENotificationType {
+    system = 1,
+    user = 2
+}
+
 type NotificationData = {
-    type: number;
-    title: string;
+    type: ENotificationType;
     content: Dictionary;
     isRead: boolean;
+    priority: ENotificationPriority;
+    subject: ENotificationSubject;
 };
 
 class Notification extends Model<NotificationData> {
     static ROLE = "notification";
 
-    static emptyData(): NotificationData {
+    public static emptyData(): NotificationData {
         return {
-            type: 1,
-            title: "",
+            type: ENotificationType.system,
             content: {},
-            isRead: false
+            isRead: false,
+            priority: ENotificationPriority.normal,
+            subject: ENotificationSubject.create
         };
     }
 
@@ -37,7 +58,23 @@ class Notification extends Model<NotificationData> {
         const core: ModelCore<NotificationData> = { _id: "", repository, role: Notification.ROLE, data, meta };
         return new Notification(core);
     }
+
+    public static forModel(say: MessengerFunction, model: Model<Dictionary>, subject: ENotificationSubject, priority: ENotificationPriority = ENotificationPriority.normal): Notification {
+        const now = Date.now();
+        const creator = say(this, "ask", "ownUserId");
+        const meta = { timeCreated: now, timeUpdated: now, creator };
+
+        const data = {
+            type: ENotificationType.system,
+            content: model,
+            isRead: false,
+            priority,
+            subject
+        };
+
+        return Notification.create(say, data, { domain: model.getDomainName(), branch: model.getBranchName() }, meta);
+    }
 }
 
-export { Notification };
+export { Notification, ENotificationPriority, ENotificationType, ENotificationSubject };
 export type { NotificationData };
