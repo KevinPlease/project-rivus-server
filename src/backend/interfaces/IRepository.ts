@@ -7,7 +7,7 @@ import { Operation } from "../../types/Operation";
 import { DetailedFind, DetailedGetMany } from "../types/DetailedFind";
 import { Filter } from "../types/Filter";
 import { PaginationOptions } from "../types/PaginationOptions";
-import IPrivilegeMiddleware from "./IRepoMiddleware";
+import IPrivilegeMiddleware from "./IPrivilegeMiddleware";
 
 interface IRepoOptions {
 	needsDisplayIds?: boolean;

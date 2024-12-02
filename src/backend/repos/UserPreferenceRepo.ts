@@ -1,6 +1,6 @@
 import { MessengerFunction } from "../../Messenger";
 import MongoCollection from "../../mongo/MongoCollection";
-import { UserPreference, UserPreferenceData } from "../models/UserPreference";
+import { EPreferenceType, UserPreference, UserPreferenceData } from "../models/UserPreference";
 import { BaseRepo } from "./BaseRepo";
 import { IRepoOptions } from "../interfaces/IRepository";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
@@ -18,6 +18,27 @@ class UserPreferenceRepo extends BaseRepo<UserPreferenceData> {
 
     public static getInstance(say: MessengerFunction): UserPreferenceRepo {
         return super.getInstance(say) as UserPreferenceRepo;
+    }
+
+    public async findByInfo(say: MessengerFunction, userId: string, type?: EPreferenceType, modelRole?: string): Promise<UserPreference | null> {
+        const query = { "data.user": userId };
+        
+        if (type) query["data.type"] = type;
+
+        const projection = modelRole ? {
+            "_id": 1,
+            "data.user": 1,
+            "data.type": 1,
+            [`data.content.${modelRole}`]: 1,
+            "repository": 1,
+            "meta": 1,
+            "displayId": 1
+        } : undefined;
+        
+        const core = await this._read(query, say, projection);
+        if (!core) return null;
+
+        return new UserPreference(core);
     }
 
     public createAggregation(query: Dictionary, say: MessengerFunction): Dictionary[] {
@@ -48,4 +69,4 @@ class UserPreferenceRepo extends BaseRepo<UserPreferenceData> {
     }
 }
 
-export { UserPreferenceRepo as UserPreferencesRepo };
+export { UserPreferenceRepo };

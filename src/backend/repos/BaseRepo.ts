@@ -7,7 +7,7 @@ import { ExString } from "../../shared/String";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
 import { OperationStatus, Operation } from "../../types/Operation";
 import IdCreator from "../IdCreator";
-import IPrivilegeMiddleware from "../interfaces/IRepoMiddleware";
+import IPrivilegeMiddleware from "../interfaces/IPrivilegeMiddleware";
 import IRepository, { IRepoOptions } from "../interfaces/IRepository";
 import { Branch } from "../models/Branch";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
@@ -90,7 +90,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		return result;
 	}
 	
-	private async _read(query: Dictionary, say: MessengerFunction, project?: Dictionary): Promise<ModelCore<ModelData> | null> {
+	public async _read(query: Dictionary, say: MessengerFunction, project?: Dictionary): Promise<ModelCore<ModelData> | null> {
 		const middleware = this.privilegeMiddleware;
 		const isSysCall = say(this, "ask", "isSysCall");
 		if (!middleware || isSysCall === true) return this._collection.findOne(query, project);
@@ -102,7 +102,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		return this._collection.findOneAsAggregation(aggregation);
 	}
 	
-	private async _readMany(say: MessengerFunction, query?: Dictionary, project?: Dictionary, sort?: Dictionary, pagination?: PaginationOptions): Promise<ModelCore<ModelData>[]> {
+	public async _readMany(say: MessengerFunction, query?: Dictionary, project?: Dictionary, sort?: Dictionary, pagination?: PaginationOptions): Promise<ModelCore<ModelData>[]> {
 		const middleware = this.privilegeMiddleware;
 		const isSysCall = say(this, "ask", "isSysCall");
 		if (!middleware || isSysCall === true) return this._collection.getMany(query, pagination, project, sort);
@@ -113,7 +113,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		const aggregation = MongoQuery.makePrivilegedAggregation(repoAccess, this._repoName, this._modelRole, query, say);
 		return this._collection.getManyAsAggregation(aggregation, pagination, sort, project);
 	}
-	private async _readManyAsAggregation(exAggregation: Dictionary[], say: MessengerFunction, pagination?: PaginationOptions): Promise<ModelCore<ModelData>[]> {
+	public async _readManyAsAggregation(exAggregation: Dictionary[], say: MessengerFunction, pagination?: PaginationOptions): Promise<ModelCore<ModelData>[]> {
 		const middleware = this.privilegeMiddleware;
 		const isSysCall = say(this, "ask", "isSysCall");
 		if (!middleware || isSysCall === true) return this._collection.getManyAsAggregation(exAggregation, pagination);
@@ -152,7 +152,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 	}
 
 	public async update(query: Dictionary, data: Dictionary, say: MessengerFunction): Promise<OperationStatus> {
-		const status =await this.dispatchOnce(ERepoEvents.BEFORE_UPDATE, { id: query._id.toString(), data, status: "success" });
+		const status = await this.dispatchOnce(ERepoEvents.BEFORE_UPDATE, { id: query._id.toString(), data, status: "success" });
 		if (status === "failure") return "failure";
 
 		const middleware = this.privilegeMiddleware;

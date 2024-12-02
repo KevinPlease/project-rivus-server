@@ -40,7 +40,7 @@ import { RoleRepo } from "./backend/repos/RoleRepo";
 import { CounterRepo } from "./backend/repos/CounterRepo";
 import { NotificationRepo } from "./backend/repos/NotificationRepo";
 import { ERepoEvents } from "./backend/repos/BaseRepo";
-import { ENotificationSubject, Notification } from "./backend/models/Notification";
+import { ENotificationAction, Notification } from "./backend/models/Notification";
 
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
@@ -143,14 +143,14 @@ class Application extends Communicator {
 		application.subscribe(ERepoEvents.AFTER_ADD, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
 			const domain = Domain.byName(content.model.getDomainName(), onMessage);
 			const notificationRepo = domain.getRepoByName(NotificationRepo.REPO_NAME) as NotificationRepo;
-			const notification = Notification.forModel(onMessage, content.model, ENotificationSubject.create);
+			const notification = Notification.forModel(onMessage, content.model, ENotificationAction.create);
 			notificationRepo.add(notification, sysCallMsngr);
 		});
 
 		application.subscribe(ERepoEvents.AFTER_REMOVE, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
 			const domain = Domain.byName(content.model.getDomainName(), onMessage);
 			const notificationRepo = domain.getRepoByName(NotificationRepo.REPO_NAME) as NotificationRepo;
-			const notification = Notification.forModel(onMessage, content.model, ENotificationSubject.delete);
+			const notification = Notification.forModel(onMessage, content.model, ENotificationAction.delete);
 			notificationRepo.add(notification, sysCallMsngr);
 		});
 
