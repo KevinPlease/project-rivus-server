@@ -6,14 +6,14 @@ import Metadata from "../../core/types/Metadata";
 import OwnershipInfo from "../types/OwnershipInfo";
 import IdCreator from "../IdCreator";
 
-export enum ENotificationType {
+enum EPreferenceType {
     system = 1,
     user = 2
 }
 
 type UserPreferenceData = {
     user: string;
-    type: ENotificationType;
+    type: EPreferenceType;
     content: Dictionary[];
 };
 
@@ -27,7 +27,7 @@ class UserPreference extends Model<UserPreferenceData> {
     static emptyData(): UserPreferenceData {
         return {
             user: "",
-            type: ENotificationType.system,
+            type: EPreferenceType.system,
             content: []
         };
     }
@@ -51,5 +51,5 @@ class UserPreference extends Model<UserPreferenceData> {
 
 }
 
-export { UserPreference };
+export { UserPreference, EPreferenceType };
 export type { UserPreferenceData, UserPreferenceFormDetails };
