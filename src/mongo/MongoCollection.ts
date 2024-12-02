@@ -27,13 +27,13 @@ class MongoCollection {
 	}
 
 
-	async insertOne(queryObj: Dictionary): Promise<string> {
+	async insertOne(queryObj: Dictionary): Promise<string | null> {
 		let obj = queryObj;
 		
 		if (queryObj.toNoIdJSON) obj = queryObj.toNoIdJSON();
 
 		const insertRes = await Functions.doAsync(this._collection, "insertOne", obj);
-		return insertRes?.insertedId.toString();
+		return insertRes?.insertedId.toString() || null;
 	}
 
 	insertMany(objs: {[key: string]: any}[]): Promise<OperationStatus> {

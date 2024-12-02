@@ -7,7 +7,7 @@ import { ExString } from "../../shared/String";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
 import { OperationStatus, Operation } from "../../types/Operation";
 import IdCreator from "../IdCreator";
-import IRepoMiddleware from "../interfaces/IRepoMiddleware";
+import IPrivilegeMiddleware from "../interfaces/IRepoMiddleware";
 import IRepository, { IRepoOptions } from "../interfaces/IRepository";
 import { Branch } from "../models/Branch";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
@@ -37,7 +37,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 	private _id: string;
 	private _lastUpdated?: number | undefined;
 	
-	public middleware?: IRepoMiddleware | undefined;
+	public privilegeMiddleware?: IPrivilegeMiddleware | undefined;
 	public options: IRepoOptions;
 
 	constructor(newCollection: MongoCollection, repoName: string, modelRole: string, domain: string, branch?: string, options?: IRepoOptions) {
@@ -70,17 +70,28 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		return say(this, "ask", "repo", this.REPO_NAME);
 	}
 
-	private async _create(data: Dictionary, say: MessengerFunction): Promise<string> {
-		const middleware = this.middleware;
+	private async _create(data: Dictionary, say: MessengerFunction): Promise<string | null> {
+		const operation: Operation = await this.dispatchOnce(ERepoEvents.BEFORE_ADD, { model: data, status: "success" });
+		if (operation?.status === "failure") return "failure";
+		
+		const middleware = this.privilegeMiddleware;
 		const isSysCall = say(this, "ask", "isSysCall");
-		if (!middleware || isSysCall === true) return this._collection.insertOne(data);
+		let result: string | null = null;
+		if (!middleware || isSysCall === true) {
+			result = await this._collection.insertOne(data);
+		} else {
+			const createQuery = await middleware.validateCreateQuery(data, this.modelRole, say) || data;
+			result = await this._collection.insertOne(createQuery);
+		}
 
-		const createQuery = await middleware.validateCreateQuery(data, this.modelRole, say) || data;
-		return this._collection.insertOne(createQuery);
+		data.id = result;
+		this.dispatchOnce(ERepoEvents.AFTER_ADD, { model: data, status: result ? "success" : "failure" });
+
+		return result;
 	}
 	
 	private async _read(query: Dictionary, say: MessengerFunction, project?: Dictionary): Promise<ModelCore<ModelData> | null> {
-		const middleware = this.middleware;
+		const middleware = this.privilegeMiddleware;
 		const isSysCall = say(this, "ask", "isSysCall");
 		if (!middleware || isSysCall === true) return this._collection.findOne(query, project);
 
@@ -92,7 +103,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 	}
 	
 	private async _readMany(say: MessengerFunction, query?: Dictionary, project?: Dictionary, sort?: Dictionary, pagination?: PaginationOptions): Promise<ModelCore<ModelData>[]> {
-		const middleware = this.middleware;
+		const middleware = this.privilegeMiddleware;
 		const isSysCall = say(this, "ask", "isSysCall");
 		if (!middleware || isSysCall === true) return this._collection.getMany(query, pagination, project, sort);
 
@@ -103,7 +114,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		return this._collection.getManyAsAggregation(aggregation, pagination, sort, project);
 	}
 	private async _readManyAsAggregation(exAggregation: Dictionary[], say: MessengerFunction, pagination?: PaginationOptions): Promise<ModelCore<ModelData>[]> {
-		const middleware = this.middleware;
+		const middleware = this.privilegeMiddleware;
 		const isSysCall = say(this, "ask", "isSysCall");
 		if (!middleware || isSysCall === true) return this._collection.getManyAsAggregation(exAggregation, pagination);
 
@@ -116,7 +127,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 	}
 
 	public async _readAsAggregation(exAggregation: Dictionary[], say: MessengerFunction, project?: Dictionary): Promise<ModelCore<ModelData> | null> {
-		const middleware = this.middleware;
+		const middleware = this.privilegeMiddleware;
 		const isSysCall = say(this, "ask", "isSysCall");
 		if (!middleware || isSysCall === true) return this._collection.findOneAsAggregation(exAggregation);
 
@@ -141,31 +152,46 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 	}
 
 	public async update(query: Dictionary, data: Dictionary, say: MessengerFunction): Promise<OperationStatus> {
-		const middleware = this.middleware;
+		const status =await this.dispatchOnce(ERepoEvents.BEFORE_UPDATE, { id: query._id.toString(), data, status: "success" });
+		if (status === "failure") return "failure";
+
+		const middleware = this.privilegeMiddleware;
 		const isSysCall = say(this, "ask", "isSysCall");
-		if (!middleware || isSysCall === true) return this._collection.updateOne(query, data);
-
-		const repoAccess = await middleware.getAccessInfo(say);
-		if (!repoAccess) return "failure";
-
-		const core = await this._read(query, say);
-		if (!core) return "failure";
-
-		const userId = say(this, "ask", "ownUserId");
-		const accessInfo = repoAccess[ ExString.betweenFirstTwo(core.repository, "/", "@") ];
-		const isOverseerUpdate = accessInfo.global[this.modelRole].write === AccessType.OVERSEER;
-		const isSelfishUpdate = accessInfo.global[this.modelRole].write === AccessType.SELFISH && (core.data.assignee === userId || core.meta.creator === userId);
-		if (isOverseerUpdate || isSelfishUpdate) {
-			const updateQuery = await middleware.validateUpdateQuery(query._id, data, this.modelRole, say) || data;
-			return this._collection.updateOne(query, updateQuery);
-
+		let result: OperationStatus = "failure";
+		if (!middleware || isSysCall === true) {
+			result = await this._collection.updateOne(query, data);
+		
+		} else {
+			const repoAccess = await middleware.getAccessInfo(say);
+			if (!repoAccess) return "failure";
+		
+			const core = await this._read(query, say);
+			if (!core) return "failure";
+	
+			const userId = say(this, "ask", "ownUserId");
+			const accessInfo = repoAccess[ ExString.betweenFirstTwo(core.repository, "/", "@") ];
+			const isOverseerUpdate = accessInfo.global[this.modelRole].write === AccessType.OVERSEER;
+			const isSelfishUpdate = accessInfo.global[this.modelRole].write === AccessType.SELFISH && (core.data.assignee === userId || core.meta.creator === userId);
+			if (isOverseerUpdate || isSelfishUpdate) {
+				const updateQuery = await middleware.validateUpdateQuery(query._id, data, this.modelRole, say) || data;
+				result = await this._collection.updateOne(query, updateQuery);
+			}
 		}
 
-		return "failure";
+		this.dispatchOnce(ERepoEvents.AFTER_UPDATE, { id: query._id.toString(), data, status: result });
+
+		return result;
 	}
 
-	private _delete(query: Dictionary, say: MessengerFunction): Promise<OperationStatus> {
-		return this._collection.deleteMany(query);
+	private async _delete(query: Dictionary, say: MessengerFunction): Promise<OperationStatus> {
+		let status = await this.dispatchOnce(ERepoEvents.BEFORE_REMOVE, { id: query._id.toString(), status: "success" });
+		if (status === "failure") return "failure";
+
+		status = await this._collection.deleteMany(query);
+
+		this.dispatchOnce(ERepoEvents.AFTER_REMOVE, { id: query._id.toString(), status: status });
+
+		return status;
 	}
 
 	public createAggregation(query: Dictionary, say: MessengerFunction): Dictionary[] {
@@ -192,10 +218,6 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		const isDraft = model.data.isDraft;
 		const timeCreated = isDraft ? 0 : Date.now();
 		model.meta.timeCreated = timeCreated;
-
-		const operation: Operation = await this.dispatchOnce(ERepoEvents.BEFORE_ADD, { model });
-		if (operation?.status === "failure") return "failure";
-
 		const insertedId = await this._create(model, say);
 		if (!insertedId) return "failure";
 
@@ -203,7 +225,6 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 			this._lastUpdated = timeCreated;
 		}
 
-		model.id = insertedId;
 		return "success";
 	}
 
@@ -238,14 +259,9 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 			meta.timeCreated = meta.timeUpdated;
 		}
 
-		await this.dispatchOnce(ERepoEvents.BEFORE_UPDATE, { id, data, meta });
-
 		const query = MongoQuery.createUpdateData({ meta, data });
 		const idQuery = { _id: new ObjectId(id) };
 		const status = await this.update(idQuery, query, say);
-		
-		await this.dispatchOnce(ERepoEvents.AFTER_UPDATE, { model: existingModel, data, meta, status });
-		
 		return { status, message: status ? "Success!" : "Failed to Update!" };
 	}
 	
@@ -283,14 +299,8 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		return { source: [], assignee: [] };
 	}
 
-	public async remove(id: string, say: MessengerFunction): Promise<OperationStatus> {
-		await this.dispatchOnce(ERepoEvents.BEFORE_REMOVE, { id });
-		
-		const status = await this._delete({ _id: new ObjectId(id) }, say);
-		
-		this.dispatchOnce(ERepoEvents.AFTER_REMOVE, { id, status });
-		
-		return status;
+	public remove(id: string, say: MessengerFunction): Promise<OperationStatus> {
+		return this._delete({ _id: new ObjectId(id) }, say);
 	}
 
 	public async findById(id: string, say: MessengerFunction, projection?: Dictionary): Promise<Model<ModelData> | null> {

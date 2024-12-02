@@ -56,7 +56,7 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		return;
 	}
 	
-	public editData(id: string, data: Partial<ModelData>, say: MessengerFunction): Promise<Operation> {
+	public async editData(id: string, data: Partial<ModelData>, say: MessengerFunction): Promise<Operation> {
 		let newImages: ImageDetails[] = [];
 		let newDocuments: DocumentDetails[] = [];
 
@@ -67,9 +67,12 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 			return "success";
 		});
 		
-		this.subscribeOnce(ERepoEvents.AFTER_UPDATE, (source: Object, content: { status: OperationStatus, model: Model<ModelData> }) => {
-			const idQuery = { _id: new ObjectId(content.model.id) };
-			return this.handleAfterEdit(content.status, newImages, newDocuments, content.model, idQuery);
+		const existingModel = await this.findById(id, say);
+		if (!existingModel) return { status: "failure", message: "NotFound" };
+
+		this.subscribeOnce(ERepoEvents.AFTER_UPDATE, (source: Object, content: { status: OperationStatus }) => {
+			const idQuery = { _id: new ObjectId(existingModel.id) };
+			return this.handleAfterEdit(content.status, newImages, newDocuments, existingModel, idQuery);
 		});
 
 		return super.editData(id, data, say);

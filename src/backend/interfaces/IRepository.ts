@@ -7,7 +7,7 @@ import { Operation } from "../../types/Operation";
 import { DetailedFind, DetailedGetMany } from "../types/DetailedFind";
 import { Filter } from "../types/Filter";
 import { PaginationOptions } from "../types/PaginationOptions";
-import IRepoMiddleware from "./IRepoMiddleware";
+import IPrivilegeMiddleware from "./IRepoMiddleware";
 
 interface IRepoOptions {
 	needsDisplayIds?: boolean;
@@ -21,7 +21,7 @@ interface IRepository<Data extends Dictionary> {
 	domain: string;
 	id: string;
 	lastUpdated?: number;
-	middleware?: IRepoMiddleware;
+	privilegeMiddleware?: IPrivilegeMiddleware;
 
 	createQueryFromFilter(filter: Filter | Filter[] | undefined): Dictionary;
 
