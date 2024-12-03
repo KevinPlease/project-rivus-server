@@ -183,15 +183,21 @@ class Application extends Communicator {
 				units.forEach((u: any) => unitRepo.changeUnitAvailability(u._id, availability, msngr));
 			}
 		});
-		
-		const sysCallMsngr = (source: Object, purpose: string, what: string, content?: any): any => {
-			if (purpose === "ask" && what === "isSysCall") return true;
-
-			return onMessage(source, purpose, what, content);
-		};
 
 		application.subscribe(ERepoEvents.AFTER_ADD, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
 			const domain = Domain.byName(content.model.getDomainName(), onMessage);
+			
+			const sysCallMsngr = (source: Object, purpose: string, what: string, content?: any): any => {
+				if (purpose === "ask") {
+					switch (what) {
+						case "isSysCall": return true;
+						case "repo": return domain.getRepoByName(content) || onMessage(source, purpose, what, content);
+					}
+				}
+
+				return onMessage(source, purpose, what, content);
+			};
+			
 			const notificationRepo = domain.getRepoByName(NotificationRepo.REPO_NAME) as NotificationRepo;
 			const notification = Notification.forModel(onMessage, content.model, ENotificationAction.create);
 			notificationRepo.add(notification, sysCallMsngr);
@@ -199,6 +205,18 @@ class Application extends Communicator {
 
 		application.subscribe(ERepoEvents.AFTER_REMOVE, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
 			const domain = Domain.byName(content.model.getDomainName(), onMessage);
+			
+			const sysCallMsngr = (source: Object, purpose: string, what: string, content?: any): any => {
+				if (purpose === "ask") {
+					switch (what) {
+						case "isSysCall": return true;
+						case "repo": return domain.getRepoByName(content) || onMessage(source, purpose, what, content);
+					}
+				}
+				
+				return onMessage(source, purpose, what, content);
+			};
+
 			const notificationRepo = domain.getRepoByName(NotificationRepo.REPO_NAME) as NotificationRepo;
 			const notification = Notification.forModel(onMessage, content.model, ENotificationAction.delete);
 			notificationRepo.add(notification, sysCallMsngr);
