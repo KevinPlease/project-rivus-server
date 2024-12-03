@@ -296,7 +296,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 	public async getFormDetails(say: MessengerFunction): Promise<GenericDictionary<Dictionary[]>> {
 		throw "BaseRepo -> MUST be custom implemented for each Repo!";
 
-		return { source: [], assignee: [] };
+		// return { source: [], assignee: [] };
 	}
 
 	public remove(id: string, say: MessengerFunction): Promise<OperationStatus> {
