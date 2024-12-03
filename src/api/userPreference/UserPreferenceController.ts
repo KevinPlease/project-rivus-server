@@ -1,7 +1,7 @@
 import Controller from "../../network/Controller";
 import { MessengerFunction } from "../../Messenger";
 import { Dictionary } from "../../types/Dictionary";
-import { UserPreferencesRepo } from "../../backend/repos/UserPreferenceRepo";
+import { UserPreferenceRepo } from "../../backend/repos/UserPreferenceRepo";
 import { IdentifiableDictionary } from "../../types/IdentifiableDictionary";
 import { ListFilter } from "../../backend/types/ListFilter";
 import { UserPreference, UserPreferenceData } from "../../backend/models/UserPreference";
@@ -17,7 +17,7 @@ class UserPreferenceController extends Controller {
 
         const domain = this.getOwningDomain(say);
         const branch = this.getOwningBranch(say);
-        const repo = UserPreferencesRepo.getInstance(say);
+        const repo = UserPreferenceRepo.getInstance(say);
         const userPreferences = UserPreference.create(say, request.body, { domain: domain.name, branch: branch.data.name });
         const operationStatus = await repo.add(userPreferences, say);
 
@@ -29,7 +29,7 @@ class UserPreferenceController extends Controller {
         const request = this.getActiveRequest<ListFilter>(say);
         const response = this.getActiveResponse<Dictionary>(say);
 
-        const repo = UserPreferencesRepo.getInstance(say);
+        const repo = UserPreferenceRepo.getInstance(say);
         const userPreferences = await repo.detailedGetMany(say, request.query.filter, request.query.pagination);
 
         response
@@ -42,7 +42,7 @@ class UserPreferenceController extends Controller {
         const request = this.getActiveRequest<IdentifiableDictionary>(say);
         const response = this.getActiveResponse<Dictionary>(say);
         
-        const repo = UserPreferencesRepo.getInstance(say);
+        const repo = UserPreferenceRepo.getInstance(say);
         const userPreferences = await repo.detailedFindById(request.query.id, say);
         const responseType = userPreferences ? "success" : "notFound";
 
@@ -57,7 +57,7 @@ class UserPreferenceController extends Controller {
         const request = this.getActiveRequest<Dictionary>(say);
         const response = this.getActiveResponse<Dictionary>(say);
 
-        const repo = UserPreferencesRepo.getInstance(say);
+        const repo = UserPreferenceRepo.getInstance(say);
         const operation = await repo.editData(request.body.id, request.body, say);
 
         return response.sendByInfo(operation.status, operation.message);
@@ -67,7 +67,7 @@ class UserPreferenceController extends Controller {
         const request = this.getActiveRequest<IdentifiableDictionary>(say);
         const response = this.getActiveResponse<Dictionary>(say);
 
-        const repo = UserPreferencesRepo.getInstance(say);
+        const repo = UserPreferenceRepo.getInstance(say);
         const operationStatus = await repo.remove(request.query.id, say);
 
         return response.sendByInfo(operationStatus);

@@ -7,12 +7,14 @@ import OrderRouter from "./order/UnitRouter";
 import PropertyRouter from "./property/PropertyRouter";
 import UnitRouter from "./unit/UnitRouter";
 import UserRouter from "./user/UserRouter";
-import NotificationRouter from "./notification/NotificationRouter";
+import UserPreferenceRouter from "./userPreference/UserPreferenceRouter";
 
 
 const ROUTERS: typeof Router[] = [
 	AuthRouter,
+	RoleRouter,
 	UserRouter,
+	UserPreferenceRouter,
 	NotificationRouter,
 	RoleRouter,
 	CustomerRouter,

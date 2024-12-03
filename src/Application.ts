@@ -57,6 +57,7 @@ import { unitAvailabilityFor } from "./backend/data/availability";
 import { OrderStatusRepo } from "./backend/repos/OrderStatusRepo";
 import { ERepoEvents } from "./backend/repos/BaseRepo";
 import { ENotificationAction, Notification } from "./backend/models/Notification";
+import { UserPreferenceRepo } from "./backend/repos/UserPreferenceRepo";
 
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
@@ -65,6 +66,7 @@ class Application extends Communicator {
 		CounterRepo,
 		RoleRepo,
 		UserRepo,
+		UserPreferenceRepo,
 		NotificationRepo,
 		CustomerRepo,
 		PropertyRepo,
