@@ -41,6 +41,7 @@ import { CounterRepo } from "./backend/repos/CounterRepo";
 import { NotificationRepo } from "./backend/repos/NotificationRepo";
 import { ERepoEvents } from "./backend/repos/BaseRepo";
 import { ENotificationAction, Notification } from "./backend/models/Notification";
+import { UserPreferenceRepo } from "./backend/repos/UserPreferenceRepo";
 
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
@@ -49,6 +50,7 @@ class Application extends Communicator {
 		CounterRepo,
 		RoleRepo,
 		UserRepo,
+		UserPreferenceRepo,
 		NotificationRepo
 	];
 	
