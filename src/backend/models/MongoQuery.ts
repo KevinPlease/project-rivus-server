@@ -8,9 +8,8 @@ import ExArray from "../../shared/Array";
 import IdCreator from "../IdCreator";
 import { Domain } from "./Domain";
 import { ExString } from "../../shared/String";
-import { BaseRepo } from "../repos/BaseRepo";
 import { AccessType, FieldAccess, RepoAccess } from "../types/Access";
-import { ModelPreference, Preference } from "./UserPreference";
+import { Preference } from "./UserPreference";
 
 type AggregationInfo = {
 	repoToJoinFrom: string;
@@ -20,7 +19,7 @@ type AggregationInfo = {
 
 class MongoQuery {
 
-	private static getNewValueForQuery(value: string | any[]): any[] {
+	private static getNewValueForQuery(value: string | number | any[]): any[] {
 		if (Array.isArray(value)) {
 			return value.map(innerVal => {
 				// if (ObjectId.isValid(innerVal)) return new ObjectId(innerVal);
@@ -28,6 +27,9 @@ class MongoQuery {
 				innerVal = innerVal.replace(/\+/g, "\\+");
 				return new RegExp(String(innerVal), "gi");
 			});
+		
+		} else if (typeof value === "number") {
+			return [value];
 		}
 
 		// if (ObjectId.isValid(value)) return [new ObjectId(value)];
@@ -45,7 +47,7 @@ class MongoQuery {
 		const filterData = filter.data;
 		for (const prop in filterData) {
 			const rule: Rule = filterData[prop];
-			
+
 			let newValues: any[] = [];
 			let valueInQuery: any;
 			if (rule.type === "range") {
@@ -75,7 +77,7 @@ class MongoQuery {
 
 	public static create(filters: Filter[] | Filter | undefined): Dictionary {
 		if (!filters) return {};
-		
+
 		if (Array.isArray(filters) && ExArray.isEmpty(filters)) return {};
 
 		if (!Array.isArray(filters)) filters = [filters];
@@ -153,7 +155,7 @@ class MongoQuery {
 			$cond: {
 				if: {
 					$or: [
-						{ $not: { $eq: ["$repository", repository] }},
+						{ $not: { $eq: ["$repository", repository] } },
 						{ $eq: ["$meta.creator", userId] },
 						{ $eq: ["$data.assignee", userId] }
 					]
@@ -225,24 +227,24 @@ class MongoQuery {
 	private static setTotalCountStage() {
 		return {
 			$setWindowFields: {
-			  output: {
-				totalCount: {
-				  $count: {}
+				output: {
+					totalCount: {
+						$count: {}
+					}
 				}
-			  }
 			}
 		};
 	}
 
 	private static privilegedRepoMatchQuery(repository: string, userId?: string) {
-		const query: Dictionary = { $and: [ { repository } ] };
-		
+		const query: Dictionary = { $and: [{ repository }] };
+
 		if (userId) {
 			query.$and.push({
 				$or: [
 					{ "data.assignee": userId },
-				  	{ "meta.creator": userId },
-				  	{ _id: new ObjectId(userId) }
+					{ "meta.creator": userId },
+					{ _id: new ObjectId(userId) }
 				]
 			});
 		}
@@ -277,12 +279,12 @@ class MongoQuery {
 						{ $or: queryToModify["$or"] }
 					]
 				};
-				
+
 				ExArray.replace(query, queryToModify, newQuery);
 			} else {
 				query.push({ "$or": value });
 			}
-			
+
 			query = { "$and": query };
 
 		} else {
@@ -297,7 +299,7 @@ class MongoQuery {
 				query = { $and: andQuery };
 			} else {
 				query["$or"] = value;
-			}	
+			}
 		}
 
 		return query;
@@ -391,20 +393,20 @@ class MongoQuery {
 		const userId = say(this, "ask", "ownUserId");
 		const aggregation: Dictionary[] = [];
 		const repoQueries: Dictionary[] = [];
-		
+
 		const validRoleName = ExString.uncapitalize(repoName);
 		for (const branchName in repoAccess) {
 			const access = repoAccess[branchName];
 			const readAccess = access.global[role].read;
-			
+
 			const repository = IdCreator.createBranchedRepoId(validRoleName, branchName, ownDomain.name);
 			if (readAccess === AccessType.SELFISH) {
 				repoQueries.push(MongoQuery.privilegedRepoMatchQuery(repository, userId));
-				
+
 			} else if (readAccess !== AccessType.MISS) {
 				repoQueries.push(MongoQuery.privilegedRepoMatchQuery(repository));
 			}
-			
+
 			const fieldAccess = access.fieldAccess[role];
 			const censorshipStage = MongoQuery.privilegedRepoCensorship(repository, fieldAccess, say);
 			if (!ObjOverride.isDictEmpty(censorshipStage)) {
@@ -413,13 +415,13 @@ class MongoQuery {
 		}
 
 		query = MongoQuery.safeAttachToOr(query, repoQueries);
-		
+
 		aggregation.unshift({
 			"$match": query
 		});
 
 		aggregation.push(MongoQuery.setTotalCountStage());
-		
+
 		return aggregation;
 	}
 
