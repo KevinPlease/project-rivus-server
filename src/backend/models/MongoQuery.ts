@@ -10,6 +10,7 @@ import { Domain } from "./Domain";
 import { ExString } from "../../shared/String";
 import { BaseRepo } from "../repos/BaseRepo";
 import { AccessType, FieldAccess, RepoAccess } from "../types/Access";
+import { ModelPreference } from "./UserPreference";
 
 type AggregationInfo = {
 	repoToJoinFrom: string;
@@ -420,6 +421,14 @@ class MongoQuery {
 		aggregation.push(MongoQuery.setTotalCountStage());
 		
 		return aggregation;
+	}
+
+	public static makePreferentialQuery(preferences: ModelPreference[], query: Dictionary) {
+		const actions = preferences
+			.filter(filter => filter.value)
+			.map(filter => filter.action);
+
+		return actions.length > 0 ? MongoQuery.safeAttachToOr(query, { "data.action": { $in: actions } }) : query;
 	}
 
 }

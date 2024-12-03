@@ -1,20 +1,22 @@
 import { Model, ModelCore } from "../../core/Model";
-import { Dictionary } from "../../types/Dictionary";
+import { Dictionary, GenericDictionary } from "../../types/Dictionary";
 import { MessengerFunction } from "../../Messenger";
 import ExObject from "../../shared/Object";
 import Metadata from "../../core/types/Metadata";
 import OwnershipInfo from "../types/OwnershipInfo";
 import IdCreator from "../IdCreator";
 
-export enum ENotificationType {
-    system = 1,
-    user = 2
+enum EPreferenceType {
+    SYSTEM = 131,
+    NOTIFICATIONS = 132
 }
+
+type ModelPreference = GenericDictionary<Dictionary[]>;
 
 type UserPreferenceData = {
     user: string;
-    type: ENotificationType;
-    content: Dictionary[];
+    type: EPreferenceType;
+    content: ModelPreference;
 };
 
 type UserPreferenceFormDetails = {
@@ -27,8 +29,8 @@ class UserPreference extends Model<UserPreferenceData> {
     static emptyData(): UserPreferenceData {
         return {
             user: "",
-            type: ENotificationType.system,
-            content: []
+            type: EPreferenceType.SYSTEM,
+            content: {}
         };
     }
 
@@ -51,5 +53,5 @@ class UserPreference extends Model<UserPreferenceData> {
 
 }
 
-export { UserPreference };
-export type { UserPreferenceData, UserPreferenceFormDetails };
+export { UserPreference, EPreferenceType };
+export type { UserPreferenceData, UserPreferenceFormDetails, ModelPreference };

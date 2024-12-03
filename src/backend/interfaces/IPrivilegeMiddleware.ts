@@ -2,7 +2,7 @@ import { MessengerFunction } from "../../Messenger";
 import { Dictionary } from "../../types/Dictionary";
 import { RepoAccess } from "../types/Access";
 
-interface IRepoMiddleware {
+interface IPrivilegeMiddleware {
 	
 	validateUpdateQuery(id: string, query: Dictionary, role: string, say: MessengerFunction): Promise<Dictionary | null>;
 	
@@ -12,4 +12,4 @@ interface IRepoMiddleware {
 
 }
 
-export default IRepoMiddleware;
+export default IPrivilegeMiddleware;

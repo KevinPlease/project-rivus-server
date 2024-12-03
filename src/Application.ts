@@ -29,7 +29,7 @@ import { Branch } from "./backend/models/Branch";
 import { ExString } from "./shared/String";
 import WorkerKeeper from "./service/WorkerKeeper";
 import RepoRequest from "./backend/types/RepoRequest";
-import { ModelCore } from "./core/Model";
+import { Model, ModelCore } from "./core/Model";
 import { WorkData } from "./service/Work";
 import ImgEnhancMaster from "./enhancers/ImgEnhancMaster";
 import ImageEnhancement from "./enhancers/ImageEnhancement";
@@ -55,6 +55,8 @@ import { UnitTypeRepo } from "./backend/repos/UnitTypeRepo";
 import { UnitExtraRepo } from "./backend/repos/UnitExtraRepo";
 import { unitAvailabilityFor } from "./backend/data/availability";
 import { OrderStatusRepo } from "./backend/repos/OrderStatusRepo";
+import { ERepoEvents } from "./backend/repos/BaseRepo";
+import { ENotificationAction, Notification } from "./backend/models/Notification";
 
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
@@ -159,7 +161,7 @@ class Application extends Communicator {
 			const sysDomain = Domain.system(onMessage);
 			sysDomain.addBranchRef(domain, branch);
 
-			const userRepo = UserRepo.getInstance(onMessage);
+			const userRepo = domain.getRepoByName(UserRepo.REPO_NAME) as UserRepo;
 			userRepo.addRoleToUsers({}, branch.data.name, process.env.DEFAULT_ROLE_ID || "");
 		});
 
@@ -178,6 +180,26 @@ class Application extends Communicator {
 			if (availability) {
 				units.forEach((u: any) => unitRepo.changeUnitAvailability(u._id, availability, msngr));
 			}
+		});
+		
+		const sysCallMsngr = (source: Object, purpose: string, what: string, content?: any): any => {
+			if (purpose === "ask" && what === "isSysCall") return true;
+
+			return onMessage(source, purpose, what, content);
+		};
+
+		application.subscribe(ERepoEvents.AFTER_ADD, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
+			const domain = Domain.byName(content.model.getDomainName(), onMessage);
+			const notificationRepo = domain.getRepoByName(NotificationRepo.REPO_NAME) as NotificationRepo;
+			const notification = Notification.forModel(onMessage, content.model, ENotificationAction.create);
+			notificationRepo.add(notification, sysCallMsngr);
+		});
+
+		application.subscribe(ERepoEvents.AFTER_REMOVE, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
+			const domain = Domain.byName(content.model.getDomainName(), onMessage);
+			const notificationRepo = domain.getRepoByName(NotificationRepo.REPO_NAME) as NotificationRepo;
+			const notification = Notification.forModel(onMessage, content.model, ENotificationAction.delete);
+			notificationRepo.add(notification, sysCallMsngr);
 		});
 
 		return application.run();

@@ -4,7 +4,7 @@ import { MessengerFunction } from "../../Messenger";
 import MongoCollection from "../../mongo/MongoCollection";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
 import { Operation, OperationStatus } from "../../types/Operation";
-import IRepoMiddleware from "../interfaces/IRepoMiddleware";
+import IPrivilegeMiddleware from "../interfaces/IPrivilegeMiddleware";
 import { IRepoOptions } from "../interfaces/IRepository";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
@@ -20,13 +20,11 @@ class UserRepo extends BaseDocimgRepo<UserData> {
 	public static REPO_NAME = "users";
 	public static MODEL_ROLE_NAME = User.ROLE;
 
-	private _middleware?: IRepoMiddleware;
-
 	public static create(collection: MongoCollection, domain: string) {
 		const options: IRepoOptions = { needsDisplayIds: true, needsDraftModels: true };
 		const userRepo = new UserRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
 		
-		userRepo._middleware = new PrivilegeKeeper()
+		userRepo.privilegeMiddleware = new PrivilegeKeeper()
 
 		return userRepo;
 	}

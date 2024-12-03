@@ -2,12 +2,12 @@ import { MessengerFunction } from "../../Messenger";
 import { Model } from "../../core/Model";
 import { ExString } from "../../shared/String";
 import { Dictionary } from "../../types/Dictionary";
-import IRepoMiddleware from "../interfaces/IRepoMiddleware";
+import IPrivilegeMiddleware from "../interfaces/IPrivilegeMiddleware";
 import { Branch } from "../models/Branch";
 import { RoleRepo } from "../repos/RoleRepo";
 import { AccessType, FieldAccess, RepoAccess } from "../types/Access";
 
-class PrivilegeKeeper implements IRepoMiddleware {
+class PrivilegeKeeper implements IPrivilegeMiddleware {
 
 	private static _excludedFields = ["roles"];
 
