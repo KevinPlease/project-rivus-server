@@ -20,7 +20,7 @@ class CustomerRepo extends BaseDocimgRepo<CustomerData> {
 		const options: IRepoOptions = { needsDisplayIds: true, needsDraftModels: true };
 		const repo = new CustomerRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
 		
-		repo.middleware = new PrivilegeKeeper();
+		repo.privilegeMiddleware = new PrivilegeKeeper();
 
 		return repo;
 	}

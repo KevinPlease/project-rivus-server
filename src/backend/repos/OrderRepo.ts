@@ -29,7 +29,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		const options: IRepoOptions = { needsDisplayIds: true, needsDraftModels: true };
 		const repo = new OrderRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
 		
-		repo.middleware = new PrivilegeKeeper();
+		repo.privilegeMiddleware = new PrivilegeKeeper();
 
 		return repo;
 	}
