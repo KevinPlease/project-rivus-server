@@ -4,14 +4,13 @@ import { Notification, NotificationData } from "../models/Notification";
 import { BaseRepo } from "./BaseRepo";
 import { IRepoOptions } from "../interfaces/IRepository";
 import { ModelCore } from "../../core/Model";
-import { Dictionary } from "../../types/Dictionary";
-import { DetailedGetMany } from "../types/DetailedFind";
 import { PaginationOptions } from "../types/PaginationOptions";
 import { Filter } from "../types/Filter";
 import IPreferenceMiddleware from "../interfaces/IPreferenceMiddleware";
 import PreferenceKeeper from "../middlewares/PreferenceKeeper";
 import { EPreferenceType } from "../models/UserPreference";
 import MongoQuery from "../models/MongoQuery";
+import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 
 class NotificationRepo extends BaseRepo<NotificationData> {
     public static REPO_NAME = "notifications";
@@ -25,7 +24,9 @@ class NotificationRepo extends BaseRepo<NotificationData> {
 
     public static create(collection: MongoCollection, domain: string) {
         const options: IRepoOptions = { needsDisplayIds: true };
-        return new NotificationRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
+        const repo = new NotificationRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
+        repo.privilegeMiddleware = new PrivilegeKeeper();
+        return repo;
     }
 
     public static getInstance(say: MessengerFunction): NotificationRepo {
