@@ -2,7 +2,6 @@ import { MessengerFunction } from "../../Messenger";
 import MongoCollection from "../../mongo/MongoCollection";
 import { EPreferenceType, UserPreference, UserPreferenceData } from "../models/UserPreference";
 import { BaseRepo } from "./BaseRepo";
-import { IRepoOptions } from "../interfaces/IRepository";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { UserRepo } from "./UserRepo";
@@ -12,8 +11,7 @@ class UserPreferenceRepo extends BaseRepo<UserPreferenceData> {
     public static MODEL_ROLE_NAME = UserPreference.ROLE;
 
     public static create(collection: MongoCollection, domain: string) {
-        const options: IRepoOptions = { needsDisplayIds: true };
-        return new UserPreferenceRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
+        return new UserPreferenceRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain);
     }
 
     public static getInstance(say: MessengerFunction): UserPreferenceRepo {
