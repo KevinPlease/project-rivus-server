@@ -10,7 +10,7 @@ import { Domain } from "./Domain";
 import { ExString } from "../../shared/String";
 import { BaseRepo } from "../repos/BaseRepo";
 import { AccessType, FieldAccess, RepoAccess } from "../types/Access";
-import { ModelPreference } from "./UserPreference";
+import { ModelPreference, Preference } from "./UserPreference";
 
 type AggregationInfo = {
 	repoToJoinFrom: string;
@@ -423,7 +423,7 @@ class MongoQuery {
 		return aggregation;
 	}
 
-	public static makePreferentialQuery(preferences: ModelPreference[], query: Dictionary) {
+	public static makePreferentialQuery(preferences: Preference[], query: Dictionary) {
 		const actions = preferences
 			.filter(filter => filter.value)
 			.map(filter => filter.action);

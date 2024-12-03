@@ -5,13 +5,24 @@ import ExObject from "../../shared/Object";
 import Metadata from "../../core/types/Metadata";
 import OwnershipInfo from "../types/OwnershipInfo";
 import IdCreator from "../IdCreator";
+import { User } from "./User";
+import { Customer } from "./Customer";
+import { Order } from "./Order";
+import { Property } from "./Property";
+import { Unit } from "./Unit";
 
 enum EPreferenceType {
     SYSTEM = 131,
     NOTIFICATIONS = 132
 }
 
-type ModelPreference = GenericDictionary<Dictionary[]>;
+type Preference = {
+  value: any;
+  action: string;
+  fieldType: number;  
+};
+
+type ModelPreference = GenericDictionary<Preference[]>;
 
 type UserPreferenceData = {
     user: string;
@@ -25,6 +36,15 @@ type UserPreferenceFormDetails = {
 
 class UserPreference extends Model<UserPreferenceData> {
     static ROLE = "userPreference";
+    static CONTENT_FOR_TYPE = {
+        [EPreferenceType.NOTIFICATIONS]: {
+            [Customer.ROLE]: [{ fieldType: 1, action: "create", value: true }, { fieldType: 1, action: "update", value: true }],
+            [Order.ROLE]: [{ fieldType: 1, action: "create", value: true }, { fieldType: 1, action: "update", value: true }],
+            [Property.ROLE]: [{ fieldType: 1, action: "create", value: true }, { fieldType: 1, action: "update", value: true }],
+            [Unit.ROLE]: [{ fieldType: 1, action: "create", value: true }, { fieldType: 1, action: "update", value: true }]
+        },
+        [EPreferenceType.SYSTEM]: {}
+    };
 
     static emptyData(): UserPreferenceData {
         return {
@@ -51,7 +71,17 @@ class UserPreference extends Model<UserPreferenceData> {
 		return new UserPreference(core);
     }
 
+	public static defaultData(user: string, type: EPreferenceType): UserPreferenceData {
+		const content = UserPreference.CONTENT_FOR_TYPE[type] || {};
+        
+        return {
+			user,
+			type,
+			content
+		};
+	}
+
 }
 
 export { UserPreference, EPreferenceType };
-export type { UserPreferenceData, UserPreferenceFormDetails, ModelPreference };
+export type { UserPreferenceData, UserPreferenceFormDetails, ModelPreference, Preference };
