@@ -71,8 +71,11 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 	}
 
 	private async _create(data: Dictionary, say: MessengerFunction): Promise<string | null> {
-		const operation: Operation = await this.dispatchOnce(ERepoEvents.BEFORE_ADD, { model: data, status: "success" });
-		if (operation?.status === "failure") return "failure";
+		if (!data.isDraft)
+		{
+			const operation: Operation = await this.dispatchOnce(ERepoEvents.BEFORE_ADD, { model: data, status: "success" });
+			if (operation?.status === "failure") return "failure";
+		}
 		
 		const middleware = this.privilegeMiddleware;
 		const isSysCall = say(this, "ask", "isSysCall");
@@ -85,7 +88,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		}
 
 		data.id = result;
-		this.dispatchOnce(ERepoEvents.AFTER_ADD, { model: data, status: result ? "success" : "failure" });
+		if (!data.isDraft) this.dispatchOnce(ERepoEvents.AFTER_ADD, { model: data, status: result ? "success" : "failure" });
 
 		return result;
 	}
