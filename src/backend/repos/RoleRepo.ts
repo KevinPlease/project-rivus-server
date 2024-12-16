@@ -19,7 +19,7 @@ class RoleRepo extends BaseRepo<RoleData> {
 	public static MODEL_ROLE_NAME = Role.ROLE;
 
 	public static create(collection: MongoCollection, domain: string) {
-		const options: IRepoOptions = { needsDisplayIds: true, needsDraftModels: true };
+		const options: IRepoOptions = { needsDisplayIds: true };
 		return new RoleRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
 	}
 

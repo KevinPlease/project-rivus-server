@@ -12,7 +12,6 @@ type BranchRole = GenericDictionary<string>;
 type UserPreferences = {};
 
 type UserData = {
-	isDraft?: boolean;
 	name: string;
 	role: Role | null;
 	roles: BranchRole;
@@ -36,7 +35,6 @@ class User extends Model<UserData> {
 
 	static emptyData(): UserData {
 		return {
-			isDraft: true,
 			name: "",
 			role: null,
 			roles: {},

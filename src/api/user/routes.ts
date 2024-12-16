@@ -11,9 +11,6 @@ const ROUTES: RawRoutesInfo = {
 		"": {
 			"actionName": "Get User"
 		},
-		"draft": {
-			"actionName": "Get User"
-		},
 		"*": {
 			"actionName": "Get Users"
 		},

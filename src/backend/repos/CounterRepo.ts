@@ -42,14 +42,12 @@ class CounterRepo extends BaseRepo<CounterData> {
 		const data: CounterData[] = [
 			{
 				counter: 1,
-				isDraft: false,
 				prefix: "RU",
 				role: "user",
 				value: "RU 1"
 			},
 			{
 				counter: 1,
-				isDraft: false,
 				prefix: "RR",
 				role: "role",
 				value: "RR 1"

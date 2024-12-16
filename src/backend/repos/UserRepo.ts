@@ -21,7 +21,7 @@ class UserRepo extends BaseDocimgRepo<UserData> {
 	public static MODEL_ROLE_NAME = User.ROLE;
 
 	public static create(collection: MongoCollection, domain: string) {
-		const options: IRepoOptions = { needsDisplayIds: true, needsDraftModels: true };
+		const options: IRepoOptions = { needsDisplayIds: true };
 		const userRepo = new UserRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
 		
 		userRepo.privilegeMiddleware = new PrivilegeKeeper()
@@ -69,8 +69,6 @@ class UserRepo extends BaseDocimgRepo<UserData> {
 
 	public async add(model: User, say: MessengerFunction): Promise<OperationStatus> {
 		this.subscribeOnce(ERepoEvents.BEFORE_ADD, async (source:Object, m: { model: User }) => {
-			if (model.data.isDraft) return "success";
-
 			const userOperation = await this.validateRequestForNewUser(m.model.data.email);
 			if (userOperation.status === "failure") return "failure";
 			

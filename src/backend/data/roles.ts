@@ -38,10 +38,6 @@ const getDefaultData = (domain: string) => {
 					},
 					"fieldAccess": {
 						"user": {
-							"isDraft": {
-								"read": AccessType.SELFISH,
-								"write": AccessType.SELFISH
-							},
 							"name": {
 								"read": AccessType.SELFISH,
 								"write": AccessType.SELFISH
@@ -80,10 +76,6 @@ const getDefaultData = (domain: string) => {
 							}
 						},
 						"role": {
-							"isDraft": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
 							"name": {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER

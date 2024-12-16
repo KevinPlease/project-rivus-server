@@ -5,7 +5,6 @@ import OwnershipInfo from "../types/OwnershipInfo";
 import { ActionRepo } from "../repos/ActionRepo";
 
 type ActionData = {
-	isDraft?: boolean,
 	description: string,
 	name: string
 };

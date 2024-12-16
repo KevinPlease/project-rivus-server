@@ -12,7 +12,6 @@ import IPrivilegeMiddleware from "./IPrivilegeMiddleware";
 interface IRepoOptions {
 	needsDisplayIds?: boolean;
 	needsLastUpdateTime?: boolean;
-	needsDraftModels?: boolean;
 }
 
 interface IRepository<Data extends Dictionary> {
@@ -54,8 +53,6 @@ interface IRepository<Data extends Dictionary> {
 	detailedFind(query: Dictionary, say: MessengerFunction): Promise<DetailedFind<Model<Data>> | null>;
 
 	detailedFindById(id: string, say: MessengerFunction): Promise<DetailedFind<Model<Data>> | null>;
-
-	findDraft(say: MessengerFunction): Promise<DetailedFind<Model<Data>> | null>;
 
 	addDefaultData(say: MessengerFunction): Promise<OperationStatus>;
 }
