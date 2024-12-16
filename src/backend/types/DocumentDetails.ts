@@ -5,7 +5,6 @@ type DocumentDetails = {
 	isRemoved?: boolean;
 	isImg: boolean;
 	id: string;
-	fsPath: string;
 	file: {
 		name: string;
 		size: number;

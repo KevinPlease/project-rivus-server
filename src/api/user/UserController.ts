@@ -29,14 +29,11 @@ class UserController extends Controller {
 	}
 
 	async postImages(say: MessengerFunction) : Promise<void> {
-		const request = this.getActiveRequest<IdentifiableDictionary>(say);
+		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
-		const userRepo = UserRepo.getInstance(say);
 		const files = request.getUploadedFiles(say);
-		const operationStatus = await userRepo.setImagesFromFiles(request.body.id, files, say);
-
-		return response.sendByInfo(operationStatus);
+		return response.sendByInfo("success", files);
 	}
 
 	async getMany(say: MessengerFunction) : Promise<void> {
@@ -66,7 +63,7 @@ class UserController extends Controller {
 
 		return response.send();
 	}
-	
+
 	async getImage(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);

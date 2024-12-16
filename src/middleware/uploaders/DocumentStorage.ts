@@ -38,14 +38,12 @@ class DocumentStorage implements IMiddlewareStorage {
 				
 				file.filename = fileName;
 				file.path = NetworkUrl.forDocument(ownDomain.name, role, req.body.id, fileName, say);
-				// @ts-ignore
-				file.fsPath = path;
 				destHandlerFunc(null, path);
 			},
 			filename: function (req: MExpRequest, file, nameHandlerFunc) {
 				if (!req.uploadedFiles) req.uploadedFiles = [];
 				// @ts-ignore
-				req.uploadedFiles.push({ src: file.path, name: file.filename, fsPath: file.fsPath, originalName: file.originalname, size: file.size, type: file.mimetype });
+				req.uploadedFiles.push({ src: file.path, name: file.filename, originalName: file.originalname, size: file.size, type: file.mimetype });
 
 				nameHandlerFunc(null, file.filename);
 			}

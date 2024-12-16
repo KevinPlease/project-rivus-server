@@ -6,11 +6,16 @@ import { Functions } from "../../shared/Function";
 import { Operation } from "../../types/Operation";
 import IModelEnhancer from "../interfaces/IModelEnhancer";
 import { ImageDetails } from "../types/ImageDetails";
+import ModelFolder from "../../files/ModelFolder";
+import { Dictionary } from "../../types/Dictionary";
+import { Model } from "../../core/Model";
 
 class ImageEnhancer implements IModelEnhancer {
 	
-	async enhance(model: ImageDetails, say: MessengerFunction): Promise<Operation> {
-		const filePath = Folder.createPath(say, model.fsPath, model.id);
+	async enhance(owningModel: Model<Dictionary>, model: ImageDetails, say: MessengerFunction): Promise<Operation> {
+		const owningFolder = ModelFolder.fromInfo(owningModel.role, owningModel.getDomainName(), owningModel.getBranchName(), owningModel.id, say);
+		const path = owningFolder.getImagesPath(say);
+		const filePath = Folder.createPath(say, path, model.id);
 
 		const options = {
 			ratio: 0.2,		// Should be less than one
