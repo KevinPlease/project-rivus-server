@@ -7,7 +7,6 @@ import OwnershipInfo from "../types/OwnershipInfo";
 import { UnitTypeRepo } from "../repos/UnitTypeRepo";
 
 type UnitTypeData = {
-	isDraft?: boolean;
 	name: string;
 	order: number;
 };
@@ -20,7 +19,6 @@ class UnitType extends Model<UnitTypeData> {
 
 	static emptyData(): UnitTypeData {
 		return {
-			isDraft: true,
 			name: "",
 			order: 1
 		};

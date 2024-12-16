@@ -7,7 +7,6 @@ import OwnershipInfo from "../types/OwnershipInfo";
 import { AvailabilityRepo } from "../repos/AvailabilityRepo";
 
 type AvailabilityData = {
-	isDraft?: boolean;
 	name: string;
 	order: number;
 };
@@ -20,7 +19,6 @@ class Availability extends Model<AvailabilityData> {
 
 	static emptyData(): AvailabilityData {
 		return {
-			isDraft: true,
 			name: "",
 			order: 1
 		};

@@ -4,7 +4,6 @@ import { Dictionary, GenericDictionary } from "../../types/Dictionary";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { Customer, CustomerData } from "../models/Customer";
-import { DetailedFind } from "../types/DetailedFind";
 import { BaseDocimgRepo } from "./BaseDocRepo";
 import { UserRepo } from "./UserRepo";
 import { IRepoOptions } from "../interfaces/IRepository";
@@ -17,7 +16,7 @@ class CustomerRepo extends BaseDocimgRepo<CustomerData> {
 	public static MODEL_ROLE_NAME = Customer.ROLE;
 
 	public static create(collection: MongoCollection, domain: string) {
-		const options: IRepoOptions = { needsDisplayIds: true, needsDraftModels: true };
+		const options: IRepoOptions = { needsDisplayIds: true };
 		const repo = new CustomerRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
 		
 		repo.privilegeMiddleware = new PrivilegeKeeper();

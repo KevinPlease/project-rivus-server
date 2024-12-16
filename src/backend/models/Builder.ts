@@ -7,7 +7,6 @@ import OwnershipInfo from "../types/OwnershipInfo";
 import { BuilderRepo } from "../repos/BuilderRepo";
 
 type BuilderData = {
-	isDraft?: boolean;
 	name: string;
 };
 
@@ -19,7 +18,6 @@ class Builder extends Model<BuilderData> {
 
 	static emptyData(): BuilderData {
 		return {
-			isDraft: true,
 			name: ""
 		};
 	}

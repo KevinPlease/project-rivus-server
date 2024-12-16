@@ -10,7 +10,6 @@ import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { Order, OrderData } from "../models/Order";
 import { AvailabilityRepo } from "./AvailabilityRepo";
 import { BaseDocimgRepo } from "./BaseDocRepo";
-import { ERepoEvents } from "./BaseRepo";
 import { CustomerRepo } from "./CustomerRepo";
 import { PaymentMethodRepo } from "./PaymentMethodRepo";
 import { UnitRepo } from "./UnitRepo";
@@ -26,7 +25,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 	public static MODEL_ROLE_NAME = Order.ROLE;
 
 	public static create(collection: MongoCollection, domain: string) {
-		const options: IRepoOptions = { needsDisplayIds: true, needsDraftModels: true };
+		const options: IRepoOptions = { needsDisplayIds: true };
 		const repo = new OrderRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
 		
 		repo.privilegeMiddleware = new PrivilegeKeeper();
@@ -39,30 +38,21 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 	}
 
 	public async editData(id: string, data: Partial<OrderData>, say: MessengerFunction): Promise<Operation> {
-		const self = this;
-		this.subscribeOnce(ERepoEvents.AFTER_UPDATE, async (source: Object, m: { model: Order }) => {
-			// NOTE: Test log to determine if this subscriber is called from different model operations
-			if (id !== m.model.id) throw "MISMATCHING IDS IN SUBSCRIBER EVENT!";
-
-			self.dispatch("order touched", { type: "update", order: m.model, data });
-			return "success";
-		});
-
-		return super.editData(id, data, say);
+		const operation = await super.editData(id, data, say);
+		
+		this.dispatch("order touched", { type: "update", order: data, data });
+		
+		return operation;
 	}
 
 	public async remove(id: string, say: MessengerFunction): Promise<OperationStatus> {
-		const self = this;
 		const existingModel = await this.findById(id, say);
+		if (!existingModel) return "failure";
 
-		this.subscribeOnce(ERepoEvents.AFTER_REMOVE, async (source: Object, m: { id: string, status: OperationStatus }) => {
-			// NOTE: Test log to determine if this subscriber is called from different model operations
-			if (id !== m.id) throw "MISMATCHING IDS IN SUBSCRIBER EVENT!";
+		const operationStatus = await super.remove(id, say);
+		if (operationStatus === "success") this.dispatch("order touched", { type: "delete", order: existingModel });
 
-			if (m.status) self.dispatch("order touched", { type: "delete", order: existingModel });
-			return "success";
-		});
-		return super.remove(id, say);
+		return operationStatus;
 	}
 
 	public createAggregation(query: Dictionary, say: MessengerFunction): Dictionary[] {

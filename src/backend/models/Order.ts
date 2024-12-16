@@ -7,7 +7,6 @@ import OwnershipInfo from "../types/OwnershipInfo";
 import { UnitData } from "./Unit";
 
 type OrderData = {
-	isDraft?: boolean;
 	currency: string;
 	status: string;
 	date: number;
@@ -30,7 +29,6 @@ class Order extends Model<OrderData> {
 
 	static emptyData(): OrderData {
 		return {
-			isDraft: true,
 			currency: "",
 			status: "",
 			customer: "",

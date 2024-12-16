@@ -5,7 +5,6 @@ import { CustomerRepo } from "../../backend/repos/CustomerRepo";
 import { IdentifiableDictionary } from "../../types/IdentifiableDictionary";
 import { ListFilter } from "../../backend/types/ListFilter";
 import { Customer, CustomerData } from "../../backend/models/Customer";
-import { Operation } from "../../types/Operation";
 
 class CustomerController extends Controller {
 
@@ -24,28 +23,15 @@ class CustomerController extends Controller {
 		const operationStatus = await repo.add(customer, say);
 		if (operationStatus === "failure") return response.sendByInfo(operationStatus);
 
-		const content: Dictionary = {}; 
-		if (request.query.isDraft) {
-			const userContent = { formDetails: {}, model: {} };
-			userContent.formDetails = await repo.getFormDetails(say);
-			userContent.model = customer;
-			content.customer = userContent;
-		} else {
-			content.customer = customer;
-		}
-
+		const content: Dictionary = { customer };
 		return response.sendByInfo(operationStatus, content);
 	}
 
 	async postDocuments(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
-
-		const repo = CustomerRepo.getInstance(say);
 		const files = request.getUploadedFiles(say);
-		const operationStatus = await repo.setDocumentsFromFiles(request.body.id, files, say);
-
-		return response.sendByInfo(operationStatus);
+		return response.sendByInfo("success", files);
 	}
 
 	async getMany(say: MessengerFunction) : Promise<void> {
@@ -67,20 +53,6 @@ class CustomerController extends Controller {
 		
 		const repo = CustomerRepo.getInstance(say);
 		const customer = await repo.detailedFindById(request.query.id, say);
-		const responseType = customer ? "success" : "notFound";
-
-		response
-			.setType(responseType)
-			.content = { customer };
-
-		return response.send();
-	}
-
-	async getDraft(say: MessengerFunction) : Promise<void> {
-		const response = this.getActiveResponse<Dictionary>(say);
-		
-		const repo = CustomerRepo.getInstance(say);
-		const customer = await repo.findDraft(say);
 		const responseType = customer ? "success" : "notFound";
 
 		response

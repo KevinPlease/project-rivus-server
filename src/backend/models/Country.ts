@@ -7,7 +7,6 @@ import OwnershipInfo from "../types/OwnershipInfo";
 import { CountryRepo } from "../repos/CountryRepo";
 
 type CountryData = {
-	isDraft?: boolean;
 	code: string;
 	name: string;
 	order: number;
@@ -22,7 +21,6 @@ class Country extends Model<CountryData> {
 
 	static emptyData(): CountryData {
 		return {
-			isDraft: true,
 			code: "",
 			name: "",
 			order: 1,

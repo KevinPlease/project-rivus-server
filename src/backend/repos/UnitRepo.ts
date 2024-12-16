@@ -1,8 +1,7 @@
-import { ObjectId } from "mongodb";
 import { MessengerFunction } from "../../Messenger";
 import MongoCollection from "../../mongo/MongoCollection";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
-import { Operation, OperationStatus } from "../../types/Operation";
+import { Operation } from "../../types/Operation";
 import { IRepoOptions } from "../interfaces/IRepository";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
@@ -26,7 +25,7 @@ class UnitRepo extends BaseDocimgRepo<UnitData> {
 	public static MODEL_ROLE_NAME = Unit.ROLE;
 
 	public static create(collection: MongoCollection, domain: string) {
-		const options: IRepoOptions = { needsDisplayIds: true, needsDraftModels: true };
+		const options: IRepoOptions = { needsDisplayIds: true };
 		const repo = new UnitRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
 		
 		repo.privilegeMiddleware = new PrivilegeKeeper();

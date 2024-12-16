@@ -7,7 +7,6 @@ import OwnershipInfo from "../types/OwnershipInfo";
 import { UnitExtraRepo } from "../repos/UnitExtraRepo";
 
 type UnitExtraData = {
-	isDraft?: boolean;
 	name: string;
 	price: number;
 	order: number;
@@ -21,7 +20,6 @@ class UnitExtra extends Model<UnitExtraData> {
 
 	static emptyData(): UnitExtraData {
 		return {
-			isDraft: true,
 			name: "",
 			price: 1,
 			order: 1

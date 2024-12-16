@@ -7,7 +7,6 @@ import OwnershipInfo from "../types/OwnershipInfo";
 import { PropertyTypeRepo } from "../repos/PropertyTypeRepo";
 
 type PropertyTypeData = {
-	isDraft?: boolean;
 	name: string;
 	order: number;
 };
@@ -20,7 +19,6 @@ class PropertyType extends Model<PropertyTypeData> {
 
 	static emptyData(): PropertyTypeData {
 		return {
-			isDraft: true,
 			name: "",
 			order: 1
 		};

@@ -8,7 +8,6 @@ import { DocumentDetails } from "../types/DocumentDetails";
 import { ImageDetails } from "../types/ImageDetails";
 
 type UnitData = {
-	isDraft?: boolean;
 	unitType: string;
 	availability: string;
 	offeringType: string;
@@ -46,7 +45,6 @@ class Unit extends Model<UnitData> {
 
 	static emptyData(): UnitData {
 		return {
-			isDraft: true,
 			unitType: "",
 			availability: "",
 			offeringType: "",

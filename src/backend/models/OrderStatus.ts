@@ -7,7 +7,6 @@ import OwnershipInfo from "../types/OwnershipInfo";
 import { OrderStatusRepo } from "../repos/OrderStatusRepo";
 
 type OrderStatusData = {
-	isDraft?: boolean;
 	name: string;
 	order: number;
 };
@@ -20,7 +19,6 @@ class OrderStatus extends Model<OrderStatusData> {
 
 	static emptyData(): OrderStatusData {
 		return {
-			isDraft: true,
 			name: "",
 			order: 1
 		};

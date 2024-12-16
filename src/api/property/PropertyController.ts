@@ -23,39 +23,22 @@ class PropertyController extends Controller {
 		const operationStatus = await repo.add(property, say);
 		if (operationStatus === "failure") return response.sendByInfo(operationStatus);
 
-		const content: Dictionary = {}; 
-		if (request.query.isDraft) {
-			const userContent = { formDetails: {}, model: {} };
-			userContent.formDetails = await repo.getFormDetails(say);
-			userContent.model = property;
-			content.property = userContent;
-		} else {
-			content.property = property;
-		}
-
+		const content: Dictionary = { property };
 		return response.sendByInfo(operationStatus, content);
 	}
 
 	async postDocuments(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
-
-		const repo = PropertyRepo.getInstance(say);
 		const files = request.getUploadedFiles(say);
-		const operationStatus = await repo.setDocumentsFromFiles(request.body.id, files, say);
-
-		return response.sendByInfo(operationStatus);
+		return response.sendByInfo("success", files);
 	}
 
 	async postImages(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
-
-		const repo = PropertyRepo.getInstance(say);
 		const files = request.getUploadedFiles(say);
-		const operationStatus = await repo.setImagesFromFiles(request.body.id, files, say);
-
-		return response.sendByInfo(operationStatus);
+		return response.sendByInfo("success", files);
 	}
 
 	async getMany(say: MessengerFunction) : Promise<void> {
@@ -77,20 +60,6 @@ class PropertyController extends Controller {
 		
 		const repo = PropertyRepo.getInstance(say);
 		const property = await repo.detailedFindById(request.query.id, say);
-		const responseType = property ? "success" : "notFound";
-
-		response
-			.setType(responseType)
-			.content = { property };
-
-		return response.send();
-	}
-
-	async getDraft(say: MessengerFunction) : Promise<void> {
-		const response = this.getActiveResponse<Dictionary>(say);
-		
-		const repo = PropertyRepo.getInstance(say);
-		const property = await repo.findDraft(say);
 		const responseType = property ? "success" : "notFound";
 
 		response

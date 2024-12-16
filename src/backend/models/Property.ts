@@ -8,7 +8,6 @@ import { DocumentDetails } from "../types/DocumentDetails";
 import { ImageDetails } from "../types/ImageDetails";
 
 type PropertyData = {
-	isDraft?: boolean;
 	propertyType: string;
     constructionStage: string;
     country: string;
@@ -42,7 +41,6 @@ class Property extends Model<PropertyData> {
 
 	static emptyData(): PropertyData {
 		return {
-			isDraft: true,
 			propertyType: "",
 			constructionStage: "",
 			country: "",

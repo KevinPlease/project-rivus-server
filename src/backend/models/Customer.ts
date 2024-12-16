@@ -7,7 +7,6 @@ import OwnershipInfo from "../types/OwnershipInfo";
 import { DocumentDetails } from "../types/DocumentDetails";
 
 type CustomerData = {
-	isDraft?: boolean;
 	name: string;
 	title: string;
 	mobile: string;
@@ -31,7 +30,6 @@ class Customer extends Model<CustomerData> {
 
 	static emptyData(): CustomerData {
 		return {
-			isDraft: true,
 			name: "",
 			title: "",
 			mobile: "",

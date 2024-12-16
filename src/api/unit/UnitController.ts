@@ -23,39 +23,22 @@ class UnitController extends Controller {
 		const operationStatus = await repo.add(unit, say);
 		if (operationStatus === "failure") return response.sendByInfo(operationStatus);
 
-		const content: Dictionary = {}; 
-		if (request.query.isDraft) {
-			const userContent = { formDetails: {}, model: {} };
-			userContent.formDetails = await repo.getFormDetails(say);
-			userContent.model = unit;
-			content.unit = userContent;
-		} else {
-			content.unit = unit;
-		}
-
+		const content: Dictionary = { unit };
 		return response.sendByInfo(operationStatus, content);
 	}
 
 	async postDocuments(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
-
-		const repo = UnitRepo.getInstance(say);
 		const files = request.getUploadedFiles(say);
-		const operationStatus = await repo.setDocumentsFromFiles(request.body.id, files, say);
-
-		return response.sendByInfo(operationStatus);
+		return response.sendByInfo("success", files);
 	}
 
 	async postImages(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<IdentifiableDictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
-
-		const repo = UnitRepo.getInstance(say);
 		const files = request.getUploadedFiles(say);
-		const operationStatus = await repo.setImagesFromFiles(request.body.id, files, say);
-
-		return response.sendByInfo(operationStatus);
+		return response.sendByInfo("success", files);
 	}
 
 	async getMany(say: MessengerFunction) : Promise<void> {
@@ -77,20 +60,6 @@ class UnitController extends Controller {
 		
 		const repo = UnitRepo.getInstance(say);
 		const unit = await repo.detailedFindById(request.query.id, say);
-		const responseType = unit ? "success" : "notFound";
-
-		response
-			.setType(responseType)
-			.content = { unit };
-
-		return response.send();
-	}
-
-	async getDraft(say: MessengerFunction) : Promise<void> {
-		const response = this.getActiveResponse<Dictionary>(say);
-		
-		const repo = UnitRepo.getInstance(say);
-		const unit = await repo.findDraft(say);
 		const responseType = unit ? "success" : "notFound";
 
 		response

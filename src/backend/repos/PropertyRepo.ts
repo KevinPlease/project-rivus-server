@@ -21,7 +21,7 @@ class PropertyRepo extends BaseDocimgRepo<PropertyData> {
 	public static MODEL_ROLE_NAME = Property.ROLE;
 
 	public static create(collection: MongoCollection, domain: string) {
-		const options: IRepoOptions = { needsDisplayIds: true, needsDraftModels: true };
+		const options: IRepoOptions = { needsDisplayIds: true };
 		const repo = new PropertyRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
 		
 		repo.privilegeMiddleware = new PrivilegeKeeper();

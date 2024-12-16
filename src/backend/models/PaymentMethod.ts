@@ -7,7 +7,6 @@ import OwnershipInfo from "../types/OwnershipInfo";
 import { PaymentMethodRepo } from "../repos/PaymentMethodRepo";
 
 type PaymentMethodData = {
-	isDraft?: boolean;
 	name: string;
 	order: number;
 };
@@ -20,7 +19,6 @@ class PaymentMethod extends Model<PaymentMethodData> {
 
 	static emptyData(): PaymentMethodData {
 		return {
-			isDraft: true,
 			name: "",
 			order: 1
 		};

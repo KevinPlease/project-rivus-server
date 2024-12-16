@@ -7,7 +7,6 @@ import OwnershipInfo from "../types/OwnershipInfo";
 import { ConstructionStageRepo } from "../repos/ConstructionStageRepo";
 
 type ConstructionStageData = {
-	isDraft?: boolean;
 	name: string;
 	order: number;
 };
@@ -20,7 +19,6 @@ class ConstructionStage extends Model<ConstructionStageData> {
 
 	static emptyData(): ConstructionStageData {
 		return {
-			isDraft: true,
 			name: "",
 			order: 1
 		};

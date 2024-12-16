@@ -7,7 +7,6 @@ import OwnershipInfo from "../types/OwnershipInfo";
 import { OfferingTypeRepo } from "../repos/OfferingTypeRepo";
 
 type OfferingTypeData = {
-	isDraft?: boolean;
 	name: string;
 	order: number;
 };
@@ -20,7 +19,6 @@ class OfferingType extends Model<OfferingTypeData> {
 
 	static emptyData(): OfferingTypeData {
 		return {
-			isDraft: true,
 			name: "",
 			order: 1
 		};
