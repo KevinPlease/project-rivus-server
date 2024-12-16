@@ -54,28 +54,24 @@ class CounterRepo extends BaseRepo<CounterData> {
 			},
 			{
 				counter: 1,
-				isDraft: false,
 				prefix: "CC",
 				role: "customer",
 				value: "CC 1"
 			},
 			{
 				counter: 1,
-				isDraft: false,
 				prefix: "CP",
 				role: "property",
 				value: "CP 1"
 			},
 			{
 				counter: 1,
-				isDraft: false,
 				prefix: "CU",
 				role: "unit",
 				value: "CU 1"
 			},
 			{
 				counter: 1,
-				isDraft: false,
 				prefix: "CO",
 				role: "order",
 				value: "CO 1"

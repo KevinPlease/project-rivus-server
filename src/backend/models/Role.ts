@@ -127,10 +127,6 @@ class Role extends Model<RoleData> {
 					}
 				},
 				[Customer.ROLE]: {
-					isDraft: {
-						read: AccessType.SELFISH,
-						write: AccessType.SELFISH
-					},
 					name: {
 						read: AccessType.SELFISH,
 						write: AccessType.SELFISH
@@ -177,10 +173,6 @@ class Role extends Model<RoleData> {
 					}
 				},
 				[Property.ROLE]: {
-					isDraft: {
-						read: AccessType.SELFISH,
-						write: AccessType.SELFISH
-					},
 					propertyType: {
 						read: AccessType.SELFISH,
 						write: AccessType.SELFISH
@@ -247,10 +239,6 @@ class Role extends Model<RoleData> {
 					}
 				},
 				[Unit.ROLE]: {
-					isDraft: {
-						read: AccessType.SELFISH,
-						write: AccessType.SELFISH
-					},
 					unitType: {
 						read: AccessType.SELFISH,
 						write: AccessType.SELFISH
@@ -353,10 +341,6 @@ class Role extends Model<RoleData> {
 					}
 				},
 				[Order.ROLE]: {
-					isDraft: {
-						read: AccessType.SELFISH,
-						write: AccessType.SELFISH
-					},
 					currency: {
 						read: AccessType.SELFISH,
 						write: AccessType.SELFISH

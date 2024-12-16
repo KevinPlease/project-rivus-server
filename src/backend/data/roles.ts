@@ -81,10 +81,6 @@ const getDefaultData = (domain: string) => {
 					},
 					"fieldAccess": {
 						"user": {
-							"isDraft": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
 							"name": {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
@@ -123,10 +119,6 @@ const getDefaultData = (domain: string) => {
 							}
 						},
 						"role": {
-							"isDraft": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
 							"name": {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
@@ -199,10 +191,6 @@ const getDefaultData = (domain: string) => {
 							}
 						},
 						"customer": {
-							"isDraft": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
 							"name": {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
@@ -249,10 +237,6 @@ const getDefaultData = (domain: string) => {
 							}
 						},
 						"property": {
-							"isDraft": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
 							"propertyType": {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
@@ -319,10 +303,6 @@ const getDefaultData = (domain: string) => {
 							}
 						},
 						"unit": {
-							"isDraft": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
 							"unitType": {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
@@ -425,10 +405,6 @@ const getDefaultData = (domain: string) => {
 							}
 						},
 						"order": {
-							"isDraft": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
 							"currency": {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
