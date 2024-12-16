@@ -92,7 +92,7 @@ class ModelFolder extends Folder {
 		return this.getDocumentsPath(say);
 	}
 
-	public getGeneratedFile(id: string): File {
+	public getReportFile(id: string): File {
 		const curModelFolder = this.getChildFolder(ModelFolder.GEN_FOLDER);
 		return curModelFolder.getFile(id);
 	}

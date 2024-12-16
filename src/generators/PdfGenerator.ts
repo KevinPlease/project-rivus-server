@@ -41,7 +41,7 @@ class PdfGenerator implements IDocGenerator {
 		await folder.ensureReportsExist(say);
 
 		const fileName = File.timestampedName("GEN_" + reportId);
-		return folder.getGeneratedFile(fileName).openAsWriteStream();
+		return folder.getReportFile(fileName).openAsWriteStream();
 	}
 
 	public addTitle(): PdfGenerator {

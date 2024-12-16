@@ -1,17 +1,18 @@
 import IdCreator from "../backend/IdCreator";
 import Work, { WorkData, WorkSchedule } from "../service/Work";
-import ExObject from "../shared/Object";
-import { ModelCore } from "../core/Model";
+import { Model, ModelCore } from "../core/Model";
 import { MessengerFunction } from "../Messenger";
 import Metadata from "../core/types/Metadata";
 import OwnershipInfo from "../backend/types/OwnershipInfo";
 import { ImageDetails } from "../backend/types/ImageDetails";
+import { Dictionary } from "../types/Dictionary";
 
 
 type ImgEnhancementExecInfo = {
 	branch: string;
 	domain: string;
-	propertyId: string;
+	modelId: string;
+	model: Model<Dictionary>;
 	images: ImageDetails[];
 };
 
@@ -27,24 +28,24 @@ class ImageEnhancement extends Work<ImgEnhancementExecInfo> {
 	// NOTE: Currently no repo for this type of work
 	public static REPO_NAME = "image_enhancements";
 
-	public static emptyData(): ImgEnhancementData {
-		return {
-			schedule: WorkSchedule.empty(),
-			groupId: "default",
-			execInfo: {
-				branch: "",
-				domain: "",
-				propertyId: "",
-				images: []
-			},
-			result: {},
-			status: "pending",
-			priority: 0
-		};
-	}
+	// public static emptyData(): ImgEnhancementData {
+	// 	return {
+	// 		schedule: WorkSchedule.empty(),
+	// 		groupId: "default",
+	// 		execInfo: {
+	// 			branch: "",
+	// 			domain: "",
+	// 			modelId: "",
+	// 			images: []
+	// 		},
+	// 		result: {},
+	// 		status: "pending",
+	// 		priority: 0
+	// 	};
+	// }
 
 	public static create(say: MessengerFunction, data: ImgEnhancementData, ownership: OwnershipInfo, meta?: Metadata): ImageEnhancement {
-		if (ExObject.isDictEmpty(data)) data = ImageEnhancement.emptyData();
+		// if (ExObject.isDictEmpty(data)) data = ImageEnhancement.emptyData();
 		
 		if (!ownership.branch) throw "HUNT: Missing branch from ownership info!";
 
