@@ -4,6 +4,8 @@ import Folder from "../files/Folder";
 import File from "../files/File";
 import { MessengerFunction } from "../Messenger";
 import { PdfGenerator } from "./PdfGenerator";
+import ModelFolder from "../files/ModelFolder";
+import { Unit } from "../backend/models/Unit";
 
 class OrderPdf extends PdfGenerator {
 
@@ -191,6 +193,8 @@ class OrderPdf extends PdfGenerator {
 			const unitData = unit.data;
 			const property = formDetails.property.find(p => p._id.toString() === unitData.property);
 			const unitType = formDetails.unitType.find(ut => ut._id.toString() === unitData.unitType);
+			const owningFolder = ModelFolder.fromInfo(Unit.ROLE, this.options.domain.name, this.options.branch.data.name, unit._id || "", this.say);
+			const path = owningFolder.getImagesPath(this.say);
 
 			doc.addPage();
 
@@ -232,7 +236,7 @@ class OrderPdf extends PdfGenerator {
 
 			for (let y = 0; y < images.length; y++) {
 				const curImage = images[y];
-				const file = File.fromInfo(curImage.fsPath, curImage.id);
+				const file = File.fromInfo(path, curImage.id);
 				unitsStruct.add(
 					doc.struct(
 						`Image ${y + 1}`,

@@ -52,7 +52,7 @@ class ImageEnhancerEngine extends WorkerEngine<ImgEnhancementExecInfo> {
 		const imgEnhancer = new ImageEnhancer();
 
 		const onMessage = Functions.bound(this, this.onMessage);
-		const proms = execInfo.images.map(img => imgEnhancer.enhance(img, onMessage));
+		const proms = execInfo.images.map(img => imgEnhancer.enhance(execInfo.property, img, onMessage));
 		
 		const status = await Functions.doSimpleAsync(Promise, "all", proms);
 

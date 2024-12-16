@@ -39,8 +39,8 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 	}
 
 	private handleBeforeEdit(data: Partial<ModelData>): { images: ImageDetails[], documents: DocumentDetails[] } {
-		const images = [...(data.images || [])];
-		const documents = [...(data.documents || [])];
+		const images: ImageDetails[] = [...(data.images || [])];
+		const documents: DocumentDetails[] = [...(data.documents || [])];
 		delete data.images;
 		delete data.documents;
 		return { images, documents };
