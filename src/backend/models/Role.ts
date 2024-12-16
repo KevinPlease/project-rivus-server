@@ -11,7 +11,6 @@ import { Property } from "./Property";
 import { Unit } from "./Unit";
 
 type RoleData = {
-	isDraft?: boolean;
 	actions: string[];
 	description: string;
 	name: string;
@@ -25,7 +24,6 @@ class Role extends Model<RoleData> {
 
 	static emptyData(): RoleData {
 		return {
-			isDraft: true,
 			name: "",
 			description: "",
 			accessInfo: Role.defaultAccessInfo(),
@@ -73,10 +71,6 @@ class Role extends Model<RoleData> {
 			},
 			fieldAccess: {
 				[User.ROLE]: {
-					"isDraft": {
-						read: AccessType.SELFISH,
-						write: AccessType.SELFISH
-					},
 					"name": {
 						read: AccessType.SELFISH,
 						write: AccessType.SELFISH
@@ -115,10 +109,6 @@ class Role extends Model<RoleData> {
 					}
 				},
 				[Role.ROLE]: {
-					"isDraft": {
-						read: AccessType.SELFISH,
-						write: AccessType.SELFISH
-					},
 					"name": {
 						read: AccessType.SELFISH,
 						write: AccessType.SELFISH

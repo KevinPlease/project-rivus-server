@@ -2,11 +2,9 @@ import { MessengerFunction } from "../../Messenger";
 import { Model, ModelCore } from "../../core/Model";
 import Metadata from "../../core/types/Metadata";
 import OwnershipInfo from "../types/OwnershipInfo";
-import { BaseRepo } from "../repos/BaseRepo";
 import { BranchRepo } from "../repos/BranchRepo";
 
 type BranchData = {
-	isDraft?: boolean;
 	name: string,
 	owner: string
 };

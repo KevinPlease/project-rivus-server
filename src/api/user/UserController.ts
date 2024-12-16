@@ -24,28 +24,16 @@ class UserController extends Controller {
 		const operationStatus = await userRepo.add(user, say);
 		if (operationStatus === "failure") return response.sendByInfo(operationStatus);
 
-		const content: Dictionary = {}; 
-		if (request.query.isDraft) {
-			const userContent = { formDetails: {}, model: {} };
-			userContent.formDetails = await userRepo.getFormDetails(say);
-			userContent.model = user;
-			content.user = userContent;
-		} else {
-			content.user = user;
-		}
-
+		const content: Dictionary = { user };
 		return response.sendByInfo(operationStatus, content);
 	}
 
 	async postImages(say: MessengerFunction) : Promise<void> {
-		const request = this.getActiveRequest<IdentifiableDictionary>(say);
+		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
 
-		const userRepo = UserRepo.getInstance(say);
 		const files = request.getUploadedFiles(say);
-		const operationStatus = await userRepo.setImagesFromFiles(request.body.id, files, say);
-
-		return response.sendByInfo(operationStatus);
+		return response.sendByInfo("success", files);
 	}
 
 	async getMany(say: MessengerFunction) : Promise<void> {
@@ -67,20 +55,6 @@ class UserController extends Controller {
 		
 		const userRepo = UserRepo.getInstance(say);
 		const user = await userRepo.detailedFindById(request.query.id, say);
-		const responseType = user ? "success" : "notFound";
-
-		response
-			.setType(responseType)
-			.content = { user };
-
-		return response.send();
-	}
-
-	async getDraft(say: MessengerFunction) : Promise<void> {
-		const response = this.getActiveResponse<Dictionary>(say);
-		
-		const userRepo = UserRepo.getInstance(say);
-		const user = await userRepo.findDraft(say);
 		const responseType = user ? "success" : "notFound";
 
 		response

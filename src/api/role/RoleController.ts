@@ -23,16 +23,7 @@ class RoleController extends Controller {
 		const operationStatus = await repo.add(model, say);
 		if (operationStatus === "failure") return response.sendByInfo(operationStatus);
 
-		const content: Dictionary = {}; 
-		if (request.query.isDraft) {
-			const roleContent = { formDetails: {}, model: {} };
-			roleContent.formDetails = await repo.getFormDetails(say);
-			roleContent.model = model;
-			content.role = roleContent;
-		} else {
-			content.role = model;
-		}
-
+		const content: Dictionary = { model }; 
 		return response.sendByInfo(operationStatus, content);
 	}
 
@@ -55,20 +46,6 @@ class RoleController extends Controller {
 		
 		const repo = RoleRepo.getInstance(say);
 		const role = await repo.detailedFindById(request.query.id, say);
-		const responseType = role ? "success" : "notFound";
-
-		response
-			.setType(responseType)
-			.content = { role };
-
-		return response.send();
-	}
-
-	async getDraft(say: MessengerFunction) : Promise<void> {
-		const response = this.getActiveResponse<Dictionary>(say);
-		
-		const repo = RoleRepo.getInstance(say);
-		const role = await repo.findDraft(say);
 		const responseType = role ? "success" : "notFound";
 
 		response

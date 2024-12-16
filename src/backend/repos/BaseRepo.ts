@@ -71,11 +71,8 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 	}
 
 	private async _create(data: Dictionary, say: MessengerFunction): Promise<string | null> {
-		if (!data.isDraft)
-		{
-			const operation: Operation = await this.dispatchOnce(ERepoEvents.BEFORE_ADD, { model: data, status: "success" });
-			if (operation?.status === "failure") return "failure";
-		}
+		const operation: Operation = await this.dispatchOnce(ERepoEvents.BEFORE_ADD, { model: data, status: "success" });
+		if (operation?.status === "failure") return "failure";
 		
 		const middleware = this.privilegeMiddleware;
 		const isSysCall = say(this, "ask", "isSysCall");
@@ -88,7 +85,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		}
 
 		data.id = result;
-		if (!data.isDraft) this.dispatchOnce(ERepoEvents.AFTER_ADD, { model: data, status: result ? "success" : "failure" });
+		this.dispatchOnce(ERepoEvents.AFTER_ADD, { model: data, status: result ? "success" : "failure" });
 
 		return result;
 	}
@@ -143,15 +140,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 	}
 
 	public createQueryFromFilter(filter: Filter | Filter[] | undefined): Dictionary {
-		let query = MongoQuery.create(filter);
-		
-		if (this.options.needsDraftModels) {
-			const notDraft = MongoQuery.notFieldExists("data.isDraft");
-			query = Array.isArray(filter) && query["$and"] ? query["$and"] : query;
-			query = MongoQuery.safeAttachToOr(query, notDraft);
-		}
-
-		return query;
+		return MongoQuery.create(filter);
 	}
 
 	public async update(query: Dictionary, data: Dictionary, say: MessengerFunction): Promise<OperationStatus> {
@@ -218,13 +207,12 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 
 		}
 
-		const isDraft = model.data.isDraft;
-		const timeCreated = isDraft ? 0 : Date.now();
+		const timeCreated = Date.now();
 		model.meta.timeCreated = timeCreated;
 		const insertedId = await this._create(model, say);
 		if (!insertedId) return "failure";
 
-		if (!isDraft && this.options.needsLastUpdateTime) {
+		if (this.options.needsLastUpdateTime) {
 			this._lastUpdated = timeCreated;
 		}
 
@@ -340,12 +328,6 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 
 	public detailedFindById(id: string, say: MessengerFunction): Promise<DetailedFind<Model<ModelData>> | null> {
 		const query = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { displayId: id };
-		return this.detailedFind(query, say);
-	}
-
-	public async findDraft(say: MessengerFunction) : Promise<DetailedFind<Model<ModelData>> | null> {
-		const creator = say(this, "ask", "ownUserId");
-		const query = { "data.isDraft": true, "meta.creator": creator };
 		return this.detailedFind(query, say);
 	}
 

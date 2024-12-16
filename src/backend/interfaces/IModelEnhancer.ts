@@ -5,7 +5,7 @@ import { Operation } from "../../types/Operation";
 
 interface IModelEnhancer {
 	
-	enhance(model: Model<Dictionary> | Dictionary, say: MessengerFunction): Promise<Operation>;
+	enhance(owningModel: Model<Dictionary>, model: Model<Dictionary> | Dictionary, say: MessengerFunction): Promise<Operation>;
 
 }
 

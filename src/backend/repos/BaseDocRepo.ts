@@ -39,8 +39,8 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 	}
 
 	private handleBeforeEdit(data: Partial<ModelData>): { images: ImageDetails[], documents: DocumentDetails[] } {
-		const images = data.images || [];
-		const documents = data.documents || [];
+		const images = [...(data.images || [])];
+		const documents = [...(data.documents || [])];
 		delete data.images;
 		delete data.documents;
 		return { images, documents };
@@ -56,29 +56,7 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		return;
 	}
 	
-	public async editData(id: string, data: Partial<ModelData>, say: MessengerFunction): Promise<Operation> {
-		let newImages: ImageDetails[] = [];
-		let newDocuments: DocumentDetails[] = [];
-
-		this.subscribeOnce(ERepoEvents.BEFORE_UPDATE, (source: Object, content: any) => {
-			const { images, documents } = this.handleBeforeEdit(data);
-			newImages.push(...images);
-			newDocuments.push(...documents);
-			return "success";
-		});
-		
-		const existingModel = await this.findById(id, say);
-		if (!existingModel) return { status: "failure", message: "NotFound" };
-
-		this.subscribeOnce(ERepoEvents.AFTER_UPDATE, (source: Object, content: { status: OperationStatus }) => {
-			const idQuery = { _id: new ObjectId(existingModel.id) };
-			return this.handleAfterEdit(content.status, newImages, newDocuments, existingModel, idQuery);
-		});
-
-		return super.editData(id, data, say);
-	}
-
-	public async setDocsFromFiles(type: "image" | "document", id: string, files: FileInfo[], say: MessengerFunction): Promise<OperationStatus> {
+	private async setDocsFromFiles(type: "image" | "document", id: string, files: FileInfo[], say: MessengerFunction): Promise<OperationStatus> {
 		const model = await this.findById(id, say);
 		if (!model) return "failure";
 
@@ -98,7 +76,6 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 					src: "",
 					isImg: fileInfo.isImg,
 					id: uploadedFile.name,
-					fsPath: uploadedFile.fsPath,
 					file: fileInfo.file
 				};
 
@@ -114,9 +91,8 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 					src: "",
 					isImg: type === "image",
 					id: f.name,
-					fsPath: f.fsPath,
 					file: { name: f.name, type: f.type, size: f.size }
-				}
+				};
 			}); 
 		}
 
@@ -125,11 +101,29 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		return this.update({ _id: new ObjectId(id) }, updateQuery, say);
 	}
 
+	public async editData(id: string, data: Partial<ModelData>, say: MessengerFunction): Promise<Operation> {
+		let newImages: ImageDetails[] = [];
+		let newDocuments: DocumentDetails[] = [];
+
+		const existingModel = await this.findById(id, say);
+		if (!existingModel) return { status: "failure", message: "NotFound" };
+		
+		const { images, documents } = this.handleBeforeEdit(data);
+		newImages = images;
+		newDocuments = documents;
+		const operation = await super.editData(id, data, say);
+		
+		const idQuery = { _id: new ObjectId(id) };
+		this.handleAfterEdit(operation.status, newImages, newDocuments, existingModel, idQuery);
+		
+		return operation;
+	}
+ 
 	public setDocumentsFromFiles(id: string, files: FileInfo[], say: MessengerFunction): Promise<OperationStatus> {
 		return this.setDocsFromFiles("document", id, files, say);
 	}
 
-	public async setImagesFromFiles(id: string, files: FileInfo[], say: MessengerFunction): Promise<OperationStatus> {
+	public setImagesFromFiles(id: string, files: FileInfo[], say: MessengerFunction): Promise<OperationStatus> {
 		return this.setDocsFromFiles("image", id, files, say);
 	}
 

@@ -2,11 +2,9 @@ import { Model } from "../../core/Model";
 import { MessengerFunction } from "../../Messenger";
 import Metadata from "../../core/types/Metadata";
 import OwnershipInfo from "../types/OwnershipInfo";
-import { BaseRepo } from "../repos/BaseRepo";
 import { CounterRepo } from "../repos/CounterRepo";
 
 type CounterData = {
-	isDraft?: boolean;
 	role: string;
 	value: string;
 	counter: number;
