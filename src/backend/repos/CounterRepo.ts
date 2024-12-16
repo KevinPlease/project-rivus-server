@@ -18,7 +18,7 @@ class CounterRepo extends BaseRepo<CounterData> {
 		return super.getInstance(say) as CounterRepo;
 	}
 
-	public async findByRole(role: string) : Promise<Counter | null> {
+	public async findByRole(role: string): Promise<Counter | null> {
 		const query = { "data.role": role };
 		const core = await this.collection.findOne(query);
 		if (!core) return null;
