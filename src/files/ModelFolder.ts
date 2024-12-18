@@ -10,6 +10,7 @@ class ModelFolder extends Folder {
 	public static IMG_FOLDER = "images";
 	public static DOC_FOLDER = "documents";
 	public static GEN_FOLDER = "generated";
+	public static TEMP_FOLDER = "temp";
 
 	public static fromInfo(role: string, domainName: string, branchName: string, id: string, say: MessengerFunction) : ModelFolder {
 		role = ExString.uncapitalize(role);

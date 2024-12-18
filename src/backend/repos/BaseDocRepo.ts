@@ -20,7 +20,7 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		const docimgToAdd: DocumentDetails[] = [];
 		const docimgToDelete: string[] = [];
 		const existingDocimgs = type === "document" ? model.data.documents : model.data.images;
-		const sourceFolder = ModelFolder.fromInfo(this.modelRole, this.domain, this.branch || "", "temp", say);
+		const sourceFolder = ModelFolder.fromInfo(this.modelRole, this.domain, this.branch || "", ModelFolder.TEMP_FOLDER, say);
 		const destFolder = ModelFolder.fromInfo(this.modelRole, this.domain, this.branch || "", model.id, say);
 		for (const docimg of newDocimgs) {
 			const newDocId = docimg.id;

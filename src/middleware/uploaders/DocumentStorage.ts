@@ -26,18 +26,18 @@ class DocumentStorage implements IMiddlewareStorage {
 		const role = this._role;
 		const storage = Multer.diskStorage({
 			destination: async function (req, file, destHandlerFunc) {
-				const propFolder = ModelFolder.fromInfo(role, ownDomain.name, ownBranch.data.name, "temp", say);
+				const tempFolder = ModelFolder.fromInfo(role, ownDomain.name, ownBranch.data.name, ModelFolder.TEMP_FOLDER, say);
 				
 				if (firstTime) {
-					await propFolder.ensureDocumentsExist(say);
+					await tempFolder.ensureDocumentsExist(say);
 					firstTime = false;
 				}
 				
-				const path = propFolder.getDocumentsPath(say);
+				const path = tempFolder.getDocumentsPath(say);
 				const fileName = File.timestampedName(file.originalname);
 				
 				file.filename = fileName;
-				file.path = NetworkUrl.forDocument(ownDomain.name, role, "temp", fileName, say);
+				file.path = NetworkUrl.forDocument(ownDomain.name, role, ModelFolder.TEMP_FOLDER, fileName, say);
 				destHandlerFunc(null, path);
 			},
 			filename: function (req: MExpRequest, file, nameHandlerFunc) {
