@@ -22,13 +22,15 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		const existingDocimgs = type === "document" ? model.data.documents : model.data.images;
 		const sourceFolder = ModelFolder.fromInfo(this.modelRole, this.domain, this.branch || "", ModelFolder.TEMP_FOLDER, say);
 		const destFolder = ModelFolder.fromInfo(this.modelRole, this.domain, this.branch || "", model.id, say);
-		const folderMethodName = type === "document" ? "getDocumentFile" : "getImageFile";
+		const folderMethodName = type === "document" ? "ensureDocumentsExist" : "ensureImagesExist";
+		await destFolder[folderMethodName](say);
+		const fileMethodName = type === "document" ? "getDocumentFile" : "getImageFile";
 		for (const docimg of newDocimgs) {
 			const newDocId = docimg.name;
 			const existing = existingDocimgs?.find(exDoc => exDoc.name === newDocId);
 			if (!existing) {
-				const srcFile = sourceFolder[folderMethodName](newDocId);
-				const destFile = destFolder[folderMethodName](newDocId);
+				const srcFile = sourceFolder[fileMethodName](newDocId);
+				const destFile = destFolder[fileMethodName](newDocId);
 				srcFile.moveTo(destFile.path);
 				docimgToAdd.push(docimg);
 				continue;
