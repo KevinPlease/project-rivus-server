@@ -44,7 +44,6 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 				docimg.url = NetworkUrl[srcMethodName](domainName, branchName, this.modelRole, model.id, newDocId, say);
 				docimg.isImg = type === "image";
 				docimg.alt = "";
-				docimg.file = { name: docimg.file.name, type: docimg.file.type, size: docimg.file.size };
 
 				docimgToAdd.push(docimg);
 				continue;
@@ -77,51 +76,6 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		
 		return;
 	}
-	
-	private async setDocsFromFiles(type: "image" | "document", id: string, files: FileInfo[], say: MessengerFunction): Promise<OperationStatus> {
-		const model = await this.findById(id, say);
-		if (!model) return "failure";
-
-		if (ExArray.isEmpty(files)) return "success";
-
-		let finalDocs: DocumentDetails[] | ImageDetails[] = [];
-		const existingDocs = type === "document" ? model.data.documents : model.data.images;
-		if (existingDocs && !(ExArray.isEmpty(existingDocs))) {
-			finalDocs = [...existingDocs];
-			for (const fileInfo of finalDocs) {
-				const uploadedFile = files.find(file => file.originalName === fileInfo.file.name);
-				if (!uploadedFile) continue;
-
-				const fileDetails: DocumentDetails | ImageDetails = {
-					alt: fileInfo.alt,
-					url: uploadedFile.src,
-					src: "",
-					isImg: fileInfo.isImg,
-					name: uploadedFile.name,
-					file: fileInfo.file
-				};
-
-				this.dispatch("BEFORE_DOC_UPDATE", fileDetails);
-
-				ExArray.replace(finalDocs, fileInfo, fileDetails);
-			}
-		} else {
-			finalDocs = files.map(f => {
-				return {
-					alt: "",
-					url: f.src,
-					src: "",
-					isImg: type === "image",
-					name: f.name,
-					file: { name: f.name, type: f.type, size: f.size }
-				};
-			}); 
-		}
-
-		const typeInPlural = type + "s";
-		const updateQuery = { [`data.${typeInPlural}`]: finalDocs };
-		return this.update({ _id: new ObjectId(id) }, updateQuery, say);
-	}
 
 	public async add(model: Model<ModelData>, say: MessengerFunction): Promise<OperationStatus> {
 		const { images, documents } = this.handleBeforeEdit(model.data);
@@ -149,14 +103,6 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		this.handleAfterEdit(operation.status, newImages, newDocuments, existingModel, idQuery, say);
 		
 		return operation;
-	}
- 
-	public setDocumentsFromFiles(id: string, files: FileInfo[], say: MessengerFunction): Promise<OperationStatus> {
-		return this.setDocsFromFiles("document", id, files, say);
-	}
-
-	public setImagesFromFiles(id: string, files: FileInfo[], say: MessengerFunction): Promise<OperationStatus> {
-		return this.setDocsFromFiles("image", id, files, say);
 	}
 
 	public async getFileDocById(type: "image" | "document" | "report", branchName: string, owningModelId: string, id: string, say: MessengerFunction): Promise<File | null> {

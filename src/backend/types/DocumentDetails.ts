@@ -5,11 +5,8 @@ type DocumentDetails = {
 	isRemoved?: boolean;
 	isImg: boolean;
 	name: string;
-	file: {
-		name: string;
-		size: number;
-		type: string;
-	};
+	size: number;
+	type: string;
 };
 
 export type { DocumentDetails };
