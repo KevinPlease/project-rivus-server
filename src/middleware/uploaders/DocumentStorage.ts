@@ -37,7 +37,7 @@ class DocumentStorage implements IMiddlewareStorage {
 				const fileName = File.timestampedName(file.originalname);
 				
 				file.filename = fileName;
-				file.path = NetworkUrl.forDocument(ownDomain.name, role, ModelFolder.TEMP_FOLDER, fileName, say);
+				file.path = NetworkUrl.forDocument(ownDomain.name, ownBranch.data.name, role, ModelFolder.TEMP_FOLDER, fileName, say);
 				destHandlerFunc(null, path);
 			},
 			filename: function (req: MExpRequest, file, nameHandlerFunc) {

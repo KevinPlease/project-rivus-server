@@ -27,9 +27,9 @@ const NetworkUrl = {
 		return encodeURI(hostUrl + `/api/${ExString.uncapitalize(modelRole)}/image/${modelId}?imageId=${id}&branch=${branch}`);
 	},
 
-	forDocument: (domain: string, modelRole: string, modelId: string, id: string, say: MessengerFunction) => {
+	forDocument: (domain: string, branch: string, modelRole: string, modelId: string, id: string, say: MessengerFunction) => {
 		const hostUrl: string = say(NetworkUrl, "ask", "hostUrlForDomain", domain);
-		return encodeURI(hostUrl + `/api/${ExString.uncapitalize(modelRole)}/document/${modelId}?documentId=${id}`);
+		return encodeURI(hostUrl + `/api/${ExString.uncapitalize(modelRole)}/document/${modelId}?documentId=${id}&branch=${branch}`);
 	}
 
 };

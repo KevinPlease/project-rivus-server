@@ -11,27 +11,37 @@ import ModelFolder from "../../files/ModelFolder";
 import File from "../../files/File";
 import { DocumentDetails } from "../types/DocumentDetails";
 import { ImageDetails } from "../types/ImageDetails";
+import NetworkUrl from "../../network/NetworkUrl";
 
 class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 
 	private async _editUpload(type: "image" | "document", newDocimgs: DocumentDetails[], model: Model<ModelData>, idQuery: Dictionary, say: MessengerFunction): Promise<OperationStatus> {
 		const collection = this.collection;
 
+		const domainName = model.getDomainName();
+		const branchName = model.getBranchName();
 		const docimgToAdd: DocumentDetails[] = [];
 		const docimgToDelete: string[] = [];
 		const existingDocimgs = type === "document" ? model.data.documents : model.data.images;
-		const sourceFolder = ModelFolder.fromInfo(this.modelRole, this.domain, this.branch || "", ModelFolder.TEMP_FOLDER, say);
-		const destFolder = ModelFolder.fromInfo(this.modelRole, this.domain, this.branch || "", model.id, say);
+		const sourceFolder = ModelFolder.fromInfo(this.modelRole, domainName, branchName || "", ModelFolder.TEMP_FOLDER, say);
+		const destFolder = ModelFolder.fromInfo(this.modelRole, domainName, branchName || "", model.id, say);
 		const folderMethodName = type === "document" ? "ensureDocumentsExist" : "ensureImagesExist";
 		await destFolder[folderMethodName](say);
 		const fileMethodName = type === "document" ? "getDocumentFile" : "getImageFile";
+		const srcMethodName = type === "document" ? "forDocument" : "forImage";
 		for (const docimg of newDocimgs) {
 			const newDocId = docimg.name;
 			const existing = existingDocimgs?.find(exDoc => exDoc.name === newDocId);
 			if (!existing) {
 				const srcFile = sourceFolder[fileMethodName](newDocId);
 				const destFile = destFolder[fileMethodName](newDocId);
-				srcFile.moveTo(destFile.path);
+				const moveStatus = await srcFile.moveTo(destFile.path);
+				if (moveStatus !== "success") {
+					console.error("Failed moving temp file to permanent location!");
+					continue;
+				}
+
+				docimg.src = NetworkUrl[srcMethodName](domainName, branchName, this.modelRole, model.id, newDocId, say);
 				docimgToAdd.push(docimg);
 				continue;
 			}
