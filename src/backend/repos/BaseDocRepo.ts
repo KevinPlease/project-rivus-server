@@ -6,7 +6,7 @@ import ExArray from "../../shared/Array";
 import { Functions } from "../../shared/Function";
 import { Dictionary } from "../../types/Dictionary";
 import { Operation, OperationStatus } from "../../types/Operation";
-import { BaseRepo, ERepoEvents } from "./BaseRepo";
+import { BaseRepo } from "./BaseRepo";
 import ModelFolder from "../../files/ModelFolder";
 import File from "../../files/File";
 import { DocumentDetails } from "../types/DocumentDetails";
@@ -22,12 +22,13 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		const existingDocimgs = type === "document" ? model.data.documents : model.data.images;
 		const sourceFolder = ModelFolder.fromInfo(this.modelRole, this.domain, this.branch || "", ModelFolder.TEMP_FOLDER, say);
 		const destFolder = ModelFolder.fromInfo(this.modelRole, this.domain, this.branch || "", model.id, say);
+		const folderMethodName = type === "document" ? "getDocumentFile" : "getImageFile";
 		for (const docimg of newDocimgs) {
-			const newDocId = docimg.id;
-			const existing = existingDocimgs?.find(exDoc => exDoc.id === newDocId);
+			const newDocId = docimg.name;
+			const existing = existingDocimgs?.find(exDoc => exDoc.name === newDocId);
 			if (!existing) {
-				const srcFile = sourceFolder.getFile(newDocId);
-				const destFile = destFolder.getFile(newDocId);
+				const srcFile = sourceFolder[folderMethodName](newDocId);
+				const destFile = destFolder[folderMethodName](newDocId);
 				srcFile.moveTo(destFile.path);
 				docimgToAdd.push(docimg);
 				continue;
@@ -80,7 +81,7 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 					url: uploadedFile.src,
 					src: "",
 					isImg: fileInfo.isImg,
-					id: uploadedFile.name,
+					name: uploadedFile.name,
 					file: fileInfo.file
 				};
 
@@ -95,7 +96,7 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 					url: f.src,
 					src: "",
 					isImg: type === "image",
-					id: f.name,
+					name: f.name,
 					file: { name: f.name, type: f.type, size: f.size }
 				};
 			}); 

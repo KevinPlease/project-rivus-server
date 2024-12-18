@@ -4,7 +4,7 @@ type DocumentDetails = {
 	url: string;
 	isRemoved?: boolean;
 	isImg: boolean;
-	id: string;
+	name: string;
 	file: {
 		name: string;
 		size: number;
