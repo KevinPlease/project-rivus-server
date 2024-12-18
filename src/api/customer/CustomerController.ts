@@ -77,7 +77,7 @@ class CustomerController extends Controller {
 		const operation = await repo.getDocumentById(branchName, request.params.id, request.query.documentId, say);
 		if (operation.status === "failure") response.setType("notFound");
 
-		const resType = operation.status === "failure" ? "notFound" : "successFile";
+		const resType = operation.status === "failure" ? "notFound" : "successDownload";
 		response
 			.setType(resType)
 			.content = operation.message;

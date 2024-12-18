@@ -84,7 +84,7 @@ class UnitController extends Controller {
 		const operation = await repo.getDocumentById(branchName, request.params.id, request.query.documentId, say);
 		if (operation.status === "failure") response.setType("notFound");
 
-		const resType = operation.status === "failure" ? "notFound" : "successFile";
+		const resType = operation.status === "failure" ? "notFound" : "successDownload";
 		response
 			.setType(resType)
 			.content = operation.message;
@@ -107,7 +107,7 @@ class UnitController extends Controller {
 		const imageOperation = await repo.getImageById(branchName, request.params.id, request.query.imageId, say);
 		if (imageOperation.status === "failure") response.setType("notFound");
 
-		const resType = imageOperation.status === "failure" ? "notFound" : "successFile";
+		const resType = imageOperation.status === "failure" ? "notFound" : "successDownload";
 		response
 			.setType(resType)
 			.content = imageOperation.message;

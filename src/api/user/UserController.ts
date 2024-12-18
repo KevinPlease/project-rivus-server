@@ -78,7 +78,7 @@ class UserController extends Controller {
 		const imageOperation = await userRepo.getImageById(branchName, request.params.id, request.query.imageId, say);
 		if (imageOperation.status === "failure") response.setType("notFound");
 
-		const resType = imageOperation.status === "failure" ? "notFound" : "successFile";
+		const resType = imageOperation.status === "failure" ? "notFound" : "successDownload";
 		response
 			.setType(resType)
 			.content = imageOperation.message;
