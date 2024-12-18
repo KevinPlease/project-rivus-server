@@ -185,8 +185,9 @@ class Application extends Communicator {
 		});
 
 		application.subscribe(ERepoEvents.AFTER_ADD, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
+			if (content.model.role === Notification.ROLE) return;
+
 			const domain = Domain.byName(content.model.getDomainName(), onMessage);
-			
 			const sysCallMsngr = (source: Object, purpose: string, what: string, content?: any): any => {
 				if (purpose === "ask") {
 					switch (what) {
@@ -204,8 +205,9 @@ class Application extends Communicator {
 		});
 
 		application.subscribe(ERepoEvents.AFTER_REMOVE, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
+			if (content.model.role === Notification.ROLE) return;
+
 			const domain = Domain.byName(content.model.getDomainName(), onMessage);
-			
 			const sysCallMsngr = (source: Object, purpose: string, what: string, content?: any): any => {
 				if (purpose === "ask") {
 					switch (what) {
