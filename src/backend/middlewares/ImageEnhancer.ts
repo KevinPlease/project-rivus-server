@@ -15,7 +15,7 @@ class ImageEnhancer implements IModelEnhancer {
 	async enhance(owningModel: Model<Dictionary>, model: ImageDetails, say: MessengerFunction): Promise<Operation> {
 		const owningFolder = ModelFolder.fromInfo(owningModel.role, owningModel.getDomainName(), owningModel.getBranchName(), owningModel.id, say);
 		const path = owningFolder.getImagesPath(say);
-		const filePath = Folder.createPath(say, path, model.id);
+		const filePath = Folder.createPath(say, path, model.name);
 
 		const options = {
 			ratio: 0.2,		// Should be less than one
