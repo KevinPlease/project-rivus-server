@@ -4,14 +4,12 @@ import { MessengerFunction } from "../../Messenger";
 import MongoCollection from "../../mongo/MongoCollection";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
 import { Operation, OperationStatus } from "../../types/Operation";
-import IPrivilegeMiddleware from "../interfaces/IPrivilegeMiddleware";
 import { IRepoOptions } from "../interfaces/IRepository";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { User, UserData } from "../models/User";
 import { DetailedFind } from "../types/DetailedFind";
 import { BaseDocimgRepo } from "./BaseDocRepo";
-import { ERepoEvents } from "./BaseRepo";
 import { BranchRepo } from "./BranchRepo";
 import { RoleRepo } from "./RoleRepo";
 
@@ -24,7 +22,7 @@ class UserRepo extends BaseDocimgRepo<UserData> {
 		const options: IRepoOptions = { needsDisplayIds: true };
 		const userRepo = new UserRepo(collection, this.REPO_NAME, this.MODEL_ROLE_NAME, domain, undefined, options);
 		
-		userRepo.privilegeMiddleware = new PrivilegeKeeper()
+		userRepo.privilegeMiddleware = new PrivilegeKeeper();
 
 		return userRepo;
 	}
@@ -68,14 +66,10 @@ class UserRepo extends BaseDocimgRepo<UserData> {
 	}
 
 	public async add(model: User, say: MessengerFunction): Promise<OperationStatus> {
-		this.subscribeOnce(ERepoEvents.BEFORE_ADD, async (source:Object, m: { model: User }) => {
-			const userOperation = await this.validateRequestForNewUser(m.model.data.email);
-			if (userOperation.status === "failure") return "failure";
-			
-			model.data.password = TokenKeeper.encryptPass(model.data.password);
-			return "success";
-		});
-
+		const userOperation = await this.validateRequestForNewUser(model.data.email);
+		if (userOperation.status === "failure") return "failure";
+		
+		model.data.password = TokenKeeper.encryptPass(model.data.password);
 		return super.add(model, say);
 	}
 

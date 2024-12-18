@@ -1,19 +1,18 @@
 import IdCreator from "../backend/IdCreator";
 import Work, { WorkData, WorkSchedule } from "../service/Work";
-import ExObject from "../shared/Object";
-import { ModelCore } from "../core/Model";
+import { Model, ModelCore } from "../core/Model";
 import { MessengerFunction } from "../Messenger";
 import Metadata from "../core/types/Metadata";
 import OwnershipInfo from "../backend/types/OwnershipInfo";
 import { ImageDetails } from "../backend/types/ImageDetails";
-import { Property } from "../backend/models/Property";
+import { Dictionary } from "../types/Dictionary";
 
 
 type ImgEnhancementExecInfo = {
 	branch: string;
 	domain: string;
-	propertyId: string;
-	property: Property;
+	modelId: string;
+	model: Model<Dictionary>;
 	images: ImageDetails[];
 };
 
@@ -36,8 +35,7 @@ class ImageEnhancement extends Work<ImgEnhancementExecInfo> {
 	// 		execInfo: {
 	// 			branch: "",
 	// 			domain: "",
-	// 			propertyId: "",
-	// 			property: new Property(),
+	// 			modelId: "",
 	// 			images: []
 	// 		},
 	// 		result: {},

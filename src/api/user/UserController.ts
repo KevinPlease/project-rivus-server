@@ -31,7 +31,6 @@ class UserController extends Controller {
 	async postImages(say: MessengerFunction) : Promise<void> {
 		const request = this.getActiveRequest<Dictionary>(say);
 		const response = this.getActiveResponse<Dictionary>(say);
-
 		const files = request.getUploadedFiles(say);
 		return response.sendByInfo("success", files);
 	}

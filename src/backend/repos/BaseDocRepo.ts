@@ -14,16 +14,21 @@ import { ImageDetails } from "../types/ImageDetails";
 
 class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 
-	private async _editUpload(type: "image" | "document", newDocimgs: DocumentDetails[], model: Model<ModelData>, idQuery: Dictionary): Promise<OperationStatus> {
+	private async _editUpload(type: "image" | "document", newDocimgs: DocumentDetails[], model: Model<ModelData>, idQuery: Dictionary, say: MessengerFunction): Promise<OperationStatus> {
 		const collection = this.collection;
 
 		const docimgToAdd: DocumentDetails[] = [];
 		const docimgToDelete: string[] = [];
 		const existingDocimgs = type === "document" ? model.data.documents : model.data.images;
+		const sourceFolder = ModelFolder.fromInfo(this.modelRole, this.domain, this.branch || "", ModelFolder.TEMP_FOLDER, say);
+		const destFolder = ModelFolder.fromInfo(this.modelRole, this.domain, this.branch || "", model.id, say);
 		for (const docimg of newDocimgs) {
 			const newDocId = docimg.id;
 			const existing = existingDocimgs?.find(exDoc => exDoc.id === newDocId);
 			if (!existing) {
+				const srcFile = sourceFolder.getFile(newDocId);
+				const destFile = destFolder.getFile(newDocId);
+				srcFile.moveTo(destFile.path);
 				docimgToAdd.push(docimg);
 				continue;
 			}
@@ -33,7 +38,7 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 
 		const typeInPlural = type + "s";
 		let status = await Functions.doSimpleAsync(collection, "removeFromList", idQuery, { [`data.${typeInPlural}`]: { id: { $in: docimgToDelete } } });
-		status = await Functions.doSimpleAsync(collection, "pushInList", idQuery, { [`data.${typeInPlural}`]: { $each: docimgToAdd } })
+		status = await Functions.doSimpleAsync(collection, "pushInList", idQuery, { [`data.${typeInPlural}`]: { $each: docimgToAdd } });
 
 		return status;
 	}
@@ -46,11 +51,11 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		return { images, documents };
 	}
 
-	private handleAfterEdit(status: OperationStatus, images: ImageDetails[], documents: DocumentDetails[], model: Model<ModelData>, idQuery: Dictionary) {
+	private handleAfterEdit(status: OperationStatus, images: ImageDetails[], documents: DocumentDetails[], model: Model<ModelData>, idQuery: Dictionary, say: MessengerFunction): void {
 		if (status === "success") {
-			if (!ExArray.isEmpty(images)) 	this._editUpload("image", images, model, idQuery);
+			if (!ExArray.isEmpty(images)) 	this._editUpload("image", images, model, idQuery, say);
 
-			if (!ExArray.isEmpty(documents)) 	this._editUpload("document", documents, model, idQuery);
+			if (!ExArray.isEmpty(documents)) 	this._editUpload("document", documents, model, idQuery, say);
 		}
 		
 		return;
@@ -101,6 +106,16 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		return this.update({ _id: new ObjectId(id) }, updateQuery, say);
 	}
 
+	public async add(model: Model<ModelData>, say: MessengerFunction): Promise<OperationStatus> {
+		const { images, documents } = this.handleBeforeEdit(model.data);
+		const status = await super.add(model, say);
+		if (!status) return status;
+		
+		const idQuery = { _id: new ObjectId(model.id) };
+		this.handleAfterEdit(status, images, documents, model, idQuery, say);
+		return status;
+	}
+
 	public async editData(id: string, data: Partial<ModelData>, say: MessengerFunction): Promise<Operation> {
 		let newImages: ImageDetails[] = [];
 		let newDocuments: DocumentDetails[] = [];
@@ -114,7 +129,7 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		const operation = await super.editData(id, data, say);
 		
 		const idQuery = { _id: new ObjectId(id) };
-		this.handleAfterEdit(operation.status, newImages, newDocuments, existingModel, idQuery);
+		this.handleAfterEdit(operation.status, newImages, newDocuments, existingModel, idQuery, say);
 		
 		return operation;
 	}
@@ -170,24 +185,24 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		return this.getDocById("report", branchName, owningModelId, id, say);
 	}
 
-	public async getRawImageById(branchName: string, propertyId: string, id: string, say: MessengerFunction): Promise<string> {
-		const imageFile = await this.getFileImageById(branchName, propertyId, id, say);
+	public async getRawImageById(branchName: string, modelId: string, id: string, say: MessengerFunction): Promise<string> {
+		const imageFile = await this.getFileImageById(branchName, modelId, id, say);
 		if (!imageFile) return "";
 
 		const base64 = await imageFile.readWithEncoding("base64");
 		return `data:image;base64,${base64}`;
 	}
 
-	public async getRawDocById(branchName: string, propertyId: string, id: string, say: MessengerFunction): Promise<string> {
-		const docFile = await this.getFileDocumentById(branchName, propertyId, id, say);
+	public async getRawDocById(branchName: string, modelId: string, id: string, say: MessengerFunction): Promise<string> {
+		const docFile = await this.getFileDocumentById(branchName, modelId, id, say);
 		if (!docFile) return "";
 
 		const base64 = await docFile.readWithEncoding("base64");
 		return `data:text;base64,${base64}`;
 	}
 
-	public async getRawReportById(branchName: string, propertyId: string, id: string, say: MessengerFunction): Promise<string> {
-		const file = await this.getFileReportById(branchName, propertyId, id, say);
+	public async getRawReportById(branchName: string, modelId: string, id: string, say: MessengerFunction): Promise<string> {
+		const file = await this.getFileReportById(branchName, modelId, id, say);
 		if (!file) return "";
 
 		const base64 = await file.readWithEncoding("base64");

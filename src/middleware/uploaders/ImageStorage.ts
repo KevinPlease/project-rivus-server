@@ -26,18 +26,18 @@ class ImageStorage implements IMiddlewareStorage {
 		const role = this._role;
 		const storage = Multer.diskStorage({
 			destination: async function (req, file, destHandlerFunc) {
-				const propFolder = ModelFolder.fromInfo(role, ownDomain.name, ownBranch.data.name, req.body.id, say);
+				const tempFolder = ModelFolder.fromInfo(role, ownDomain.name, ownBranch.data.name, ModelFolder.TEMP_FOLDER, say);
 				
 				if (firstTime) {
-					await propFolder.ensureImagesExist(say);
+					await tempFolder.ensureImagesExist(say);
 					firstTime = false;
 				}
 				
-				const path = propFolder.getImagesPath(say);
+				const path = tempFolder.getImagesPath(say);
 				const fileName = File.timestampedName(file.originalname);
 				
 				file.filename = fileName;
-				file.path = NetworkUrl.forImage(ownDomain.name, ownBranch.data.name, role, req.body.id, fileName, say);
+				file.path = NetworkUrl.forImage(ownDomain.name, ownBranch.data.name, role, ModelFolder.TEMP_FOLDER, fileName, say);
 				destHandlerFunc(null, path);
 			},
 			filename: function (req: MExpRequest, file, nameHandlerFunc) {

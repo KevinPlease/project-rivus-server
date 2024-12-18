@@ -1,4 +1,4 @@
-import PDFDocument from "pdfkit";
+import PDFKit from "pdfkit";
 import IDocGenerator from "../backend/interfaces/IDocGenerator";
 import { DocType } from "../backend/types/DocType";
 import { Model } from "../core/Model";
@@ -24,7 +24,7 @@ class PdfGenerator implements IDocGenerator {
 			size: "A4",
 			margin: 50
 		};
-		this._doc = new PDFDocument(docOptions);
+		this._doc = new PDFKit(docOptions);
 		this._say = say;
 	}
 

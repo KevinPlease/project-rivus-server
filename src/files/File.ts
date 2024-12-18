@@ -85,7 +85,14 @@ class File {
 	copy(destinationPath: string): Promise<OperationStatus> {
 		return Functions.doAsync(FS, "copyFile", this.path, destinationPath);
 	}
-	
+
+	async moveTo(destinationPath: string): Promise<OperationStatus> {
+		let result = await Functions.doAsync(FS, "rename", this.path, destinationPath);
+		if (result === null) return "failure";
+
+		result = await Functions.doAsync(FS, "unlink", this.path);
+		return result === null ? "failure" : "success";
+	}
 	
 	writeWithEncoding(content: string, type: string): Promise<OperationStatus> {
 		if (!type) type = "utf-8";
