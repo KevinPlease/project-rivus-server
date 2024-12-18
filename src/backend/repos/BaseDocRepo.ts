@@ -41,7 +41,11 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 					continue;
 				}
 
-				docimg.src = NetworkUrl[srcMethodName](domainName, branchName, this.modelRole, model.id, newDocId, say);
+				docimg.url = NetworkUrl[srcMethodName](domainName, branchName, this.modelRole, model.id, newDocId, say);
+				docimg.isImg = type === "image";
+				docimg.alt = "";
+				docimg.file = { name: docimg.file.name, type: docimg.file.type, size: docimg.file.size };
+
 				docimgToAdd.push(docimg);
 				continue;
 			}
