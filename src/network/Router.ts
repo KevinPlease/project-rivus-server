@@ -209,7 +209,7 @@ class Router {
 	public async authorizeRequest(routeInfo: RouteInfo, req: MExpRequest, res: ExpResponse, next: ExpNextFunc) {
 		const headers = req.headers as MReqHeaders;
 		const domain = ArrayOps.last(req.subdomains) || "";
-		const reqAuthInfo: RequestAuthInfo = { authToken: headers.authorization || "", branchName: headers.branch, domainName: domain, ...routeInfo };
+		const reqAuthInfo: RequestAuthInfo = { authToken: headers.authorization || "", branchName: headers.branch || req.query.branch as string, domainName: domain, ...routeInfo };
 		const msngr = this.getRequestMsngr(req, res, next);
 		const authorizers = this._authorizers;
 
