@@ -1,4 +1,4 @@
-import PDFDocument from "pdfkit";
+import PDFKit from "pdfkit";
 import IDocGenerator from "../backend/interfaces/IDocGenerator";
 import { DocType } from "../backend/types/DocType";
 import { Model } from "../core/Model";
@@ -14,8 +14,9 @@ class PdfGenerator implements IDocGenerator {
 	private _type: DocType;
 	private _options: Dictionary;
 	private _doc: PDFKit.PDFDocument;
+	private _say: MessengerFunction;
 
-	constructor(options: Dictionary) {
+	constructor(options: Dictionary, say: MessengerFunction) {
 		this._type = "pdf";
 		this._options = options;
 
@@ -23,7 +24,8 @@ class PdfGenerator implements IDocGenerator {
 			size: "A4",
 			margin: 50
 		};
-		this._doc = new PDFDocument(docOptions);
+		this._doc = new PDFKit(docOptions);
+		this._say = say;
 	}
 
 	public get type(): DocType { return this._type }
@@ -32,6 +34,8 @@ class PdfGenerator implements IDocGenerator {
 	public set options(value: Dictionary) { this._options = value }
 	public get doc(): PDFKit.PDFDocument { return this._doc }
 	public set doc(value: PDFKit.PDFDocument) { this._doc = value }
+	public get say(): MessengerFunction { return this._say }
+	public set say(value: MessengerFunction) { this._say = value }
 
 	private async prepareFileStream(model: Model<Dictionary> | Dictionary, reportId: string, say: MessengerFunction): Promise<Operation> {
 		const domain = this.options.domain;
@@ -40,7 +44,7 @@ class PdfGenerator implements IDocGenerator {
 		
 		await folder.ensureReportsExist(say);
 
-		const fileName = File.timestampedName("GEN_" + reportId);
+		const fileName = File.basicName(reportId + ".pdf");
 		return folder.getReportFile(fileName).openAsWriteStream();
 	}
 
@@ -91,7 +95,7 @@ class PdfGenerator implements IDocGenerator {
 			.text(domainName, 110, 57)
 			.fontSize(10)
 			.text(domainName, 200, 50, { align: "right" })
-			.text(`Dega "${branch.data.name}"`, 200, 65, { align: "right" })
+			.text(`Dega '${branch.data.name}'`, 200, 65, { align: "right" })
 			.text(branch.data.address || "", 200, 80, { align: "right" })
 			.moveDown();
 		
@@ -116,11 +120,12 @@ class PdfGenerator implements IDocGenerator {
 
 	public addFooter(detailedFind: DetailedFind<Model<Dictionary>> | Dictionary): PdfGenerator {
 		this._doc
+			.font("Helvetica")	
 			.fontSize(10)
 			.text(
 				"Gjeneruar automatikisht nga sistemi Catasta",
 				50,
-				780,
+				765,
 				{ align: "center", width: 500 }
 			);
 		
@@ -136,17 +141,26 @@ class PdfGenerator implements IDocGenerator {
 
 		const fileStream = fileStreamOperation.message;
 		try {
-			this.addTitle()
+			
+			doc.pipe(fileStream.stream);
+			
+			this
+				.addTitle()
 				.addHeader(detailedFind, say)
 				.addBody(detailedFind)
 				.addFooter(detailedFind);
 
-			doc.pipe(fileStream.stream);
 			doc.end();
-
-			return new Promise((resolve) => {
+			
+			return new Promise((resolve, reject) => {
 				fileStream.stream.on("finish", () => {
+					fileStream.stream.close();
 					resolve({ status: "success", message: fileStream.path });
+				});
+
+				fileStream.stream.on("error", (e: Error) => {
+					fileStream.stream.close();
+					reject({ status: "failure", message: e.stack || e.message });
 				});
 			});
 

@@ -90,7 +90,7 @@ class ModelFolder extends Folder {
 		const opStatus = await this.createFolderIfMissing(ModelFolder.GEN_FOLDER);
 		if (opStatus === "failure") return "";
 
-		return this.getDocumentsPath(say);
+		return this.getReportsPath(say);
 	}
 
 	public getReportFile(id: string): File {
