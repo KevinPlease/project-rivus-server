@@ -88,9 +88,6 @@ class File {
 
 	async moveTo(destinationPath: string): Promise<OperationStatus> {
 		let result = await Functions.doAsync(FS, "rename", this.path, destinationPath);
-		if (result === null) return "failure";
-
-		result = await Functions.doAsync(FS, "unlink", this.path);
 		return result === null ? "failure" : "success";
 	}
 	
