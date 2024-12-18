@@ -41,10 +41,6 @@ class ImageStorage implements IMiddlewareStorage {
 				destHandlerFunc(null, path);
 			},
 			filename: function (req: MExpRequest, file, nameHandlerFunc) {
-				if (!req.uploadedFiles) req.uploadedFiles = [];
-				// @ts-ignore
-				req.uploadedFiles.push({ src: file.path, name: file.filename, originalName: file.originalname, size: file.size, type: file.mimetype });
-
 				nameHandlerFunc(null, file.filename);
 			}
 		});

@@ -37,7 +37,13 @@ class Request<Data extends Dictionary> {
 
 	public getUploadedFiles(say: MessengerFunction): FileInfo[] {
 		const expReq: MExpRequest = say(this, "ask", "request");
-		return expReq.uploadedFiles || [];
+		if (!expReq.files) return [];
+
+		if (Array.isArray(expReq.files)) {
+			return expReq.files.map((file: any) => ({ src: file.path, name: file.filename, originalName: file.originalname, size: file.size, type: file.mimetype }));
+		}
+
+		return [];
 	}
 
 }
