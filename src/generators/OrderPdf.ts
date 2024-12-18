@@ -236,7 +236,7 @@ class OrderPdf extends PdfGenerator {
 
 			for (let y = 0; y < images.length; y++) {
 				const curImage = images[y];
-				const file = File.fromInfo(path, curImage.id);
+				const file = File.fromInfo(path, curImage.name);
 				unitsStruct.add(
 					doc.struct(
 						`Image ${y + 1}`,
