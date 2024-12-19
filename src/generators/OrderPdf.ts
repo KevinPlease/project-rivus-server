@@ -188,12 +188,13 @@ class OrderPdf extends PdfGenerator {
 		const imagesHeaderStartY = 170;
 		const imagesStartY = 200;
 		const imagesSpacing = 320;
-		for (let i = 0; i < order.data.units.length; i++) {
-			const unit = order.data.units[i];
+		const units = order.data.units as Unit[];
+		for (let i = 0; i < units.length; i++) {
+			const unit = units[i];
 			const unitData = unit.data;
 			const property = formDetails.property.find(p => p._id.toString() === unitData.property);
 			const unitType = formDetails.unitType.find(ut => ut._id.toString() === unitData.unitType);
-			const owningFolder = ModelFolder.fromInfo(Unit.ROLE, this.options.domain.name, this.options.branch.data.name, unit._id || "", this.say);
+			const owningFolder = ModelFolder.fromInfo(Unit.ROLE, this.options.domain.name, this.options.branch.data.name, unit.id || "", this.say);
 			const path = owningFolder.getImagesPath(this.say);
 
 			doc.addPage();
