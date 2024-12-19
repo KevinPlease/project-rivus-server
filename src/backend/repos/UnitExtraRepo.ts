@@ -1,7 +1,10 @@
 import { MessengerFunction } from "../../Messenger";
 import MongoCollection from "../../mongo/MongoCollection";
+import { Dictionary } from "../../types/Dictionary";
 import { OperationStatus } from "../../types/Operation";
 import { UnitExtra, UnitExtraData } from "../models/UnitExtra";
+import { Filter } from "../types/Filter";
+import { PaginationOptions } from "../types/PaginationOptions";
 import { BaseRepo } from "./BaseRepo";
 
 class UnitExtraRepo extends BaseRepo<UnitExtraData> {
@@ -14,6 +17,18 @@ class UnitExtraRepo extends BaseRepo<UnitExtraData> {
 
 	public static getInstance(say: MessengerFunction): UnitExtraRepo {
 		return super.getInstance(say) as UnitExtraRepo;
+	}
+
+	public getSimplifiedMany(say: MessengerFunction, filter?: Filter | Dictionary, pagination?: PaginationOptions, project?: Dictionary): Promise<Dictionary[]> {
+		if (!project) project = {};
+		
+		const overrideProject = {
+			"data.order": 1,
+			"data.price": 1,
+			"data.area": 1,
+			...project
+		};
+		return super.getSimplifiedMany(say, filter, pagination, overrideProject);
 	}
 
 	public async addDefaultData(say: MessengerFunction): Promise<OperationStatus> {
