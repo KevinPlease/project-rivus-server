@@ -59,6 +59,7 @@ import { ERepoEvents } from "./backend/repos/BaseRepo";
 import { ENotificationAction, Notification } from "./backend/models/Notification";
 import { UserPreferenceRepo } from "./backend/repos/UserPreferenceRepo";
 import { Order } from "./backend/models/Order";
+import { Counter } from "./backend/models/Counter";
 
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
@@ -169,7 +170,8 @@ class Application extends Communicator {
 		});
 
 		application.subscribe(ERepoEvents.AFTER_UPDATE, function(source: any, content: { model: Model<Dictionary>, status: OperationStatus }) {
-			if (content.model.role === Notification.ROLE) return;
+			const role = content.model.role;
+			if (role === Notification.ROLE || role === Counter.ROLE) return;
 
 			const domain = Domain.byName(content.model.getDomainName(), onMessage);
 			const sysCallMsngr = (source: Object, purpose: string, what: string, content?: any): any => {
@@ -197,7 +199,8 @@ class Application extends Communicator {
 		});
 
 		application.subscribe(ERepoEvents.AFTER_ADD, function(source: any, content: { model: Model<Dictionary>, status: OperationStatus }) {
-			if (content.model.role === Notification.ROLE) return;
+			const role = content.model.role;
+			if (role === Notification.ROLE || role === Counter.ROLE) return;
 
 			const domain = Domain.byName(content.model.getDomainName(), onMessage);
 			const sysCallMsngr = (source: Object, purpose: string, what: string, content?: any): any => {
@@ -225,7 +228,8 @@ class Application extends Communicator {
 		});
 
 		application.subscribe(ERepoEvents.AFTER_REMOVE, function(source: any, content: { model: Model<Dictionary>, status: OperationStatus }) {
-			if (content.model.role === Notification.ROLE) return;
+			const role = content.model.role;
+			if (role === Notification.ROLE || role === Counter.ROLE) return;
 
 			const domain = Domain.byName(content.model.getDomainName(), onMessage);
 			const sysCallMsngr = (source: Object, purpose: string, what: string, content?: any): any => {
