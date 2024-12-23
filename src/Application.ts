@@ -236,8 +236,7 @@ class Application extends Communicator {
 				const units = order.data.units || [];
 				const domain = application.getDomainByRepoId(order.repository);
 				const unitRepo = domain.getRepoByName(UnitRepo.REPO_NAME) as UnitRepo;
-				const availability = unitAvailabilityFor.delete[order.data.orderStatus];
-				units.forEach((u: any) => unitRepo.changeUnitAvailability(u._id, availability, sysCallMsngr));
+				units.forEach((u: any) => unitRepo.changeUnitAvailability(u._id, "66be60c2f80c0b00b38cc2fb", sysCallMsngr));
 			}
 		});
 
