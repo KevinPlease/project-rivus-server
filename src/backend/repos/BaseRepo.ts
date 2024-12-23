@@ -293,14 +293,8 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		// return { source: [], assignee: [] };
 	}
 
-	public async remove(id: string, say: MessengerFunction): Promise<OperationStatus> {
-		await this.dispatch(ERepoEvents.BEFORE_REMOVE, { id });
-		
-		const status = await this._delete({ _id: new ObjectId(id) }, say);
-		
-		this.dispatch(ERepoEvents.AFTER_REMOVE, { id, status });
-		
-		return status;
+	public remove(id: string, say: MessengerFunction): Promise<OperationStatus> {
+		return this._delete({ _id: new ObjectId(id) }, say);
 	}
 
 	public async findById(id: string, say: MessengerFunction, projection?: Dictionary): Promise<Model<ModelData> | null> {
