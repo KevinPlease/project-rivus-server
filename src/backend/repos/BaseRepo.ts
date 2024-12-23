@@ -143,7 +143,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		return MongoQuery.create(filter);
 	}
 
-	public async update(query: Dictionary, data: Dictionary, say: MessengerFunction): Promise<OperationStatus> {
+	public async update(query: Dictionary, data: Dictionary, existingModel: Model<ModelData>, say: MessengerFunction): Promise<OperationStatus> {
 		const status = await this.dispatchOnce(ERepoEvents.BEFORE_UPDATE, { id: query._id.toString(), data, status: "success" });
 		if (status === "failure") return "failure";
 
@@ -170,7 +170,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 			}
 		}
 
-		this.dispatchOnce(ERepoEvents.AFTER_UPDATE, { id: query._id.toString(), data, status: result });
+		this.dispatchOnce(ERepoEvents.AFTER_UPDATE, { id: query._id.toString(), data, model: existingModel, status: result });
 
 		return result;
 	}
@@ -237,7 +237,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		}
 
 		model.meta.timeUpdated = Date.now();
-		return this.update({ _id: new ObjectId(id) }, model, say);
+		return this.update({ _id: new ObjectId(id) }, model, model, say);
 	}
 
 	public async editData(id: string, data: Partial<ModelData>, say: MessengerFunction): Promise<Operation> {
@@ -255,7 +255,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 
 		const query = MongoQuery.createUpdateData({ meta, data });
 		const idQuery = { _id: new ObjectId(id) };
-		const status = await this.update(idQuery, query, say);
+		const status = await this.update(idQuery, query, existingModel, say);
 		return { status, message: status ? "Success!" : "Failed to Update!" };
 	}
 	
