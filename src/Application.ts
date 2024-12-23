@@ -42,6 +42,7 @@ import { NotificationRepo } from "./backend/repos/NotificationRepo";
 import { ERepoEvents } from "./backend/repos/BaseRepo";
 import { ENotificationAction, Notification } from "./backend/models/Notification";
 import { UserPreferenceRepo } from "./backend/repos/UserPreferenceRepo";
+import { Counter } from "./backend/models/Counter";
 
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
@@ -137,7 +138,8 @@ class Application extends Communicator {
 		});
 
 		application.subscribe(ERepoEvents.AFTER_ADD, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
-			if (content.model.role === Notification.ROLE) return;
+			const role = content.model.role;
+			if (role === Notification.ROLE || role === Counter.ROLE) return;
 
 			const domain = Domain.byName(content.model.getDomainName(), onMessage);
 			const sysCallMsngr = (source: Object, purpose: string, what: string, content?: any): any => {
@@ -156,8 +158,30 @@ class Application extends Communicator {
 			notificationRepo.add(notification, sysCallMsngr);
 		});
 
+		application.subscribe(ERepoEvents.AFTER_UPDATE, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
+			const role = content.model.role;
+			if (role === Notification.ROLE || role === Counter.ROLE) return;
+
+			const domain = Domain.byName(content.model.getDomainName(), onMessage);
+			const sysCallMsngr = (source: Object, purpose: string, what: string, content?: any): any => {
+				if (purpose === "ask") {
+					switch (what) {
+						case "isSysCall": return true;
+						case "repo": return domain.getRepoByName(content) || onMessage(source, purpose, what, content);
+					}
+				}
+
+				return onMessage(source, purpose, what, content);
+			};
+			
+			const notificationRepo = domain.getRepoByName(NotificationRepo.REPO_NAME) as NotificationRepo;
+			const notification = Notification.forModel(onMessage, content.model, ENotificationAction.update);
+			notificationRepo.add(notification, sysCallMsngr);
+		});
+
 		application.subscribe(ERepoEvents.AFTER_REMOVE, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
-			if (content.model.role === Notification.ROLE) return;
+			const role = content.model.role;
+			if (role === Notification.ROLE || role === Counter.ROLE) return;
 
 			const domain = Domain.byName(content.model.getDomainName(), onMessage);
 			const sysCallMsngr = (source: Object, purpose: string, what: string, content?: any): any => {
