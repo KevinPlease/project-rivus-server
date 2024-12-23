@@ -168,7 +168,7 @@ class Application extends Communicator {
 			userRepo.addRoleToUsers({}, branch.data.name, process.env.DEFAULT_ROLE_ID || "");
 		});
 
-		application.subscribe(ERepoEvents.AFTER_UPDATE, function(source: any, content: { model: Model<Dictionary>,data: Dictionary, status: OperationStatus }) {
+		application.subscribe(ERepoEvents.AFTER_UPDATE, function(source: any, content: { model: Model<Dictionary>, partialCore: Dictionary, status: OperationStatus }) {
 			const msngr = (source: Object, purpose: string, what: string, content?: any): any => {
 				if (purpose === "ask" && what === "isSysCall") return true;
 	
@@ -176,15 +176,15 @@ class Application extends Communicator {
 			};
 
 			if (content.model.role === Order.ROLE) {
-				const units = content.data.units || content.model.data.units || [];
+				const units = content.partialCore.data?.units || content.model.data.units || [];
 				const domain = application.getDomainByRepoId(source.id);
 				const unitRepo = domain.getRepoByName(UnitRepo.REPO_NAME) as UnitRepo;
-				const availability = unitAvailabilityFor.update[content.data.orderStatus || content.model.data.orderStatus];
+				const availability = unitAvailabilityFor.update[content.partialCore.data?.orderStatus || content.model.data.orderStatus];
 				units.forEach((u: any) => unitRepo.changeUnitAvailability(u._id, availability, msngr));
 			}
 		});
 
-		application.subscribe(ERepoEvents.AFTER_ADD, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
+		application.subscribe(ERepoEvents.AFTER_ADD, function(source: any, content: { model: Model<Dictionary>, status: OperationStatus }) {
 			if (content.model.role === Notification.ROLE) return;
 
 			const domain = Domain.byName(content.model.getDomainName(), onMessage);
@@ -202,6 +202,14 @@ class Application extends Communicator {
 			const notificationRepo = domain.getRepoByName(NotificationRepo.REPO_NAME) as NotificationRepo;
 			const notification = Notification.forModel(onMessage, content.model, ENotificationAction.create);
 			notificationRepo.add(notification, sysCallMsngr);
+
+			if (content.model.role === Order.ROLE) {
+				const units = content.model.data.units || [];
+				const domain = application.getDomainByRepoId(source.id);
+				const unitRepo = domain.getRepoByName(UnitRepo.REPO_NAME) as UnitRepo;
+				const availability = unitAvailabilityFor.update[content.model.data.orderStatus];
+				units.forEach((u: any) => unitRepo.changeUnitAvailability(u._id, availability, sysCallMsngr));
+			}
 		});
 
 		application.subscribe(ERepoEvents.AFTER_REMOVE, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
