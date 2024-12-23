@@ -9,7 +9,7 @@ import IdCreator from "../IdCreator";
 import { Domain } from "./Domain";
 import { ExString } from "../../shared/String";
 import { AccessType, FieldAccess, RepoAccess } from "../types/Access";
-import { Preference } from "./UserPreference";
+import { ModelPreference } from "./UserPreference";
 
 type AggregationInfo = {
 	repoToJoinFrom: string;
@@ -28,7 +28,7 @@ class MongoQuery {
 				return new RegExp(String(innerVal), "gi");
 			});
 		
-		} else if (typeof value === "number") {
+		} else if (typeof value === "number" || typeof value === "boolean") {
 			return [value];
 		}
 
@@ -269,6 +269,26 @@ class MongoQuery {
 		return stageSet;
 	}
 
+	private static basic_safeAttachToAnd(query: Dictionary, value: any): Dictionary {
+		if (query["$and"]) {
+			query["$and"].push(value);
+		} else {
+			query["$and"] = [value];
+		}
+	
+		return query;
+	}
+	
+	private static basic_safeAttachToOr(query: Dictionary, value: any): Dictionary {
+		if (query["$or"]) {
+			query["$or"].push(value);
+		} else {
+			query["$or"] = [value];
+		}
+	
+		return query;
+	}
+
 	public static safeAttachToOr(query: Dictionary, value: any): Dictionary {
 		if (Array.isArray(query)) {
 			const queryToModify = query.find(q => q["$or"] !== undefined);
@@ -425,12 +445,19 @@ class MongoQuery {
 		return aggregation;
 	}
 
-	public static makePreferentialQuery(preferences: Preference[], query: Dictionary) {
-		const actions = preferences
-			.filter(filter => filter.value)
-			.map(filter => filter.action);
+	public static makePreferentialQuery(modelPrefs: ModelPreference, query: Dictionary): Dictionary {
+		let finalQuery: Dictionary = {};
+		for (const modelName in modelPrefs) {
+			const preferences = modelPrefs[modelName];
+			const actions = preferences
+				.filter(filter => filter.value)
+				.map(filter => filter.action);
+			if (actions.length === 0) continue;
 
-		return actions.length > 0 ? MongoQuery.safeAttachToOr(query, { "data.action": { $in: actions } }) : query;
+			finalQuery = MongoQuery.basic_safeAttachToOr(finalQuery, { "data.content._core.role": modelName, "data.action": { $in: actions } });
+		}
+
+		return MongoQuery.basic_safeAttachToAnd(query, finalQuery);
 	}
 
 }

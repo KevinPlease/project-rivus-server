@@ -34,6 +34,10 @@ const getDefaultData = (domain: string) => {
 						"role": {
 							"read": AccessType.OVERSEER,
 							"write": AccessType.OVERSEER
+						},
+						"notification": {
+							"read": AccessType.OVERSEER,
+							"write": AccessType.OVERSEER
 						}
 					},
 					"fieldAccess": {
@@ -77,6 +81,206 @@ const getDefaultData = (domain: string) => {
 						},
 						"role": {
 							"name": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"description": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"actions": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"accessInfo": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							}
+						},
+						"notification": {
+							"type": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"content": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"isRead": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"priority": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"action": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							}
+						},
+						"customer": {
+							"name": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"title": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"mobile": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"email": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"birthdate": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"address": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"personalId": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"assignee": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"idImage": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"description": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"documents": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							}
+						},
+						"property": {
+							"propertyType": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"constructionStage": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"country": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"city": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"zone": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"builder": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"assignee": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"title": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"address": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"description": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"startOfConstruction": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"endOfConstruction": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"landArea": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"images": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"documents": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"imageThumbnail": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							}
+						},
+						"unit": {
+							"unitType": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"availability": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"country": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"city": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"zone": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"offeringType": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"price": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"currency": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"property": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"assignee": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"unitExtra": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"title": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"address": {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
 							},

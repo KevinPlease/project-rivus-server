@@ -28,7 +28,7 @@ const doAsync = async (inst: any, funcName: string | AnyFunction, ...args: any[]
 		result = await inst[funcName].call(inst, ...args);
 
 	} catch (error) {
-		console.error(error.message || error);
+		console.error(error.stack || error.message || error);
 		result = null;
 	}
 
@@ -63,7 +63,7 @@ const doTryCatch = (inst: any, funcName: string | AnyFunction, ...args: any[]): 
 		result = inst[funcName].call(inst, ...args);
 
 	} catch (error) {
-		console.error(error);
+		console.error(error.stack || error.message || error);
 		result = null;
 	}
 
