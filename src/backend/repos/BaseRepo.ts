@@ -176,10 +176,11 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 	}
 
 	private async _delete(query: Dictionary, say: MessengerFunction): Promise<OperationStatus> {
-		const model = await this._read(query, say);
-		if (model === null) return "failure";
+		const modelCore = await this._read(query, say);
+		if (modelCore === null) return "failure";
 
-		let status = await this.dispatchOnce(ERepoEvents.BEFORE_REMOVE, { id: model._id, status: "success" });
+		const model = new Model(modelCore);
+		let status = await this.dispatchOnce(ERepoEvents.BEFORE_REMOVE, { id: model.id, status: "success" });
 		if (status === "failure") return "failure";
 
 		status = await this._collection.deleteMany(query);
