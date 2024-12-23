@@ -37,24 +37,6 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		return super.getInstance(say) as OrderRepo;
 	}
 
-	public async editData(id: string, data: Partial<OrderData>, say: MessengerFunction): Promise<Operation> {
-		const operation = await super.editData(id, data, say);
-		
-		this.dispatch("order touched", { type: "update", order: data });
-		
-		return operation;
-	}
-
-	public async remove(id: string, say: MessengerFunction): Promise<OperationStatus> {
-		const existingModel = await this.findById(id, say);
-		if (!existingModel) return "failure";
-
-		const operationStatus = await super.remove(id, say);
-		if (operationStatus === "success") this.dispatch("order touched", { type: "delete", order: existingModel });
-
-		return operationStatus;
-	}
-
 	public createAggregation(query: Dictionary, say: MessengerFunction): Dictionary[] {
 		const userRepoId = UserRepo.getInstance(say).id;
 		const customerRepoId = CustomerRepo.getInstance(say).id;

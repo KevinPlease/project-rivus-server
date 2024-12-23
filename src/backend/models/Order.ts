@@ -8,7 +8,7 @@ import { UnitData } from "./Unit";
 
 type OrderData = {
 	currency: string;
-	status: string;
+	orderStatus: string;
 	date: number;
     customer: string;
     units: ModelCore<UnitData>[];
@@ -30,7 +30,7 @@ class Order extends Model<OrderData> {
 	static emptyData(): OrderData {
 		return {
 			currency: "",
-			status: "",
+			orderStatus: "",
 			customer: "",
 			date: Date.now(),
 			units: [],

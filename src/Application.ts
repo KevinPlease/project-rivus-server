@@ -58,6 +58,7 @@ import { OrderStatusRepo } from "./backend/repos/OrderStatusRepo";
 import { ERepoEvents } from "./backend/repos/BaseRepo";
 import { ENotificationAction, Notification } from "./backend/models/Notification";
 import { UserPreferenceRepo } from "./backend/repos/UserPreferenceRepo";
+import { Order } from "./backend/models/Order";
 
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
@@ -167,21 +168,19 @@ class Application extends Communicator {
 			userRepo.addRoleToUsers({}, branch.data.name, process.env.DEFAULT_ROLE_ID || "");
 		});
 
-		application.subscribe("order touched", (source: Object, msg: any) => {
+		application.subscribe(ERepoEvents.AFTER_UPDATE, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
 			const msngr = (source: Object, purpose: string, what: string, content?: any): any => {
 				if (purpose === "ask" && what === "isSysCall") return true;
 	
 				return application._msngr(source, purpose, what, content);
 			};
 
-			const order = msg.order;
-			const units = order.units || [];
+			const order = content.model as Order;
+			const units = order.data.units || [];
 			const domain = application.getDomainByRepoId(order.repository);
 			const unitRepo = domain.getRepoByName(UnitRepo.REPO_NAME) as UnitRepo;
-			const availability = unitAvailabilityFor[msg.type][order.orderStatus] || unitAvailabilityFor[msg.type];
-			if (availability) {
-				units.forEach((u: any) => unitRepo.changeUnitAvailability(u._id, availability, msngr));
-			}
+			const availability = unitAvailabilityFor.update[order.data.orderStatus];
+			units.forEach((u: any) => unitRepo.changeUnitAvailability(u._id, availability, msngr));
 		});
 
 		application.subscribe(ERepoEvents.AFTER_ADD, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
@@ -222,6 +221,15 @@ class Application extends Communicator {
 			const notificationRepo = domain.getRepoByName(NotificationRepo.REPO_NAME) as NotificationRepo;
 			const notification = Notification.forModel(onMessage, content.model, ENotificationAction.delete);
 			notificationRepo.add(notification, sysCallMsngr);
+
+			if (content.model.role === Order.ROLE) {
+				const order = content.model as Order;
+				const units = order.data.units || [];
+				const domain = application.getDomainByRepoId(order.repository);
+				const unitRepo = domain.getRepoByName(UnitRepo.REPO_NAME) as UnitRepo;
+				const availability = unitAvailabilityFor.delete[order.data.orderStatus];
+				units.forEach((u: any) => unitRepo.changeUnitAvailability(u._id, availability, sysCallMsngr));
+			}
 		});
 
 		return application.run();
