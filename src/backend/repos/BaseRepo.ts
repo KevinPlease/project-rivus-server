@@ -170,7 +170,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 			}
 		}
 
-		this.dispatchOnce(ERepoEvents.AFTER_UPDATE, { id: query._id.toString(), data, model: existingModel, status: result });
+		this.dispatchOnce(ERepoEvents.AFTER_UPDATE, { id: query._id.toString(), partialCore: data, model: existingModel, status: result });
 
 		return result;
 	}
