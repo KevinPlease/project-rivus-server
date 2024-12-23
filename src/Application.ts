@@ -169,18 +169,30 @@ class Application extends Communicator {
 		});
 
 		application.subscribe(ERepoEvents.AFTER_UPDATE, function(source: any, content: { model: Model<Dictionary>, status: OperationStatus }) {
-			const msngr = (source: Object, purpose: string, what: string, content?: any): any => {
-				if (purpose === "ask" && what === "isSysCall") return true;
-	
-				return application._msngr(source, purpose, what, content);
+			if (content.model.role === Notification.ROLE) return;
+
+			const domain = Domain.byName(content.model.getDomainName(), onMessage);
+			const sysCallMsngr = (source: Object, purpose: string, what: string, content?: any): any => {
+				if (purpose === "ask") {
+					switch (what) {
+						case "isSysCall": return true;
+						case "repo": return domain.getRepoByName(content) || onMessage(source, purpose, what, content);
+					}
+				}
+
+				return onMessage(source, purpose, what, content);
 			};
+
+			const notificationRepo = domain.getRepoByName(NotificationRepo.REPO_NAME) as NotificationRepo;
+			const notification = Notification.forModel(onMessage, content.model, ENotificationAction.create);
+			notificationRepo.add(notification, sysCallMsngr);
 
 			if (content.model.role === Order.ROLE) {
 				const units = content.model.data.units || [];
 				const domain = application.getDomainByRepoId(source.id);
 				const unitRepo = domain.getRepoByName(UnitRepo.REPO_NAME) as UnitRepo;
 				const availability = unitAvailabilityFor.update[content.model.data.orderStatus];
-				units.forEach((u: any) => unitRepo.changeUnitAvailability(u._id, availability, msngr));
+				units.forEach((u: any) => unitRepo.changeUnitAvailability(u._id, availability, sysCallMsngr));
 			}
 		});
 
