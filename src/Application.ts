@@ -212,7 +212,7 @@ class Application extends Communicator {
 			}
 		});
 
-		application.subscribe(ERepoEvents.AFTER_REMOVE, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
+		application.subscribe(ERepoEvents.AFTER_REMOVE, function(source: any, content: { model: Model<Dictionary>, status: OperationStatus }) {
 			if (content.model.role === Notification.ROLE) return;
 
 			const domain = Domain.byName(content.model.getDomainName(), onMessage);
@@ -234,7 +234,7 @@ class Application extends Communicator {
 			if (content.model.role === Order.ROLE) {
 				const order = content.model as Order;
 				const units = order.data.units || [];
-				const domain = application.getDomainByRepoId(order.repository);
+				const domain = application.getDomainByRepoId(source.id);
 				const unitRepo = domain.getRepoByName(UnitRepo.REPO_NAME) as UnitRepo;
 				units.forEach((u: any) => unitRepo.changeUnitAvailability(u._id, "66be60c2f80c0b00b38cc2fb", sysCallMsngr));
 			}
