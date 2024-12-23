@@ -168,18 +168,17 @@ class Application extends Communicator {
 			userRepo.addRoleToUsers({}, branch.data.name, process.env.DEFAULT_ROLE_ID || "");
 		});
 
-		application.subscribe(ERepoEvents.AFTER_UPDATE, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
+		application.subscribe(ERepoEvents.AFTER_UPDATE, function(source: any, content: { data: Dictionary, status: OperationStatus }) {
 			const msngr = (source: Object, purpose: string, what: string, content?: any): any => {
 				if (purpose === "ask" && what === "isSysCall") return true;
 	
 				return application._msngr(source, purpose, what, content);
 			};
 
-			const order = content.model as Order;
-			const units = order.data.units || [];
-			const domain = application.getDomainByRepoId(order.repository);
+			const units = content.data.units || [];
+			const domain = application.getDomainByRepoId(source.id);
 			const unitRepo = domain.getRepoByName(UnitRepo.REPO_NAME) as UnitRepo;
-			const availability = unitAvailabilityFor.update[order.data.orderStatus];
+			const availability = unitAvailabilityFor.update[content.data.orderStatus];
 			units.forEach((u: any) => unitRepo.changeUnitAvailability(u._id, availability, msngr));
 		});
 
