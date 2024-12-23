@@ -175,10 +175,10 @@ class Application extends Communicator {
 			};
 
 			const order = msg.order;
-			const units = msg.data?.units || order.data.units;
+			const units = order.units || [];
 			const domain = application.getDomainByRepoId(order.repository);
 			const unitRepo = domain.getRepoByName(UnitRepo.REPO_NAME) as UnitRepo;
-			const availability = unitAvailabilityFor[msg.type][msg.data.orderStatus] || unitAvailabilityFor[msg.type];
+			const availability = unitAvailabilityFor[msg.type][order.orderStatus] || unitAvailabilityFor[msg.type];
 			if (availability) {
 				units.forEach((u: any) => unitRepo.changeUnitAvailability(u._id, availability, msngr));
 			}

@@ -40,7 +40,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 	public async editData(id: string, data: Partial<OrderData>, say: MessengerFunction): Promise<Operation> {
 		const operation = await super.editData(id, data, say);
 		
-		this.dispatch("order touched", { type: "update", order: data, data });
+		this.dispatch("order touched", { type: "update", order: data });
 		
 		return operation;
 	}
