@@ -9,8 +9,10 @@ import { Filter } from "../types/Filter";
 import IPreferenceMiddleware from "../interfaces/IPreferenceMiddleware";
 import PreferenceKeeper from "../middlewares/PreferenceKeeper";
 import { EPreferenceType } from "../models/UserPreference";
-import MongoQuery from "../models/MongoQuery";
+import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import PrivilegeKeeper from "../middlewares/PrivilegeKeeper";
+import { UserRepo } from "./UserRepo";
+import { GenericDictionary, Dictionary } from "../../types/Dictionary";
 
 class NotificationRepo extends BaseRepo<NotificationData> {
 	public static REPO_NAME = "notifications";
@@ -33,9 +35,37 @@ class NotificationRepo extends BaseRepo<NotificationData> {
 		return super.getInstance(say) as NotificationRepo;
 	}
 
+	public createAggregation(query: Dictionary, say: MessengerFunction): Dictionary[] {
+		const userRepoId = UserRepo.getInstance(say).id;
+		const project = {
+			"data.name": 1,
+			"repository": 1
+		};
+		const aggInfo: AggregationInfo[] = [
+			{
+				repoToJoinFrom: userRepoId,
+				fieldToSet: "data.content._core.meta.creator",
+				project
+			},
+		];
+
+		const sort = {
+			"meta.timeCreated": -1
+		};
+
+		return MongoQuery.makeAggregation(aggInfo, query, sort);
+	}
+
+	public async getFormDetails(say: MessengerFunction): Promise<GenericDictionary<Dictionary[]>> {
+		const userRepo = UserRepo.getInstance(say);
+		const user = await userRepo.getSimplifiedMany(say);
+
+		return { user };
+	}
+
 	public async getMany(say: MessengerFunction, filter?: Filter | undefined, pagination?: PaginationOptions | undefined): Promise<ModelCore<NotificationData>[]> {
-		const userId = say(this, "ask", "userId");
-		const preferences = await this._preferenceMiddleware.getPreferencesForModel(this.modelRole, userId, EPreferenceType.NOTIFICATIONS, say);
+		const userId = say(this, "ask", "ownUserId");
+		const preferences = await this._preferenceMiddleware.getPreferencesForAll(userId, EPreferenceType.NOTIFICATIONS, say);
 		const query = this.createQueryFromFilter(filter);
 		const preferentialQuery = MongoQuery.makePreferentialQuery(preferences, query);
 		const aggregation = this.createAggregation(preferentialQuery, say);

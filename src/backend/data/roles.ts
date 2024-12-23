@@ -58,6 +58,14 @@ const getDefaultData = (domain: string) => {
 							"read": AccessType.OVERSEER,
 							"write": AccessType.OVERSEER
 						},
+						"role": {
+							"read": AccessType.OVERSEER,
+							"write": AccessType.OVERSEER
+						},
+						"notification": {
+							"read": AccessType.OVERSEER,
+							"write": AccessType.OVERSEER
+						},
 						"customer": {
 							"read": AccessType.OVERSEER,
 							"write": AccessType.OVERSEER
@@ -73,119 +81,83 @@ const getDefaultData = (domain: string) => {
 						"unit": {
 							"read": AccessType.OVERSEER,
 							"write": AccessType.OVERSEER
-						},
-						"role": {
-							"read": AccessType.OVERSEER,
-							"write": AccessType.OVERSEER
 						}
 					},
 					"fieldAccess": {
 						"user": {
 							"name": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
+								"read": AccessType.SELFISH,
+								"write": AccessType.SELFISH
 							},
 							"role": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
+								"read": AccessType.SELFISH,
+								"write": AccessType.SELFISH
 							},
 							"images": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
+								"read": AccessType.SELFISH,
+								"write": AccessType.SELFISH
 							},
 							"email": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
+								"read": AccessType.SELFISH,
+								"write": AccessType.SELFISH
 							},
 							"username": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
+								"read": AccessType.SELFISH,
+								"write": AccessType.SELFISH
 							},
 							"password": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
+								"read": AccessType.SELFISH,
+								"write": AccessType.SELFISH
 							},
 							"phone": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
+								"read": AccessType.SELFISH,
+								"write": AccessType.SELFISH
 							},
 							"token": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
+								"read": AccessType.SELFISH,
+								"write": AccessType.SELFISH
 							},
 							"roles": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
+								"read": AccessType.SELFISH,
+								"write": AccessType.SELFISH
 							}
 						},
 						"role": {
 							"name": {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
-							}
-						},
-						"fieldAccess": {
-							"user": {
-								"name": {
-									"read": AccessType.SELFISH,
-									"write": AccessType.SELFISH
-								},
-								"role": {
-									"read": AccessType.SELFISH,
-									"write": AccessType.SELFISH
-								},
-								"images": {
-									"read": AccessType.SELFISH,
-									"write": AccessType.SELFISH
-								},
-								"email": {
-									"read": AccessType.SELFISH,
-									"write": AccessType.SELFISH
-								},
-								"username": {
-									"read": AccessType.SELFISH,
-									"write": AccessType.SELFISH
-								},
-								"password": {
-									"read": AccessType.SELFISH,
-									"write": AccessType.SELFISH
-								},
-								"phone": {
-									"read": AccessType.SELFISH,
-									"write": AccessType.SELFISH
-								},
-								"token": {
-									"read": AccessType.SELFISH,
-									"write": AccessType.SELFISH
-								},
-								"roles": {
-									"read": AccessType.SELFISH,
-									"write": AccessType.SELFISH
-								}
 							},
-							"role": {
-								"name": {
-									"read": AccessType.OVERSEER,
-									"write": AccessType.OVERSEER
-								},
-								"description": {
-									"read": AccessType.OVERSEER,
-									"write": AccessType.OVERSEER
-								},
-								"actions": {
-									"read": AccessType.OVERSEER,
-									"write": AccessType.OVERSEER
-								},
-								"accessInfo": {
-									"read": AccessType.OVERSEER,
-									"write": AccessType.OVERSEER
-								}
+							"description": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
 							},
 							"actions": {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
 							},
 							"accessInfo": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							}
+						},
+						"notification": {
+							"type": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"content": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"isRead": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"priority": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
+							"action": {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
 							}
@@ -359,81 +331,15 @@ const getDefaultData = (domain: string) => {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
 							},
-							"livingRoomCount": {
+							"actions": {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
 							},
-							"kitchenCount": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"bedroomCount": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"bathroomCount": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"floorCount": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"grossArea": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"interiorArea": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"landArea": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"images": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"documents": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"imageThumbnail": {
+							"accessInfo": {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
 							}
 						},
-						"order": {
-							"currency": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"customer": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"units": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"paymentMethod": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"orderStatus": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"totalAmount": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"assignee": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							}
-						}
 					}
 				}
 			},
@@ -443,7 +349,7 @@ const getDefaultData = (domain: string) => {
 				"creator": ""
 			}
 		}
-	]
-}
+	];
+};
 
 export { getDefaultData };
