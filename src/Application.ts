@@ -186,7 +186,7 @@ class Application extends Communicator {
 			};
 
 			const notificationRepo = domain.getRepoByName(NotificationRepo.REPO_NAME) as NotificationRepo;
-			const notification = Notification.forModel(onMessage, content.model, ENotificationAction.create);
+			const notification = Notification.forModel(onMessage, content.model, ENotificationAction.update);
 			notificationRepo.add(notification, sysCallMsngr);
 
 			if (content.model.role === Order.ROLE) {
