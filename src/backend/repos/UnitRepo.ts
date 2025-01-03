@@ -143,10 +143,8 @@ class UnitRepo extends BaseDocimgRepo<UnitData> {
 		const overrideProject = {
 			"data.title": 1,
 			"data.availability": 1,
-			"data.country": 1,
-			"data.city": 1,
-			"data.zone": 1,
 			"data.price": 1,
+			"data.property": 1,
 			"data.grossArea": 1,
 			"data.unitType": 1,
 			...project

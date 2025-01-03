@@ -18,6 +18,8 @@ import { OrderStatusRepo } from "./OrderStatusRepo";
 import { Unit } from "../models/Unit";
 import { PropertyRepo } from "./PropertyRepo";
 import { UnitTypeRepo } from "./UnitTypeRepo";
+import { CountryRepo } from "./CountryRepo";
+import { CityRepo } from "./CityRepo";
 
 
 class OrderRepo extends BaseDocimgRepo<OrderData> {
@@ -104,6 +106,12 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		
 		const unitTypeRepo = UnitTypeRepo.getInstance(say);
 		const unitType = await unitTypeRepo.getSimplifiedMany(say);
+		
+		const countryRepo = CountryRepo.getInstance(say);
+		const country = await countryRepo.getSimplifiedMany(say);
+
+		const cityRepo = CityRepo.getInstance(say);
+		const city = await cityRepo.getSimplifiedMany(say);
 
 		const unitRepo = UnitRepo.getInstance(say); 
 		// const unitFilter: Filter = {
@@ -118,7 +126,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		// };
 		const unit = await unitRepo.getSimplifiedMany(say);
 
-		return { assignee, customer, availability, paymentMethod, unit, orderStatus, property, unitType };
+		return { assignee, city, country, customer, availability, paymentMethod, unit, orderStatus, property, unitType };
 	}
 
 	public async generateReportById(owningModelId: string, id: string, say: MessengerFunction): Promise<Operation> {
