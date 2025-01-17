@@ -3,28 +3,28 @@ import { RawRoutesInfo } from "../../network/types/RoutesInfo";
 const ROUTES: RawRoutesInfo = {
 	delete: {
 		"": {
-			"actionName": "Remove User Preferences"
+			"actionName": "Remove User Preference"
 		}
 	},
 
 	get: {
 		"": {
-			"actionName": "Get User Preferences"
+			"actionName": "Get User Preference"
 		},
 		"*": {
-			"actionName": "Get User Preferences List"
+			"actionName": "Get User Preferences"
 		}
 	},
 
 	post: {
 		"": {
-			"actionName": "Add User Preferences"
+			"actionName": "Add User Preference"
 		}
 	},
 
 	put: {
 		"": {
-			"actionName": "Edit User Preferences"
+			"actionName": "Edit User Preference"
 		}
 	}
 };
