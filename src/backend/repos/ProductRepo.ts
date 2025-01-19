@@ -1,7 +1,6 @@
 import { MessengerFunction } from "../../Messenger";
 import MongoCollection from "../../mongo/MongoCollection";
 import { Product, ProductData } from "../models/Product";
-import { BaseRepo } from "./BaseRepo";
 import { IRepoOptions } from "../interfaces/IRepository";
 import { CategoryRepo } from "./CategoryRepo";
 import { BrandRepo } from "./BrandRepo";
@@ -9,8 +8,9 @@ import { ColorRepo } from "./ColorRepo";
 import { CityRepo } from "./CityRepo";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
+import { BaseDocimgRepo } from "./BaseDocRepo";
 
-class ProductRepo extends BaseRepo<ProductData> {
+class ProductRepo extends BaseDocimgRepo<ProductData> {
 	public static REPO_NAME = "products";
 	public static MODEL_ROLE_NAME = Product.ROLE;
 

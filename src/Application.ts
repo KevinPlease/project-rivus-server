@@ -43,6 +43,7 @@ import { ERepoEvents } from "./backend/repos/BaseRepo";
 import { ENotificationAction, Notification } from "./backend/models/Notification";
 import { UserPreferenceRepo } from "./backend/repos/UserPreferenceRepo";
 import { Counter } from "./backend/models/Counter";
+import { ProductRepo } from "./backend/repos/ProductRepo";
 
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
@@ -52,7 +53,8 @@ class Application extends Communicator {
 		RoleRepo,
 		UserRepo,
 		UserPreferenceRepo,
-		NotificationRepo
+		NotificationRepo,
+		ProductRepo
 	];
 	
 	private _domainCache: Cache<Domain>;

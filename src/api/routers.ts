@@ -4,6 +4,7 @@ import RoleRouter from "./role/RoleRouter";
 import UserRouter from "./user/UserRouter";
 import NotificationRouter from "./notification/NotificationRouter";
 import UserPreferenceRouter from "./userPreference/UserPreferenceRouter";
+import ProductRouter from "./product/ProductRouter";
 
 
 const ROUTERS: typeof Router[] = [
@@ -11,7 +12,8 @@ const ROUTERS: typeof Router[] = [
 	RoleRouter,
 	UserRouter,
 	UserPreferenceRouter,
-	NotificationRouter
+	NotificationRouter,
+	ProductRouter
 ];
 
 export { ROUTERS };
