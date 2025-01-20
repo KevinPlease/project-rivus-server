@@ -8,12 +8,10 @@ import { DocumentDetails } from "../types/DocumentDetails";
 
 type CustomerData = {
 	name: string;
-	title: string;
 	mobile: string;
 	email: string;
-	birthdate: number;
 	address: string;
-	personalId: string;
+	source: string;
 	assignee: string;
 	idImage: string;
 	description: string;
@@ -31,12 +29,10 @@ class Customer extends Model<CustomerData> {
 	static emptyData(): CustomerData {
 		return {
 			name: "",
-			title: "",
 			mobile: "",
 			email: "",
-			birthdate: Date.now(),
 			address: "",
-			personalId: "",
+			source: "",
 			assignee: "",
 			idImage: "",
 			description: "",

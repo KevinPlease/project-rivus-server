@@ -66,15 +66,15 @@ class ProductRepo extends BaseDocimgRepo<ProductData> {
 
 	public async getFormDetails(say: MessengerFunction): Promise<GenericDictionary<Dictionary[]>> {
 		const categoryRepo = CategoryRepo.getInstance(say);
-		const categories = await categoryRepo.getSimplifiedMany(say);
+		const category = await categoryRepo.getSimplifiedMany(say);
 		const brandRepo = BrandRepo.getInstance(say);
-		const brands = await brandRepo.getSimplifiedMany(say);
+		const brand = await brandRepo.getSimplifiedMany(say);
 		const colorRepo = ColorRepo.getInstance(say);
-		const colors = await colorRepo.getSimplifiedMany(say);
+		const color = await colorRepo.getSimplifiedMany(say);
 		const cityRepo = CityRepo.getInstance(say);
-		const cities = await cityRepo.getSimplifiedMany(say);
+		const city = await cityRepo.getSimplifiedMany(say);
 
-		return { categories, brands, colors, cities };
+		return { category, brand, color, city };
 	}
 }
 

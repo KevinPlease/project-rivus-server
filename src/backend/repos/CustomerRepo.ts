@@ -53,7 +53,6 @@ class CustomerRepo extends BaseDocimgRepo<CustomerData> {
 		if (!project) project = {};
 		
 		const overrideProject = {
-			"data.title": 1,
 			"data.name": 1,
 			"data.address": 1,
 			"data.mobile": 1,
@@ -65,6 +64,10 @@ class CustomerRepo extends BaseDocimgRepo<CustomerData> {
 	public async getFormDetails(say: MessengerFunction): Promise<GenericDictionary<Dictionary[]>> {
 		const userRepo = UserRepo.getInstance(say);
 		const assignee = await userRepo.getSimplifiedMany(say);
+
+		// const sourceRepo = SourceRepo.getInstance(say);
+		// const source = await sourceRepo.getSimplifiedMany(say);
+		
 		return { assignee };
 	}
 
