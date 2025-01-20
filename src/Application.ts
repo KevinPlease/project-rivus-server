@@ -44,6 +44,16 @@ import { ENotificationAction, Notification } from "./backend/models/Notification
 import { UserPreferenceRepo } from "./backend/repos/UserPreferenceRepo";
 import { Counter } from "./backend/models/Counter";
 import { ProductRepo } from "./backend/repos/ProductRepo";
+import { BrandRepo } from "./backend/repos/BrandRepo";
+import { CategoryRepo } from "./backend/repos/CategoryRepo";
+import { CityRepo } from "./backend/repos/CityRepo";
+import { ColorRepo } from "./backend/repos/ColorRepo";
+import { CountryRepo } from "./backend/repos/CountryRepo";
+import { CustomerRepo } from "./backend/repos/CustomerRepo";
+import { OrderRepo } from "./backend/repos/OrderRepo";
+import { OrderStatusRepo } from "./backend/repos/OrderStatusRepo";
+import { PaymentMethodRepo } from "./backend/repos/PaymentMethodRepo";
+import { ReferralSourceRepo } from "./backend/repos/ReferralSourceRepo";
 
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
@@ -54,7 +64,17 @@ class Application extends Communicator {
 		UserRepo,
 		UserPreferenceRepo,
 		NotificationRepo,
-		ProductRepo
+		ProductRepo,
+		BrandRepo,
+		CategoryRepo,
+		CityRepo,
+		ColorRepo,
+		CountryRepo,
+		CustomerRepo,
+		OrderRepo,
+		OrderStatusRepo,
+		PaymentMethodRepo,
+		ReferralSourceRepo
 	];
 	
 	private _domainCache: Cache<Domain>;
