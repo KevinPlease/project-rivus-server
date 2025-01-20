@@ -11,7 +11,7 @@ type CustomerData = {
 	mobile: string;
 	email: string;
 	address: string;
-	source: string;
+	referralSource: string;
 	assignee: string;
 	idImage: string;
 	description: string;
@@ -32,7 +32,7 @@ class Customer extends Model<CustomerData> {
 			mobile: "",
 			email: "",
 			address: "",
-			source: "",
+			referralSource: "",
 			assignee: "",
 			idImage: "",
 			description: "",
