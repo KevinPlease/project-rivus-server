@@ -12,6 +12,7 @@ type ProductData = {
 	category: string;
 	price: number;
 	quantity: number;
+	availableQuantity: number;
 	color: string;
 	images: ImageDetails[];
 	city: string;
@@ -27,6 +28,7 @@ class Product extends Model<ProductData> {
 			brand: "",
 			category: "",
 			price: 0,
+			availableQuantity: 0,
 			quantity: 0,
 			color: "",
 			images: [],

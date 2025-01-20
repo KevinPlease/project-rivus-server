@@ -104,26 +104,26 @@ class OrderPdf extends PdfGenerator {
 		doc.font("Helvetica-Bold");
 		this.addTableRow(
 			invoiceTableTop,
-			"Njesia",
+			"Produkti",
 			"Titulli",
-			"Cmimi per m2",
-			"Siperfaqja",
+			"Cmimi",
+			"Sasia",
 			"Vlera"
 			);
 			this.addDivider(invoiceTableTop + 20);
 			doc.font("Helvetica");
 			
 		let i: number;
-		for (i = 0; i < order.data.units.length; i++) {
-			const unit = order.data.units[i];
+		for (i = 0; i < order.data.products.length; i++) {
+			const unit = order.data.products[i];
 			const position = invoiceTableTop + (i + 1) * 30;
 			this.addTableRow(
 				position,
 				unit.displayId || "N/A",
-				unit.data.title,
+				unit.data.name,
 				this.formatCurrency(unit.data.price),
-				String(unit.data.grossArea),
-				this.formatCurrency(unit.data.price * unit.data.grossArea)
+				String(unit.data.quantity),
+				this.formatCurrency(unit.data.price * unit.data.quantity)
 			);
 
 			this.addDivider(position + 20);
@@ -188,7 +188,7 @@ class OrderPdf extends PdfGenerator {
 		const imagesHeaderStartY = 170;
 		const imagesStartY = 200;
 		const imagesSpacing = 320;
-		const units = order.data.units as Product[];
+		const units = order.data.products as Product[];
 		for (let i = 0; i < units.length; i++) {
 			const unit = units[i];
 			const unitData = unit.data;
