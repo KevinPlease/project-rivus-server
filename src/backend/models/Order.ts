@@ -14,6 +14,7 @@ type OrderData = {
     products: ModelCore<ProductData>[];
     paymentMethod: string;
     totalAmount: number;
+    discount: number;
     assignee: string;
 };
 
@@ -36,6 +37,7 @@ class Order extends Model<OrderData> {
 			products: [],
 			paymentMethod: "",
 			totalAmount: 1,
+			discount: 0,
 			assignee: ""
 		};
 	}

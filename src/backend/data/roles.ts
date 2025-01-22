@@ -230,73 +230,7 @@ const getDefaultData = (domain: string) => {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
 							}
-						},
-						"unit": {
-							"unitType": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"availability": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"country": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"city": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"zone": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"offeringType": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"price": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"currency": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"property": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"assignee": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"unitExtra": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"title": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"address": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"description": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"actions": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							},
-							"accessInfo": {
-								"read": AccessType.OVERSEER,
-								"write": AccessType.OVERSEER
-							}
-						},
+						}
 					}
 				}
 			},

@@ -47,6 +47,14 @@ class Role extends Model<RoleData> {
 				[Role.ROLE]: {
 					read: AccessType.SELFISH,
 					write: AccessType.SELFISH
+				},
+				product: {
+					"read": AccessType.SELFISH,
+					"write": AccessType.SELFISH
+				},
+				order: {
+					"read": AccessType.SELFISH,
+					"write": AccessType.SELFISH
 				}
 			},
 			fieldAccess: {
@@ -104,6 +112,94 @@ class Role extends Model<RoleData> {
 					"accessInfo": {
 						read: AccessType.SELFISH,
 						write: AccessType.SELFISH
+					}
+				},
+				product: {
+					"name": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"description": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"brand": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"category": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"price": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"availableQuantity": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"quantity": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"color": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"images": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"city": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"rating": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"tags": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					}
+				},
+				order: {
+					"currency": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"orderStatus": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"customer": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"date": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"products": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"paymentMethod": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"totalAmount": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"discount": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
+					},
+					"assignee": {
+						"read": AccessType.SELFISH,
+						"write": AccessType.SELFISH
 					}
 				}
 			}
