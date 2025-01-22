@@ -95,7 +95,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		const cityRepo = CityRepo.getInstance(say);
 		const city = await cityRepo.getSimplifiedMany(say);
 
-		const unitRepo = ProductRepo.getInstance(say); 
+		const productRepo = ProductRepo.getInstance(say); 
 		// const unitFilter: Filter = {
 		// 	type: FilterType.CONJUNCTION,
 		// 	data: {
@@ -106,9 +106,9 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		// 		}
 		// 	}
 		// };
-		const unit = await unitRepo.getSimplifiedMany(say);
+		const product = await productRepo.getSimplifiedMany(say);
 
-		return { assignee, city, country, customer, paymentMethod, unit, orderStatus };
+		return { assignee, city, country, customer, paymentMethod, product, orderStatus };
 	}
 
 	public async generateReportById(owningModelId: string, id: string, say: MessengerFunction): Promise<Operation> {
@@ -122,15 +122,15 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		if (existingReport) return { status: "success", message: existingReport };
 		
 		const orderPdf = new OrderPdf({ domain, branch }, say);
-		const unitRepo = ProductRepo.getInstance(say);
-		const units = await Promise.all(
-			detailedOrder.model.data.products.map(u => unitRepo.findById(u._id || "", say))
+		const productRepo = ProductRepo.getInstance(say);
+		const products = await Promise.all(
+			detailedOrder.model.data.products.map(u => productRepo.findById(u._id || "", say))
 		);
-		if (units.some(u => u === null || u === undefined)) {
-			return { status: "failure", message: "Problem getting units' information!" };
+		if (products.some(u => u === null || u === undefined)) {
+			return { status: "failure", message: "Problem getting products' information!" };
 		} 
 
-		detailedOrder.model.data.products = units as Product[];
+		detailedOrder.model.data.products = products as Product[];
 		const pdfGenOperation = await orderPdf.generate(detailedOrder, id, say);
 		if (pdfGenOperation.status === "failure") return { status: "failure", message: "Problem generating the report!" };
 
