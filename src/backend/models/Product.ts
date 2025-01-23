@@ -21,6 +21,8 @@ type ProductData = {
 };
 
 class Product extends Model<ProductData> {
+	static ROLE = "product";
+
 	static emptyData(): ProductData {
 		return {
 			name: "",

@@ -9,6 +9,7 @@ import { CityRepo } from "./CityRepo";
 import { Dictionary, GenericDictionary } from "../../types/Dictionary";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { BaseDocimgRepo } from "./BaseDocRepo";
+import { UserRepo } from "./UserRepo";
 
 class ProductRepo extends BaseDocimgRepo<ProductData> {
 	public static REPO_NAME = "products";
@@ -24,6 +25,7 @@ class ProductRepo extends BaseDocimgRepo<ProductData> {
 	}
 
 	public createAggregation(query: Dictionary, say: MessengerFunction): Dictionary[] {
+		const userRepoId = UserRepo.getInstance(say).id;
 		const categoryRepoId = CategoryRepo.getInstance(say).id;
 		const brandRepoId = BrandRepo.getInstance(say).id;
 		const colorRepoId = ColorRepo.getInstance(say).id;
@@ -35,6 +37,11 @@ class ProductRepo extends BaseDocimgRepo<ProductData> {
 		};
 
 		const aggInfo: AggregationInfo[] = [
+			{
+				repoToJoinFrom: userRepoId,
+				fieldToSet: "data.assignee",
+				project,
+			},
 			{
 				repoToJoinFrom: categoryRepoId,
 				fieldToSet: "data.category",
@@ -73,8 +80,10 @@ class ProductRepo extends BaseDocimgRepo<ProductData> {
 		const color = await colorRepo.getSimplifiedMany(say);
 		const cityRepo = CityRepo.getInstance(say);
 		const city = await cityRepo.getSimplifiedMany(say);
+		const userRepo = UserRepo.getInstance(say);
+		const assignee = await userRepo.getSimplifiedMany(say);
 
-		return { category, brand, color, city };
+		return { category, brand, color, city, assignee };
 	}
 }
 

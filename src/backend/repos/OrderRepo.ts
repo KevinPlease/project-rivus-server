@@ -17,6 +17,7 @@ import { CityRepo } from "./CityRepo";
 import { PaymentMethodRepo } from "./PaymentMethodRepo";
 import { OrderPdf } from "../../generators/OrderPdf";
 import { Product } from "../models/Product";
+import { ColorRepo } from "./ColorRepo";
 
 
 class OrderRepo extends BaseDocimgRepo<OrderData> {
@@ -46,6 +47,12 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 			"data.name": 1,
 			"repository": 1
 		};
+		const customerProject = {
+			"data.address": 1,
+			"data.name": 1,
+			"data.city": 1,
+			"repository": 1
+		};
 		const aggInfo : AggregationInfo[] = [
 			{
 				repoToJoinFrom: userRepoId,
@@ -55,7 +62,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 			{
 				repoToJoinFrom: customerRepoId,
 				fieldToSet: "data.customer",
-				project
+				project: customerProject
 			},
 			{
 				repoToJoinFrom: paymentMethodRepoId,
@@ -95,6 +102,9 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		const cityRepo = CityRepo.getInstance(say);
 		const city = await cityRepo.getSimplifiedMany(say);
 
+		const colorRepo = ColorRepo.getInstance(say);
+		const color = await colorRepo.getSimplifiedMany(say);
+
 		const productRepo = ProductRepo.getInstance(say); 
 		// const unitFilter: Filter = {
 		// 	type: FilterType.CONJUNCTION,
@@ -106,9 +116,14 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		// 		}
 		// 	}
 		// };
-		const product = await productRepo.getSimplifiedMany(say);
+		const project = {
+			"data.availableQuantity": 1,
+			"data.price": 1,
+			"data.color": 1
+		};
+		const product = await productRepo.getSimplifiedMany(say, undefined, undefined, project);
 
-		return { assignee, city, country, customer, paymentMethod, product, orderStatus };
+		return { assignee, city, color, country, customer, paymentMethod, product, orderStatus };
 	}
 
 	public async generateReportById(owningModelId: string, id: string, say: MessengerFunction): Promise<Operation> {

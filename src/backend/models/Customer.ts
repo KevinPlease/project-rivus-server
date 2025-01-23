@@ -10,10 +10,10 @@ type CustomerData = {
 	name: string;
 	mobile: string;
 	email: string;
+	city: string;
 	address: string;
 	referralSource: string;
 	assignee: string;
-	idImage: string;
 	description: string;
 	documents?: DocumentDetails[];
 };
@@ -31,10 +31,10 @@ class Customer extends Model<CustomerData> {
 			name: "",
 			mobile: "",
 			email: "",
+			city: "",
 			address: "",
 			referralSource: "",
 			assignee: "",
-			idImage: "",
 			description: "",
 			documents: []
 		};

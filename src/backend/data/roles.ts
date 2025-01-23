@@ -140,6 +140,10 @@ const getDefaultData = (domain: string) => {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
 							},
+							"city": {
+								"read": AccessType.OVERSEER,
+								"write": AccessType.OVERSEER
+							},
 							"address": {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
@@ -152,7 +156,7 @@ const getDefaultData = (domain: string) => {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
 							},
-							"idImage": {
+							"referralSource": {
 								"read": AccessType.OVERSEER,
 								"write": AccessType.OVERSEER
 							},

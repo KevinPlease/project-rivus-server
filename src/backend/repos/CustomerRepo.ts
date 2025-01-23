@@ -11,6 +11,7 @@ import { Filter } from "../types/Filter";
 import { PaginationOptions } from "../types/PaginationOptions";
 import { ReferralSource } from "../models/ReferralSource";
 import { ReferralSourceRepo } from "./ReferralSourceRepo";
+import { CityRepo } from "./CityRepo";
 
 
 class CustomerRepo extends BaseDocimgRepo<CustomerData> {
@@ -32,6 +33,7 @@ class CustomerRepo extends BaseDocimgRepo<CustomerData> {
 
 	public createAggregation(query: Dictionary, say: MessengerFunction): Dictionary[] {
 		const userRepoId = UserRepo.getInstance(say).id;
+		const cityRepoId = CityRepo.getInstance(say).id;
 		const referralSourceRepoId = ReferralSourceRepo.getInstance(say).id;
 		const project = {
 			"data.name": 1,
@@ -41,6 +43,11 @@ class CustomerRepo extends BaseDocimgRepo<CustomerData> {
 			{
 				repoToJoinFrom: userRepoId,
 				fieldToSet: "data.assignee",
+				project
+			},
+			{
+				repoToJoinFrom: cityRepoId,
+				fieldToSet: "data.city",
 				project
 			},
 			{
@@ -63,6 +70,7 @@ class CustomerRepo extends BaseDocimgRepo<CustomerData> {
 		const overrideProject = {
 			"data.name": 1,
 			"data.address": 1,
+			"data.city": 1,
 			"data.mobile": 1,
 			...project
 		};
@@ -73,10 +81,13 @@ class CustomerRepo extends BaseDocimgRepo<CustomerData> {
 		const userRepo = UserRepo.getInstance(say);
 		const assignee = await userRepo.getSimplifiedMany(say);
 
+		const cityRepo = CityRepo.getInstance(say);
+		const city = await cityRepo.getSimplifiedMany(say);
+
 		const referralSourceRepo = ReferralSourceRepo.getInstance(say);
 		const referralSource = await referralSourceRepo.getSimplifiedMany(say);
 		
-		return { assignee, referralSource };
+		return { assignee, city, referralSource };
 	}
 
 	// public async detailedFind(query: Dictionary, say: MessengerFunction): Promise<DetailedFind<Customer> | null> {
