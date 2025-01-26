@@ -18,6 +18,7 @@ import { PaymentMethodRepo } from "./PaymentMethodRepo";
 import { OrderPdf } from "../../generators/OrderPdf";
 import { Product } from "../models/Product";
 import { ColorRepo } from "./ColorRepo";
+import { ReferralSourceRepo } from "./ReferralSourceRepo";
 
 
 class OrderRepo extends BaseDocimgRepo<OrderData> {
@@ -105,6 +106,9 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		const colorRepo = ColorRepo.getInstance(say);
 		const color = await colorRepo.getSimplifiedMany(say);
 
+		const referralSourceRepo = ReferralSourceRepo.getInstance(say);
+		const referralSource = await referralSourceRepo.getSimplifiedMany(say);
+
 		const productRepo = ProductRepo.getInstance(say); 
 		// const unitFilter: Filter = {
 		// 	type: FilterType.CONJUNCTION,
@@ -123,7 +127,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		};
 		const product = await productRepo.getSimplifiedMany(say, undefined, undefined, project);
 
-		return { assignee, city, color, country, customer, paymentMethod, product, orderStatus };
+		return { assignee, city, color, country, customer, paymentMethod, referralSource, product, orderStatus };
 	}
 
 	public async generateReportById(owningModelId: string, id: string, say: MessengerFunction): Promise<Operation> {
