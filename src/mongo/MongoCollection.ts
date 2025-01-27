@@ -58,6 +58,10 @@ class MongoCollection {
 		return Functions.doSimpleAsync(this._collection, "updateOne", queryObj, { $set: obj }, { upsert: false });
 	}
 
+	updateOneAgg(queryObj: Dictionary, updateArr: Dictionary[]): Promise<OperationStatus> {
+		return Functions.doSimpleAsync(this._collection, "updateOne", queryObj, updateArr, { upsert: false });
+	}
+
 	updateMany(queryObj: Dictionary, updateObj: Dictionary): Promise<OperationStatus> {
 		let obj = updateObj;
 		
