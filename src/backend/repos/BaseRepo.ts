@@ -71,7 +71,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 	}
 
 	private async _create(data: Dictionary, say: MessengerFunction): Promise<string | null> {
-		const operation: Operation = await this.dispatchOnce(ERepoEvents.BEFORE_ADD, { model: data, status: "success" });
+		const operation: Operation = await this.dispatchOnce(ERepoEvents.BEFORE_ADD, { role: this._modelRole, model: data, status: "success" });
 		if (operation?.status === "failure") return "failure";
 		
 		const middleware = this.privilegeMiddleware;
@@ -85,7 +85,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		}
 
 		data.id = result;
-		this.dispatchOnce(ERepoEvents.AFTER_ADD, { model: data, status: result ? "success" : "failure" });
+		this.dispatchOnce(ERepoEvents.AFTER_ADD, { role: this._modelRole, model: data, status: result ? "success" : "failure" });
 
 		return result;
 	}
@@ -144,7 +144,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 	}
 
 	public async update(query: Dictionary, data: Dictionary, say: MessengerFunction): Promise<OperationStatus> {
-		const status = await this.dispatchOnce(ERepoEvents.BEFORE_UPDATE, { id: query._id.toString(), data, status: "success" });
+		const status = await this.dispatchOnce(ERepoEvents.BEFORE_UPDATE, { role: this._modelRole, id: query._id.toString(), data, status: "success" });
 		if (status === "failure") return "failure";
 
 		const middleware = this.privilegeMiddleware;
@@ -171,7 +171,7 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		}
 
 		const model = await this.findById(query._id?.toString() || "", say);
-		this.dispatchOnce(ERepoEvents.AFTER_UPDATE, { model, status: result });
+		this.dispatchOnce(ERepoEvents.AFTER_UPDATE, { role: this._modelRole, model, status: result });
 
 		return result;
 	}
@@ -181,12 +181,12 @@ class BaseRepo<ModelData extends Dictionary> extends Communicator implements IRe
 		if (modelCore === null) return "failure";
 
 		const model = new Model(modelCore);
-		let status = await this.dispatchOnce(ERepoEvents.BEFORE_REMOVE, { id: model.id, status: "success" });
+		let status = await this.dispatchOnce(ERepoEvents.BEFORE_REMOVE, { role: this._modelRole, id: model.id, status: "success" });
 		if (status === "failure") return "failure";
 
 		status = await this._collection.deleteMany(query);
 
-		this.dispatchOnce(ERepoEvents.AFTER_REMOVE, { model, status: status });
+		this.dispatchOnce(ERepoEvents.AFTER_REMOVE, { role: this._modelRole, model, status: status });
 
 		return status;
 	}
