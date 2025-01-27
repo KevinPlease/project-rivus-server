@@ -13,6 +13,7 @@ type ProductData = {
 	price: number;
 	quantity: number;
 	availableQuantity: number;
+	lastQuantityChange: number;
 	color: string;
 	images: ImageDetails[];
 	city: string;
@@ -31,6 +32,7 @@ class Product extends Model<ProductData> {
 			category: "",
 			price: 0,
 			availableQuantity: 0,
+			lastQuantityChange: 0,
 			quantity: 0,
 			color: "",
 			images: [],

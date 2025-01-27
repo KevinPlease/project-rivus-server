@@ -54,6 +54,7 @@ import { OrderRepo } from "./backend/repos/OrderRepo";
 import { OrderStatusRepo } from "./backend/repos/OrderStatusRepo";
 import { PaymentMethodRepo } from "./backend/repos/PaymentMethodRepo";
 import { ReferralSourceRepo } from "./backend/repos/ReferralSourceRepo";
+import { Order } from "./backend/models/Order";
 
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
@@ -159,8 +160,8 @@ class Application extends Communicator {
 			userRepo.addRoleToUsers({}, branch.data.name, process.env.DEFAULT_ROLE_ID || "");
 		});
 
-		application.subscribe(ERepoEvents.AFTER_ADD, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
-			const role = content.model.role;
+		application.subscribe(ERepoEvents.AFTER_ADD, function(source: any, content: { role:string, model: Model<Dictionary>, status: OperationStatus }) {
+			const role = content.role;
 			if (role === Notification.ROLE || role === Counter.ROLE) return;
 
 			const domain = Domain.byName(content.model.getDomainName(), onMessage);
@@ -178,10 +179,52 @@ class Application extends Communicator {
 			const notificationRepo = domain.getRepoByName(NotificationRepo.REPO_NAME) as NotificationRepo;
 			const notification = Notification.forModel(onMessage, content.model, ENotificationAction.create);
 			notificationRepo.add(notification, sysCallMsngr);
+
+			// Custom events here
+			if (content.model.role === Order.ROLE) {
+				const products = content.model.data.products || [];
+				const domain = application.getDomainByRepoId(source.id);
+				const productRepo = domain.getRepoByName(ProductRepo.REPO_NAME) as ProductRepo;
+				products.forEach((p: any) => productRepo.addOrSubtractQuantity(sysCallMsngr, p._id, p.quantity * -1));
+			}
 		});
 
-		application.subscribe(ERepoEvents.AFTER_UPDATE, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
-			const role = content.model.role;
+		application.subscribe(ERepoEvents.BEFORE_UPDATE, async function(source: any, content: {  role: string, id: string, data: Dictionary, status: OperationStatus }) {
+			const role = content.role;
+			if (role === Notification.ROLE || role === Counter.ROLE) return;
+
+			const domain = Domain.byName(source.domain, onMessage);
+			const sysCallMsngr = (source: Object, purpose: string, what: string, content?: any): any => {
+				if (purpose === "ask") {
+					switch (what) {
+						case "isSysCall": return true;
+						case "repo": return domain.getRepoByName(content) || onMessage(source, purpose, what, content);
+					}
+				}
+
+				return onMessage(source, purpose, what, content);
+			};
+
+			// Custom events here
+			if (role === Order.ROLE) {
+				const domain = application.getDomainByRepoId(source.id);
+				const orderRepo = domain.getRepoByName(OrderRepo.REPO_NAME) as OrderRepo;
+				const order = await orderRepo.findById(content.id, sysCallMsngr);
+				if (!order) return;
+
+				const products = content.data["data.products"] || [];
+				const productRepo = domain.getRepoByName(ProductRepo.REPO_NAME) as ProductRepo;
+				products.forEach((u: any) => {
+					const previousProduct = order.data.products.find((p: any) => p._id === u._id);
+					if (!previousProduct) return;
+
+					const lastQuantityChange = previousProduct.data.quantity - u.data.quantity;
+					productRepo.editData(u._id, { lastQuantityChange }, onMessage);
+				});
+			}
+		});
+		application.subscribe(ERepoEvents.AFTER_UPDATE, function(source: any, content: { role: string, model: Model<Dictionary>, status: OperationStatus }) {
+			const role = content.role;
 			if (role === Notification.ROLE || role === Counter.ROLE) return;
 
 			const domain = Domain.byName(content.model.getDomainName(), onMessage);
@@ -199,10 +242,19 @@ class Application extends Communicator {
 			const notificationRepo = domain.getRepoByName(NotificationRepo.REPO_NAME) as NotificationRepo;
 			const notification = Notification.forModel(onMessage, content.model, ENotificationAction.update);
 			notificationRepo.add(notification, sysCallMsngr);
+
+
+			// Custom events here
+			if (content.model.role === Order.ROLE) {
+				const products = content.model.data.products || [];
+				const domain = application.getDomainByRepoId(source.id);
+				const productRepo = domain.getRepoByName(ProductRepo.REPO_NAME) as ProductRepo;
+				products.forEach((p: any) => productRepo.addOrSubtractQuantity(sysCallMsngr, p._id, p.lastQuantityChange));
+			}
 		});
 
-		application.subscribe(ERepoEvents.AFTER_REMOVE, function(source: Object, content: { model: Model<Dictionary>, status: OperationStatus }) {
-			const role = content.model.role;
+		application.subscribe(ERepoEvents.AFTER_REMOVE, function(source: any, content: { role: string, model: Model<Dictionary>, status: OperationStatus }) {
+			const role = content.role;
 			if (role === Notification.ROLE || role === Counter.ROLE) return;
 
 			const domain = Domain.byName(content.model.getDomainName(), onMessage);
@@ -220,6 +272,13 @@ class Application extends Communicator {
 			const notificationRepo = domain.getRepoByName(NotificationRepo.REPO_NAME) as NotificationRepo;
 			const notification = Notification.forModel(onMessage, content.model, ENotificationAction.delete);
 			notificationRepo.add(notification, sysCallMsngr);
+
+			if (content.model.role === Order.ROLE) {
+				const products = content.model.data.products || [];
+				const domain = application.getDomainByRepoId(source.id);
+				const productRepo = domain.getRepoByName(ProductRepo.REPO_NAME) as ProductRepo;
+				products.forEach((p: any) => productRepo.addOrSubtractQuantity(sysCallMsngr, p._id, p.quantity));
+			}
 		});
 
 		return application.run();

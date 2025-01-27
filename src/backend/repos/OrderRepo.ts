@@ -122,6 +122,7 @@ class OrderRepo extends BaseDocimgRepo<OrderData> {
 		// };
 		const project = {
 			"data.availableQuantity": 1,
+			"data.lastQuantityChange": 1,
 			"data.price": 1,
 			"data.color": 1
 		};

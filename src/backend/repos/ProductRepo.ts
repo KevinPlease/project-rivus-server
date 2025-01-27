@@ -10,6 +10,8 @@ import { Dictionary, GenericDictionary } from "../../types/Dictionary";
 import MongoQuery, { AggregationInfo } from "../models/MongoQuery";
 import { BaseDocimgRepo } from "./BaseDocRepo";
 import { UserRepo } from "./UserRepo";
+import { Operation, OperationStatus } from "../../types/Operation";
+import { ObjectId } from "mongodb";
 
 class ProductRepo extends BaseDocimgRepo<ProductData> {
 	public static REPO_NAME = "products";
@@ -85,6 +87,14 @@ class ProductRepo extends BaseDocimgRepo<ProductData> {
 
 		return { category, brand, color, city, assignee };
 	}
+
+	public async addOrSubtractQuantity(say: MessengerFunction, id: string, lastQuantityChange?: number): Promise<Operation> {
+		const data =  [{$set: { "data.availableQuantity": { $add: ["$data.availableQuantity", lastQuantityChange || "$data.lastQuantityChange"]} }}];
+		const idQuery = { _id: new ObjectId(id) };
+		const status = await this.collection.updateOneAgg(idQuery, data);
+		return { status, message: status ? "Success!" : "Failed to Update!" };
+	}
+
 }
 
 export { ProductRepo };
