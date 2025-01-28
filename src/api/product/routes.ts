@@ -18,7 +18,8 @@ const ROUTES: RawRoutesInfo = {
 			"actionName": "Get Form Details"
 		},
 		"image/:id?": {
-			"actionName": "Get Product Image"
+			"actionName": "Public Action",
+			"needsAuth": false
 		}
 	},
 
