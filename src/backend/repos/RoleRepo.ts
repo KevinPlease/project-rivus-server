@@ -43,7 +43,10 @@ class RoleRepo extends BaseRepo<RoleData> {
 
 		const userRepo = UserRepo.getInstance(say);
 		const assignee = await userRepo.getSimplifiedMany(say);
-		return { assignee, action };
+
+		const accessInfo = [ Role.defaultAccessInfo() ];
+
+		return { accessInfo, assignee, action };
 	}
 
 	public async isActionPresent(actionId: string, roleId: string | ObjectId): Promise<boolean> {
