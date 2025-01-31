@@ -55,6 +55,7 @@ import { OrderStatusRepo } from "./backend/repos/OrderStatusRepo";
 import { PaymentMethodRepo } from "./backend/repos/PaymentMethodRepo";
 import { ReferralSourceRepo } from "./backend/repos/ReferralSourceRepo";
 import { Order } from "./backend/models/Order";
+import { ProductData } from "./backend/models/Product";
 
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
@@ -185,7 +186,7 @@ class Application extends Communicator {
 				const products = content.model.data.products || [];
 				const domain = application.getDomainByRepoId(source.id);
 				const productRepo = domain.getRepoByName(ProductRepo.REPO_NAME) as ProductRepo;
-				products.forEach((p: any) => productRepo.addOrSubtractQuantity(sysCallMsngr, p._id, p.quantity * -1));
+				products.forEach((p: ModelCore<ProductData>) => productRepo.addOrSubtractQuantity(sysCallMsngr, p._id || "", p.data.quantity * -1));
 			}
 		});
 
@@ -212,13 +213,22 @@ class Application extends Communicator {
 				const order = await orderRepo.findById(content.id, sysCallMsngr);
 				if (!order) return;
 
-				const products = content.data["data.products"] || [];
+				const newStatus = content.data["data.orderStatus"] !== order.data.orderStatus ? content.data["data.orderStatus"] : "";
+				const products = content.data["data.products"] || order.data.products;
 				const productRepo = domain.getRepoByName(ProductRepo.REPO_NAME) as ProductRepo;
 				products.forEach((u: any) => {
 					const previousProduct = order.data.products.find((p: any) => p._id === u._id);
 					if (!previousProduct) return;
 
-					const lastQuantityChange = previousProduct.data.quantity - u.data.quantity;
+					let lastQuantityChange = 0;
+					if (newStatus === "66fc57ae2eece7a40bbde7fa") {
+						lastQuantityChange = previousProduct.data.quantity;
+					} else if (newStatus === "66fc554e5a3e830d4786026f" || newStatus === "66fc554e5a3e830d4786026e") {
+						lastQuantityChange = previousProduct.data.quantity * -1;
+					} else {
+						lastQuantityChange = previousProduct.data.quantity - u.data.quantity;
+					}
+
 					productRepo.editData(u._id, { lastQuantityChange }, onMessage);
 				});
 			}
