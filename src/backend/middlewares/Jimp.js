@@ -101,6 +101,7 @@ const ErrorTextSize = new Error("Text size must range from 1 - 8");
 const ErrorScaleRatio = new Error("Scale Ratio must be less than one!");
 const ErrorOpacity = new Error("Opacity must be less than one!");
 const ErrorQuality = new Error("Quality must be within the range of 10 -> 100!");
+const ErrorSize = new Error("Width and/or heigt must be within the range of 1 -> 2000!");
 
 const getDimensions = (H, W, h, w, ratio) => {
 	let hh, ww;
@@ -129,6 +130,12 @@ const checkCompressOptions = (options) => {
 	options = { ...defaultOptions, ...options };
 	if (options.quality > 100 || options.quality <= 10) {
 		throw ErrorQuality;
+	}
+	if (options.width > 2000 || options.width <= 1) {
+		throw ErrorSize;
+	}
+	if (options.height > 2000 || options.height <= 1) {
+		throw ErrorSize;
 	}
 	return options;
 };
@@ -209,7 +216,16 @@ async function compress(mainImage, options) {
 		options = checkCompressOptions(options);
 		const main = await Jimp.read(mainImage);
 
+		if (options.width && options.height) {
+			main.contain(options.width, options.height);
+		} else if (options.width) {
+			main.resize(options.width, Jimp.AUTO);
+		} else if (options.height) {
+			main.resize(Jimp.AUTO, options.height);
+		}
+		
 		await main.quality(options.quality).writeAsync(options.dstPath);
+
 		return {
 			destinationPath: options.dstPath,
 			imageHeight: main.getHeight(),
@@ -221,8 +237,9 @@ async function compress(mainImage, options) {
 	}
 }
 
+
 const ExJimp = {
-	addTextWatermark, addWatermark
+	addTextWatermark, addWatermark, compress
 };
 
 export default ExJimp;
