@@ -47,7 +47,7 @@ class ImageEnhancement extends Work<ImgEnhancementExecInfo> {
 	public static create(say: MessengerFunction, data: ImgEnhancementData, ownership: OwnershipInfo, meta?: Metadata): ImageEnhancement {
 		// if (ExObject.isDictEmpty(data)) data = ImageEnhancement.emptyData();
 		
-		if (!ownership.branch) throw "HUNT: Missing branch from ownership info!";
+		if (!ownership.branch) throw "ImageEnhancement: Missing branch from ownership info!";
 
 		const repository = IdCreator.createBranchedRepoId(ImageEnhancement.REPO_NAME, ownership.branch, ownership.domain);
 
@@ -62,11 +62,11 @@ class ImageEnhancement extends Work<ImgEnhancementExecInfo> {
 	public static fromInfo(say: MessengerFunction, info: ImgEnhancementExecInfo, ownership: OwnershipInfo, meta?: Metadata): ImageEnhancement {
 		const schedule = WorkSchedule.empty();
 		const workData: ImgEnhancementData = { groupId: ImageEnhancement.ROLE, execInfo: info, priority: 0, result: {}, schedule, status: "pending" };
-		const hunt = ImageEnhancement.create(say, workData, ownership, meta);
+		const model = ImageEnhancement.create(say, workData, ownership, meta);
 		
-		hunt.id = "";
+		model.id = "";
 
-		return hunt;
+		return model;
 	}
 
 	public static request<ImgEnhancementExecInfo>(execInfo: ImgEnhancementExecInfo, say: MessengerFunction): Promise<Work<ImgEnhancementExecInfo>> {

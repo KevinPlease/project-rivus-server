@@ -10,7 +10,7 @@ import ModelFolder from "../../files/ModelFolder";
 import { Dictionary } from "../../types/Dictionary";
 import { Model } from "../../core/Model";
 
-class ImageEnhancer implements IModelEnhancer {
+class ImageCompresser implements IModelEnhancer {
 	
 	async enhance(owningModel: Model<Dictionary>, model: ImageDetails, say: MessengerFunction): Promise<Operation> {
 		const owningFolder = ModelFolder.fromInfo(owningModel.role, owningModel.getDomainName(), owningModel.getBranchName(), owningModel.id, say);
@@ -18,17 +18,13 @@ class ImageEnhancer implements IModelEnhancer {
 		const filePath = Folder.createPath(say, path, model.name);
 
 		const options = {
-			ratio: 0.2,		// Should be less than one
-			opacity: 0.99, 	// Should be less than one
-			dstPath: filePath,
-			location: "top-right"
+			quality: 60
 		};
 
-		const waterMarkPath = Folder.createPath(say, "backend", "data", "watermark_simple.png");
-		const status = await Functions.doSimpleAsync(ExJimp, "addWatermark", filePath, waterMarkPath, options);
+		const status = await Functions.doSimpleAsync(ExJimp, "compress", filePath, options);
 		return { status, message: null };
 	}
 
 }
 
-export default ImageEnhancer;
+export default ImageCompresser;

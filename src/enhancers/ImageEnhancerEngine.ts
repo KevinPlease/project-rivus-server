@@ -1,12 +1,12 @@
 import UrlUtils from "url";
 const __dirname = UrlUtils.fileURLToPath(new UrlUtils.URL(".", import.meta.url));
 
-import ImageEnhancer from "../backend/middlewares/ImageEnhancer";
 import { Messenger, MessengerFunction } from "../Messenger";
 import WorkDependency from "../service/types/WorkDependency";
 import WorkerEngine from "../service/WorkerEngine";
 import { Functions } from "../shared/Function";
 import ImageEnhancement, { ImgEnhancementExecInfo, ImgEnhancementResult } from "./ImageEnhancement";
+import ImageCompresser from "../backend/middlewares/ImageCompresser";
 
 class ImageEnhancerEngine extends WorkerEngine<ImgEnhancementExecInfo> {
 
@@ -49,7 +49,7 @@ class ImageEnhancerEngine extends WorkerEngine<ImgEnhancementExecInfo> {
 		if (!this.curWork) throw "ImageEnhancerEngine: Missing Work!";
 		
 		const execInfo = this.curWork.data.execInfo;
-		const imgEnhancer = new ImageEnhancer();
+		const imgEnhancer = new ImageCompresser();
 
 		const onMessage = Functions.bound(this, this.onMessage);
 		const proms = execInfo.images.map(img => imgEnhancer.enhance(execInfo.model, img, onMessage));

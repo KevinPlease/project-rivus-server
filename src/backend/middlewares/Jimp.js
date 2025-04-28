@@ -100,6 +100,7 @@ const SizeEnum = Object.freeze({
 const ErrorTextSize = new Error("Text size must range from 1 - 8");
 const ErrorScaleRatio = new Error("Scale Ratio must be less than one!");
 const ErrorOpacity = new Error("Opacity must be less than one!");
+const ErrorQuality = new Error("Quality must be within the range of 10 -> 100!");
 
 const getDimensions = (H, W, h, w, ratio) => {
 	let hh, ww;
@@ -120,6 +121,14 @@ const checkOptions = (options) => {
 	}
 	if (options.opacity > 1) {
 		throw ErrorOpacity;
+	}
+	return options;
+};
+
+const checkCompressOptions = (options) => {
+	options = { ...defaultOptions, ...options };
+	if (options.quality > 100 || options.quality <= 10) {
+		throw ErrorQuality;
 	}
 	return options;
 };
@@ -184,6 +193,23 @@ async function addWatermark(mainImage, watermarkImage, options) {
 		main.bitmap.exifBuffer = undefined;
 		
 		await main.quality(70).writeAsync(options.dstPath);
+		return {
+			destinationPath: options.dstPath,
+			imageHeight: main.getHeight(),
+			imageWidth: main.getWidth(),
+		};
+	} catch (err) {
+		console.error(err);
+		return null;
+	}
+}
+
+async function compress(mainImage, options) {
+	try {
+		options = checkCompressOptions(options);
+		const main = await Jimp.read(mainImage);
+
+		await main.quality(options.quality).writeAsync(options.dstPath);
 		return {
 			destinationPath: options.dstPath,
 			imageHeight: main.getHeight(),
