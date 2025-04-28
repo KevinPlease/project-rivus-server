@@ -18,7 +18,9 @@ class ImageCompresser implements IModelEnhancer {
 		const filePath = Folder.createPath(say, path, model.name);
 
 		const options = {
-			quality: 60
+			dstPath: filePath,
+			quality: 70,
+			width: 1200
 		};
 
 		const status = await Functions.doSimpleAsync(ExJimp, "compress", filePath, options);

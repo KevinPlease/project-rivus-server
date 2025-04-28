@@ -57,10 +57,16 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		}
 
 		const typeInPlural = type + "s";
-		let status = await Functions.doSimpleAsync(collection, "removeFromList", idQuery, { [`data.${typeInPlural}`]: { id: { $in: docimgToDelete } } });
+		let status = await Functions.doSimpleAsync(collection, "removeFromList", idQuery, { [`data.${typeInPlural}`]: { name: { $in: docimgToDelete } } });
 		status = await Functions.doSimpleAsync(collection, "pushInList", idQuery, { [`data.${typeInPlural}`]: { $each: docimgToAdd } });
 		
-		ImageEnhancement.request({ images: docimgToAdd }, say);
+		ImageEnhancement.request<ImgEnhancementExecInfo>({
+			images: docimgToAdd,
+			branch: branchName,
+			domain: domainName,
+			modelId: model.id,
+			model
+		}, say);
 
 		return status;
 	}

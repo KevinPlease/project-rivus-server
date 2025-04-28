@@ -7,6 +7,7 @@ import WorkerEngine from "../service/WorkerEngine";
 import { Functions } from "../shared/Function";
 import ImageEnhancement, { ImgEnhancementExecInfo, ImgEnhancementResult } from "./ImageEnhancement";
 import ImageCompresser from "../backend/middlewares/ImageCompresser";
+import { Model } from "../core/Model";
 
 class ImageEnhancerEngine extends WorkerEngine<ImgEnhancementExecInfo> {
 
@@ -52,7 +53,7 @@ class ImageEnhancerEngine extends WorkerEngine<ImgEnhancementExecInfo> {
 		const imgEnhancer = new ImageCompresser();
 
 		const onMessage = Functions.bound(this, this.onMessage);
-		const proms = execInfo.images.map(img => imgEnhancer.enhance(execInfo.model, img, onMessage));
+		const proms = execInfo.images.map(img => imgEnhancer.enhance(new Model(execInfo.model), img, onMessage));
 		
 		const status = await Functions.doSimpleAsync(Promise, "all", proms);
 
