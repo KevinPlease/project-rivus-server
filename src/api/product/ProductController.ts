@@ -74,7 +74,7 @@ class ProductController extends Controller {
 		if (!branch) return response.setType("badRequest").send();
 
 		const repo = ProductRepo.getInstance(say);
-		const operation = await repo.getImageById(branchName, request.params.id, request.query.documentId, say);
+		const operation = await repo.getImageById(branchName, request.params.id, request.query.imageId, say);
 		if (operation.status === "failure") response.setType("notFound");
 
 		const resType = operation.status === "failure" ? "notFound" : "successDownload";
