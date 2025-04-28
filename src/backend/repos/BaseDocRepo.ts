@@ -12,6 +12,7 @@ import File from "../../files/File";
 import { DocumentDetails } from "../types/DocumentDetails";
 import { ImageDetails } from "../types/ImageDetails";
 import NetworkUrl from "../../network/NetworkUrl";
+import ImageEnhancement, { ImgEnhancementExecInfo } from "../../enhancers/ImageEnhancement";
 
 class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 
@@ -25,10 +26,13 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		const existingDocimgs = type === "document" ? model.data.documents : model.data.images;
 		const sourceFolder = ModelFolder.fromInfo(this.modelRole, domainName, branchName || "", ModelFolder.TEMP_FOLDER, say);
 		const destFolder = ModelFolder.fromInfo(this.modelRole, domainName, branchName || "", model.id, say);
+		
 		const folderMethodName = type === "document" ? "ensureDocumentsExist" : "ensureImagesExist";
 		await destFolder[folderMethodName](say);
+		
 		const fileMethodName = type === "document" ? "getDocumentFile" : "getImageFile";
 		const srcMethodName = type === "document" ? "forDocument" : "forImage";
+		
 		for (const docimg of newDocimgs) {
 			const newDocId = docimg.name;
 			const existing = existingDocimgs?.find(exDoc => exDoc.name === newDocId);
@@ -55,6 +59,8 @@ class BaseDocimgRepo<ModelData extends Dictionary> extends BaseRepo<ModelData> {
 		const typeInPlural = type + "s";
 		let status = await Functions.doSimpleAsync(collection, "removeFromList", idQuery, { [`data.${typeInPlural}`]: { id: { $in: docimgToDelete } } });
 		status = await Functions.doSimpleAsync(collection, "pushInList", idQuery, { [`data.${typeInPlural}`]: { $each: docimgToAdd } });
+		
+		ImageEnhancement.request({ images: docimgToAdd }, say);
 
 		return status;
 	}

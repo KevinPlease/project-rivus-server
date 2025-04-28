@@ -115,16 +115,16 @@ class Application extends Communicator {
 		});
 
 		// TODO: Can be further generalized in the future by passing a msg.type
-		// application.subscribe("work started", (source: Object, msg: Dictionary) => {
-		// 	if (msg.type === ImageEnhancement.ROLE) {
-		// 		application._imgEnhancMaster.startWork(msg.id, onMessage);
-		// 	}
-		// });
-		// application.subscribe("work finished", (source: Object, msg: Dictionary) => {
-		// 	if (msg.type === ImageEnhancement.ROLE) {
-		// 		application._imgEnhancMaster.handleFinishedWork(msg.content, onMessage);
-		// 	}
-		// });
+		application.subscribe("work started", (source: Object, msg: Dictionary) => {
+			if (msg.type === ImageEnhancement.ROLE) {
+				application._imgEnhancMaster.startWork(msg.id, onMessage);
+			}
+		});
+		application.subscribe("work finished", (source: Object, msg: Dictionary) => {
+			if (msg.type === ImageEnhancement.ROLE) {
+				application._imgEnhancMaster.handleFinishedWork(msg.content, onMessage);
+			}
+		});
 
 		application.subscribe("branch added", function(source: Object, branch: Branch) {
 			const branchRepo = source as BranchRepo;

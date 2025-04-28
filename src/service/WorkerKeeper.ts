@@ -18,7 +18,6 @@ class WorkerKeeper extends Communicator {
 	private static MAINTENANCE_INTERVAL = 1000;		// in ms
 	private static MAX_WORKERS = CPU_THREADS;
 	private static SERVICE_PATHS_FOR_TYPE = {
-		VENATORE: "server/bin/venatores/Venatore.js",
 		[ImageEnhancement.ROLE]: "server/bin/enhancers/ImageEnhancerEngine.js",
 	};
 
