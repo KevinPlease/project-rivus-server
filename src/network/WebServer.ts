@@ -65,7 +65,8 @@ class WebServer extends Communicator {
 
 		const CONNECTION_MODE = say(WebServer, "ask", "connectionMode");
 		const isDev = CONNECTION_MODE === "development";
-		const clientProvider = NextClient.create({ dev: isDev });
+		const CONN = config[CONNECTION_MODE];
+		const clientProvider = NextClient.create({ dev: isDev, port: CONN.PORT, hostname: CONN.URL });
 		const clientHandler = clientProvider.getRequestHandler();
 
 		await clientProvider.prepare();

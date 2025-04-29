@@ -11,7 +11,7 @@ import WorkGroup from "./WorkGroup";
 import WorkerMessage from "./types/WorkerMessage";
 import ImageEnhancement from "../enhancers/ImageEnhancement";
 
-const CPU_THREADS = OS.cpus().length;
+const CPU_THREADS = OS.cpus().length * 2;
 
 class WorkerKeeper extends Communicator {
 
