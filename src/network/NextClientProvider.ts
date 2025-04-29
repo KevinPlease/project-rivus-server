@@ -15,7 +15,7 @@ class NextClient implements IClientProvider {
 	}
 
 	public static create(options?: Dictionary) {
-		const inst = Next({ dev: options?.dev });
+		const inst = Next({ dev: options?.dev, port: options?.port, hostname: options?.hostname });
 		return new NextClient(inst);
 	}
 
